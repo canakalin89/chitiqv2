@@ -26,7 +26,14 @@ const resources = {
         startRecording: "Start Recording",
         stopRecording: "Stop Recording",
         processing: "Processing...",
-        recording: "Recording..."
+        recording: "Recording...",
+        processingSteps: {
+          uploading: "Uploading audio...",
+          transcribing: "Transcribing speech...",
+          analyzing: "Analyzing metrics...",
+          finalizing: "Finalizing report..."
+        },
+        estimatedTime: "Estimated time: ~{{seconds}}s"
       },
       recorder: {
         liveTranscript: "Live Transcript",
@@ -95,7 +102,14 @@ const resources = {
         startRecording: "Kaydı Başlat",
         stopRecording: "Kaydı Bitir",
         processing: "İşleniyor...",
-        recording: "Kaydediliyor..."
+        recording: "Kaydediliyor...",
+        processingSteps: {
+          uploading: "Ses yükleniyor...",
+          transcribing: "Konuşma deşifre ediliyor...",
+          analyzing: "Metrikler analiz ediliyor...",
+          finalizing: "Rapor hazırlanıyor..."
+        },
+        estimatedTime: "Tahmini süre: ~{{seconds}}sn"
       },
       recorder: {
         liveTranscript: "Canlı Döküm",

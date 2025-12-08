@@ -44,6 +44,10 @@ const App: React.FC = () => {
   const [evaluationData, setEvaluationData] = useState<EvaluationResultData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Loading State
+  const [loadingProgress, setLoadingProgress] = useState(0);
+  const [estimatedTimeLeft, setEstimatedTimeLeft] = useState(15);
+
   // Theme Effect
   useEffect(() => {
     const root = window.document.documentElement;
@@ -59,6 +63,44 @@ const App: React.FC = () => {
   useEffect(() => {
     localStorage.setItem('history', JSON.stringify(history));
   }, [history]);
+
+  // Simulated Progress Logic
+  useEffect(() => {
+    let progressInterval: any;
+    let timeInterval: any;
+
+    if (view === 'evaluating') {
+      setLoadingProgress(0);
+      setEstimatedTimeLeft(15);
+
+      // 1. Progress Bar Simulation (Logarithmic-ish)
+      progressInterval = setInterval(() => {
+        setLoadingProgress((prev) => {
+          if (prev >= 95) return 95; // Stall at 95% until real response comes
+          
+          // Move fast at first, then slow down
+          const remaining = 100 - prev;
+          const increment = Math.max(0.2, remaining / 30); 
+          // Randomize slightly for organic feel
+          const noise = Math.random() * 0.5;
+          return Math.min(95, prev + increment + noise);
+        });
+      }, 100);
+
+      // 2. Countdown Simulation
+      timeInterval = setInterval(() => {
+        setEstimatedTimeLeft((prev) => {
+          if (prev <= 1) return 1; // Stuck at ~1s if it takes longer
+          return prev - 1;
+        });
+      }, 1000);
+    }
+
+    return () => {
+      clearInterval(progressInterval);
+      clearInterval(timeInterval);
+    };
+  }, [view]);
 
   // Handlers
   const toggleTheme = () => {
@@ -102,7 +144,13 @@ const App: React.FC = () => {
 
       setEvaluationData(result);
       setHistory(prev => [newEvaluation, ...prev]);
-      setView('result');
+      
+      // Small artificial delay to show 100% if response was super fast, 
+      // but mostly to transition smoothly
+      setLoadingProgress(100);
+      setTimeout(() => {
+        setView('result');
+      }, 500);
 
     } catch (err) {
       console.error("Evaluation failed", err);
@@ -127,6 +175,14 @@ const App: React.FC = () => {
       setAudioBlob(null); 
       setView('result');
     }
+  };
+
+  // Helper to determine status text based on progress
+  const getLoadingStatusText = (progress: number) => {
+    if (progress < 25) return t('dashboard.processingSteps.uploading');
+    if (progress < 60) return t('dashboard.processingSteps.transcribing');
+    if (progress < 90) return t('dashboard.processingSteps.analyzing');
+    return t('dashboard.processingSteps.finalizing');
   };
 
   // Views
@@ -296,17 +352,65 @@ const App: React.FC = () => {
         );
 
       case 'evaluating':
+        const radius = 70;
+        const circumference = 2 * Math.PI * radius;
+        const strokeDashoffset = circumference - (loadingProgress / 100) * circumference;
+        
         return (
-          <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-10 animate-fade-in relative z-10">
-            <div className="relative w-32 h-32">
-               <div className="absolute inset-0 bg-indigo-500 blur-2xl opacity-20 rounded-full animate-pulse-slow"></div>
-               <div className="absolute top-0 left-0 w-full h-full rounded-full border-4 border-slate-200 dark:border-slate-800"></div>
-               <div className="absolute top-0 left-0 w-full h-full rounded-full border-4 border-indigo-600 border-t-transparent animate-spin"></div>
-               <div className="absolute inset-0 flex items-center justify-center text-4xl animate-bounce">✨</div>
+          <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8 animate-fade-in relative z-10">
+            <div className="relative w-56 h-56 flex items-center justify-center">
+               {/* Background Glow */}
+               <div className="absolute inset-0 bg-indigo-500 blur-3xl opacity-20 rounded-full animate-pulse-slow"></div>
+               
+               {/* SVG Progress Circle */}
+               <svg className="w-full h-full" viewBox="0 0 224 224">
+                 {/* Track */}
+                 <circle
+                   cx="112"
+                   cy="112"
+                   r={radius}
+                   stroke="currentColor"
+                   strokeWidth="12"
+                   fill="transparent"
+                   className="text-slate-200 dark:text-slate-800"
+                 />
+                 {/* Indicator */}
+                 <circle
+                   cx="112"
+                   cy="112"
+                   r={radius}
+                   stroke="currentColor"
+                   strokeWidth="12"
+                   fill="transparent"
+                   strokeDasharray={circumference}
+                   strokeDashoffset={strokeDashoffset}
+                   strokeLinecap="round"
+                   className="text-indigo-600 dark:text-indigo-500 transition-all duration-300 ease-linear origin-center -rotate-90"
+                 />
+                 {/* Percentage Text inside SVG for perfect centering */}
+                 <text
+                    x="112"
+                    y="112"
+                    textAnchor="middle"
+                    dominantBaseline="middle"
+                    dy=".1em"
+                    className="text-4xl font-extrabold fill-slate-800 dark:fill-white"
+                    style={{ fontVariantNumeric: 'tabular-nums' }}
+                 >
+                    {Math.round(loadingProgress)}%
+                 </text>
+               </svg>
             </div>
-            <div className="text-center space-y-3">
-              <h2 className="text-3xl font-bold text-slate-800 dark:text-white tracking-tight">{t('dashboard.processing')}</h2>
-              <p className="text-slate-500 dark:text-slate-400 text-lg">AI is analyzing your speech patterns...</p>
+
+            <div className="text-center space-y-3 max-w-sm px-4">
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-white tracking-tight animate-pulse">
+                {getLoadingStatusText(loadingProgress)}
+              </h2>
+              <div className="inline-block px-4 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-900/50">
+                <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
+                  {t('dashboard.estimatedTime', { seconds: estimatedTimeLeft })}
+                </p>
+              </div>
             </div>
           </div>
         );

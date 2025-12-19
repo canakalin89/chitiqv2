@@ -15,6 +15,7 @@ import HistoryView from './components/HistoryView';
 import ExamMode from './components/ExamMode';
 import ClassManager from './components/ClassManager';
 import AnalyticsDashboard from './components/AnalyticsDashboard';
+import FeedbackForm from './components/FeedbackForm';
 
 // Icons
 import { Logo } from './icons/Logo';
@@ -42,6 +43,7 @@ const App: React.FC = () => {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     return (localStorage.getItem('theme') as 'light' | 'dark') || 'light';
   });
+  const [showFeedback, setShowFeedback] = useState(false);
   
   // Data State
   const [history, setHistory] = useState<(Evaluation | ExamSession)[]>(() => {
@@ -149,27 +151,36 @@ const App: React.FC = () => {
   const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
   const toggleLanguage = () => i18n.changeLanguage(i18n.language === 'tr' ? 'en' : 'tr');
 
+  // Testimonial logic ensures uniqueness and randomized selection from localized keys
   const testimonials = useMemo(() => {
     const teachersObj = t('landing.teacherTestimonials', { returnObjects: true }) as any;
     const studentsObj = t('landing.studentTestimonials', { returnObjects: true }) as any;
     
     if (!teachersObj || !studentsObj) return [];
     
-    const result: any[] = [];
+    const pickedTeachers: any[] = [];
+    const pickedStudents: any[] = [];
     const cats = ['star5', 'star4', 'star3'];
     
+    // Pick 3 unique teachers
+    const allTeachers: any[] = [];
     cats.forEach(cat => {
       if (teachersObj[cat]) {
-        const item = teachersObj[cat][Math.floor(Math.random() * teachersObj[cat].length)];
-        result.push({ ...item, stars: parseInt(cat.replace('star', '')), type: 'teacher' });
-      }
-      if (studentsObj[cat]) {
-        const item = studentsObj[cat][Math.floor(Math.random() * studentsObj[cat].length)];
-        result.push({ ...item, stars: parseInt(cat.replace('star', '')), type: 'student' });
+        teachersObj[cat].forEach((item: any) => allTeachers.push({ ...item, stars: parseInt(cat.replace('star', '')), type: 'teacher' }));
       }
     });
     
-    return result.sort(() => Math.random() - 0.5).slice(0, 3);
+    // Pick 3 unique students
+    const allStudents: any[] = [];
+    cats.forEach(cat => {
+      if (studentsObj[cat]) {
+        studentsObj[cat].forEach((item: any) => allStudents.push({ ...item, stars: parseInt(cat.replace('star', '')), type: 'student' }));
+      }
+    });
+
+    const shuffle = (array: any[]) => array.sort(() => Math.random() - 0.5);
+    
+    return [...shuffle(allTeachers).slice(0, 3), ...shuffle(allStudents).slice(0, 3)].sort(() => Math.random() - 0.5);
   }, [t, i18n.language, view]);
 
   const handleStopRecording = async (blob: Blob) => {
@@ -276,89 +287,90 @@ const App: React.FC = () => {
     switch (view) {
       case 'landing':
         return (
-          <div className="flex flex-col items-center space-y-32 animate-fade-in relative z-10 pb-32">
+          <div className="flex flex-col items-center space-y-12 animate-fade-in relative z-10 pb-16">
             {/* --- HERO SECTION --- */}
-            <div className="flex flex-col items-center text-center space-y-16 pt-12 relative w-full px-4">
+            <div className="flex flex-col items-center text-center space-y-6 pt-2 relative w-full px-4">
               
-              {/* Maarif Modeli Badge - Higher and separate from Logo container */}
-              <div className="z-20">
-                <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-indigo-600 dark:text-indigo-400 text-xs sm:text-sm font-black shadow-lg shadow-indigo-500/5 animate-slide-up">
-                   <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+              {/* Maarif Badge - Top center */}
+              <div className="z-30 animate-slide-up">
+                <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-indigo-50/80 dark:bg-indigo-950/80 backdrop-blur-sm border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 text-[10px] sm:text-xs font-black shadow-sm">
+                   <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
                    {t('landing.badge')}
                 </div>
               </div>
 
-              <div className="flex flex-col items-center gap-8">
-                {/* Logo with controlled scaling to avoid overlap */}
+              <div className="flex flex-col items-center gap-4">
+                {/* Logo Section */}
                 <div className="relative transform hover:scale-105 transition-transform duration-500">
-                  <Logo className="md:scale-[1.8]" />
+                  <Logo className="md:scale-110" />
                 </div>
                 
-                <div className="space-y-6 max-w-4xl">
-                  <h1 className="text-5xl md:text-8xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.1]">
+                <div className="space-y-2 max-w-4xl">
+                  <h1 className="text-4xl md:text-7xl font-black tracking-tight text-slate-900 dark:text-white leading-[1] drop-shadow-sm">
                     {t('landing.heroTitle')}
                   </h1>
-                  <p className="text-xl md:text-2xl font-medium text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                  <p className="text-base md:text-xl font-medium text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
                     {t('landing.heroDesc')}
                   </p>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row items-center gap-8 pt-4">
+              <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
                 <button 
                   onClick={() => setView('dashboard')} 
-                  className="group relative inline-flex items-center justify-center px-12 py-6 text-xl font-bold text-white transition-all duration-300 bg-indigo-600 rounded-3xl focus:outline-none hover:bg-indigo-700 shadow-2xl shadow-indigo-500/30 active:scale-95"
+                  className="group relative inline-flex items-center justify-center px-10 py-5 text-lg font-black text-white transition-all duration-300 bg-indigo-600 rounded-2xl focus:outline-none hover:bg-indigo-700 shadow-xl shadow-indigo-500/30 active:scale-95"
                 >
                   {t('landing.startBtn')}
-                  <svg className="w-6 h-6 ml-3 transition-transform group-hover:translate-x-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                  <svg className="w-5 h-5 ml-2.5 transition-transform group-hover:translate-x-1.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
                 </button>
-                <div className="flex flex-col items-center justify-center px-10 py-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
-                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-2">{t('dashboard.usageCount')}</p>
-                   <p className="text-4xl font-black text-slate-800 dark:text-white leading-none tracking-tight">{displayCount.toLocaleString()}</p>
+                <div className="flex items-center gap-4 px-8 py-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                   <div className="text-center">
+                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5">{t('dashboard.usageCount')}</p>
+                     <p className="text-2xl font-black text-slate-800 dark:text-white tabular-nums">{displayCount.toLocaleString()}</p>
+                   </div>
                 </div>
               </div>
             </div>
 
-            {/* --- HOW IT WORKS (SIMPLIFIED) --- */}
-            <div className="w-full max-w-6xl mx-auto px-4 space-y-16">
-              <div className="text-center space-y-4">
-                <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('landing.howItWorks')}</h2>
-                <p className="text-slate-500 dark:text-slate-400 text-lg font-medium max-w-2xl mx-auto">{t('landing.howDesc')}</p>
+            {/* --- COMPACT HOW IT WORKS --- */}
+            <div className="w-full max-w-5xl mx-auto px-4 space-y-6">
+              <div className="text-center">
+                <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-1">{t('landing.howItWorks')}</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-sm font-bold">{t('landing.howDesc')}</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {[1, 2, 3].map(step => (
-                  <div key={step} className="flex flex-col items-center text-center space-y-6 p-10 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-all hover:shadow-lg">
-                    <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-3xl font-black shadow-inner">
+                  <div key={step} className="flex items-start gap-4 p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-all hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-xl font-black shadow-inner">
                       {step}
                     </div>
-                    <div className="space-y-3">
-                      <h3 className="text-xl font-bold text-slate-800 dark:text-white">{t(`landing.step${step}Title`)}</h3>
-                      <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-sm">{t(`landing.step${step}Desc`)}</p>
+                    <div>
+                      <h3 className="text-base font-bold text-slate-800 dark:text-white mb-1">{t(`landing.step${step}Title`)}</h3>
+                      <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-xs font-medium">{t(`landing.step${step}Desc`)}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* --- CRITERIA SECTION (MINIMAL) --- */}
-            <div className="w-full bg-slate-100/30 dark:bg-slate-900/30 py-32 border-y border-slate-200/50 dark:border-slate-800/50 backdrop-blur-sm">
-              <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                 <div className="space-y-8">
-                    <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-[0.9]">{t('landing.criteriaTitle')}</h2>
-                    <p className="text-lg text-slate-500 dark:text-slate-400 max-w-lg font-medium">{t('landing.criteriaDesc')}</p>
-                    <div className="h-1 w-20 bg-indigo-500 rounded-full"></div>
+            {/* --- COMPACT CRITERIA SECTION --- */}
+            <div className="w-full bg-slate-100/30 dark:bg-slate-900/30 py-10 border-y border-slate-200/50 dark:border-slate-800/50 backdrop-blur-sm">
+              <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                 <div className="lg:col-span-4 space-y-3 text-center lg:text-left">
+                    <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none">{t('landing.criteriaTitle')}</h2>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('landing.criteriaDesc')}</p>
                  </div>
-                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
+                 <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {Object.keys(CRITERIA[i18n.language.startsWith('tr') ? 'tr' : 'en']).map((key) => (
-                      <div key={key} className="p-8 rounded-[2rem] bg-white dark:bg-slate-950 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col items-center text-center gap-5 transition-all hover:bg-indigo-50 dark:hover:bg-indigo-900/10">
-                        <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-                           {key === 'rapport' && <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
-                           {key === 'organisation' && <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>}
-                           {key === 'delivery' && <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>}
-                           {key === 'languageUse' && <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>}
-                           {key === 'creativity' && <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>}
+                      <div key={key} className="p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col items-center text-center gap-2 transition-all hover:scale-105">
+                        <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                           {key === 'rapport' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+                           {key === 'organisation' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>}
+                           {key === 'delivery' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>}
+                           {key === 'languageUse' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>}
+                           {key === 'creativity' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>}
                         </div>
-                        <h4 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-tight">
+                        <h4 className="text-[10px] font-black text-slate-800 dark:text-white uppercase tracking-tight leading-none">
                            {(CRITERIA[i18n.language.startsWith('tr') ? 'tr' : 'en'] as any)[key]}
                         </h4>
                       </div>
@@ -367,20 +379,26 @@ const App: React.FC = () => {
               </div>
             </div>
 
-            {/* --- TESTIMONIALS SECTION --- */}
-            <div className="w-full max-w-7xl mx-auto px-4 space-y-20">
-               <div className="text-center space-y-4">
-                  <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('landing.testimonialsTitle')}</h2>
+            {/* --- COMPACT TESTIMONIALS SECTION --- */}
+            <div className="w-full max-w-6xl mx-auto px-4 space-y-12">
+               <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                  <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('landing.testimonialsTitle')}</h2>
+                  <button 
+                    onClick={() => setShowFeedback(true)}
+                    className="px-6 py-2.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 rounded-xl font-bold text-sm border border-indigo-100 dark:border-indigo-800 hover:bg-indigo-100 transition-all active:scale-95"
+                  >
+                    {t('feedback.writeBtn')}
+                  </button>
                </div>
                
-               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                  {testimonials.map((item, idx) => (
-                    <div key={idx} className="flex flex-col p-10 rounded-[3rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm relative transition-all hover:shadow-xl hover:-translate-y-2">
-                       <div className="flex items-center gap-1 mb-8">
+                    <div key={idx} className="flex flex-col p-6 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm relative transition-all hover:shadow-md">
+                       <div className="flex items-center gap-1 mb-4">
                           {[...Array(5)].map((_, i) => (
                              <svg 
                                key={i} 
-                               className={`w-5 h-5 ${i < item.stars ? 'text-amber-400' : 'text-slate-100 dark:text-slate-800'}`} 
+                               className={`w-4 h-4 ${i < item.stars ? 'text-amber-400' : 'text-slate-100 dark:text-slate-800'}`} 
                                fill="currentColor" 
                                viewBox="0 0 20 20"
                              >
@@ -388,22 +406,24 @@ const App: React.FC = () => {
                              </svg>
                           ))}
                        </div>
-                       <p className="flex-1 text-slate-600 dark:text-slate-300 text-lg leading-relaxed italic mb-10">
+                       <p className="flex-1 text-slate-600 dark:text-slate-300 text-sm font-bold italic leading-relaxed mb-6">
                           “{item.comment}”
                        </p>
-                       <div className="flex items-center gap-4 pt-8 border-t border-slate-50 dark:border-slate-800">
-                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black shadow-md ${item.type === 'teacher' ? 'bg-indigo-600' : 'bg-purple-600'}`}>
-                             <UserPlaceholder className="w-8 h-8" />
+                       <div className="flex items-center gap-4 pt-4 border-t border-slate-50 dark:border-slate-800">
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-black shadow-sm ${item.type === 'teacher' ? 'bg-indigo-600' : 'bg-purple-600'}`}>
+                             <UserPlaceholder className="w-6 h-6" />
                           </div>
                           <div>
-                             <h4 className="font-bold text-slate-900 dark:text-white leading-none mb-1.5">{item.name}</h4>
-                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{item.role}</p>
+                             <h4 className="font-bold text-slate-900 dark:text-white leading-none mb-1 text-sm">{item.name}</h4>
+                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">{item.role}</p>
                           </div>
                        </div>
                     </div>
                  ))}
                </div>
             </div>
+
+            {showFeedback && <FeedbackForm onClose={() => setShowFeedback(false)} />}
           </div>
         );
       case 'dashboard':
@@ -473,7 +493,7 @@ const App: React.FC = () => {
           </div>
         </div>
       </header>
-      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 relative z-10 print:p-0 print:max-w-none">{renderContent()}</main>
+      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-2 md:py-4 relative z-10 print:p-0 print:max-w-none">{renderContent()}</main>
       <footer className="w-full py-8 text-center relative z-10 border-t border-slate-200/50 dark:border-slate-800/50 bg-white/30 dark:bg-slate-900/30 backdrop-blur-sm mt-auto print:hidden"><div className="max-w-7xl mx-auto px-4"><p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Built with <span className="font-semibold text-sky-500">React</span>, <span className="font-semibold text-blue-500">TypeScript</span> & <span className="font-semibold text-cyan-500">Tailwind</span> by <a href="https://instagram.com/can_akalin" target="_blank" rel="noopener noreferrer" className="text-slate-700 dark:text-slate-200 font-bold hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors inline-flex items-center gap-1">Can AKALIN</a></p></div></footer>
     </div>
   );

@@ -32,38 +32,39 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
 
   const examData = useMemo(() => history.filter(h => 'isExam' in h && h.isExam) as ExamSession[], [history]);
 
-  // Handle printing trigger after DOM update
+  // Reliable print trigger
   useEffect(() => {
     if (reportClassId && isPrinting) {
       const timer = setTimeout(() => {
         window.print();
         setIsPrinting(false);
-        setTimeout(() => setReportClassId(null), 500);
-      }, 400);
+        // Keep the reportClassId briefly so the print dialog has content
+        setTimeout(() => setReportClassId(null), 1000);
+      }, 500);
       return () => clearTimeout(timer);
     }
   }, [reportClassId, isPrinting]);
 
+  // Calculate stats for ALL classes, even those with 0 exams
   const classStats = useMemo(() => {
     const stats: Record<string, ClassStat> = {};
     classes.forEach(c => {
       const classExams = examData.filter(e => e.studentInfo.classId === c.id || e.studentInfo.studentClass === c.name);
-      if (classExams.length > 0) {
-        const sum = classExams.reduce((acc, curr) => acc + curr.overallScore, 0);
-        stats[c.id] = {
-          id: c.id,
-          name: c.name,
-          count: classExams.length,
-          avg: Math.round(sum / classExams.length),
-          metrics: {
-             rapport: Math.round(classExams.reduce((a, b) => a + b.scores.rapport, 0) / classExams.length),
-             organisation: Math.round(classExams.reduce((a, b) => a + b.scores.organisation, 0) / classExams.length),
-             delivery: Math.round(classExams.reduce((a, b) => a + b.scores.delivery, 0) / classExams.length),
-             languageUse: Math.round(classExams.reduce((a, b) => a + b.scores.languageUse, 0) / classExams.length),
-             creativity: Math.round(classExams.reduce((a, b) => a + b.scores.creativity, 0) / classExams.length),
-          }
-        };
-      }
+      const hasExams = classExams.length > 0;
+      
+      stats[c.id] = {
+        id: c.id,
+        name: c.name,
+        count: classExams.length,
+        avg: hasExams ? Math.round(classExams.reduce((acc, curr) => acc + curr.overallScore, 0) / classExams.length) : 0,
+        metrics: {
+           rapport: hasExams ? Math.round(classExams.reduce((a, b) => a + b.scores.rapport, 0) / classExams.length) : 0,
+           organisation: hasExams ? Math.round(classExams.reduce((a, b) => a + b.scores.organisation, 0) / classExams.length) : 0,
+           delivery: hasExams ? Math.round(classExams.reduce((a, b) => a + b.scores.delivery, 0) / classExams.length) : 0,
+           languageUse: hasExams ? Math.round(classExams.reduce((a, b) => a + b.scores.languageUse, 0) / classExams.length) : 0,
+           creativity: hasExams ? Math.round(classExams.reduce((a, b) => a + b.scores.creativity, 0) / classExams.length) : 0,
+        }
+      };
     });
     return stats;
   }, [examData, classes]);
@@ -79,7 +80,6 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
 
   const reportClass = classes.find(c => c.id === reportClassId);
   
-  // Create a list of ALL students in the class and pair them with their best/latest exam if it exists
   const reportRows = useMemo(() => {
     if (!reportClass) return [];
     
@@ -90,50 +90,75 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
         return noA - noB;
       })
       .map(student => {
-        // Find the exam result for this student
-        const studentExam = examData.find(e => 
+        // Find the latest exam for this student
+        const studentExams = examData.filter(e => 
           e.studentInfo.studentNumber === student.studentNumber || 
           (e.studentInfo.firstName.toLowerCase() === student.firstName.toLowerCase() && 
            e.studentInfo.lastName.toLowerCase() === student.lastName.toLowerCase())
-        );
-        return { student, exam: studentExam };
+        ).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+        return { student, exam: studentExams[0] || null };
       });
   }, [reportClass, examData]);
 
-  if (examData.length === 0) {
-    return (
-      <div className="max-w-4xl mx-auto py-20 text-center space-y-4 animate-fade-in relative z-10">
-        <button onClick={onBack} className="absolute top-8 left-0 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg"><BackIcon className="w-6 h-6" /></button>
-        <div className="w-20 h-20 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center mx-auto text-indigo-500 opacity-50"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10"><path strokeLinecap="round" strokeLinejoin="round" d="M10.5 6a7.5 7.5 0 107.5 7.5h-7.5V6z" /><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 10.5H21A7.5 7.5 0 0013.5 3v7.5z" /></svg></div>
-        <h2 className="text-2xl font-bold text-slate-800 dark:text-white">{t('analytics.noData')}</h2>
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-7xl mx-auto space-y-10 animate-fade-in relative z-10 pb-20">
+      <style>{`
+        @media print {
+          /* Hide everything by default */
+          body * { display: none !important; }
+          /* Show only the print container and its children */
+          .print-area, .print-area * { display: block !important; }
+          /* Reset layout for print */
+          .print-area { 
+            display: block !important; 
+            position: absolute !important; 
+            left: 0 !important; 
+            top: 0 !important; 
+            width: 100% !important; 
+            background: white !important;
+            padding: 0 !important;
+            margin: 0 !important;
+          }
+          table { display: table !important; width: 100% !important; border-collapse: collapse !important; }
+          tr { display: table-row !important; }
+          td, th { display: table-cell !important; border: 1px solid #000 !important; padding: 4px !important; }
+          thead { display: table-header-group !important; }
+          tfoot { display: table-footer-group !important; }
+          @page { size: A4; margin: 1.5cm; }
+        }
+      `}</style>
+
+      {/* --- DASHBOARD UI --- */}
       <div className="space-y-10 print:hidden">
         <div className="flex items-center gap-4">
           <button onClick={onBack} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"><BackIcon className="w-6 h-6" /></button>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">{t('analytics.title')}</h1>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {Object.values(classStats).map((stat: ClassStat) => (
-            <div key={stat.id} className="glass p-6 rounded-3xl border border-white/20 dark:border-slate-800 shadow-xl shadow-indigo-500/5 flex flex-col items-center text-center">
-               <span className="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-2">{stat.name}</span>
-               <h2 className="text-4xl font-black text-slate-800 dark:text-white">{stat.avg}</h2>
-               <p className="text-xs text-slate-400 font-bold uppercase mt-1">{t('analytics.averageScore')}</p>
-               <div className="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full mt-4 overflow-hidden"><div className="h-full bg-indigo-500" style={{ width: `${stat.avg}%` }}></div></div>
-               <button 
-                 onClick={() => startPrintProcess(stat.id)} 
-                 className="mt-6 text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-xl transition-all w-full border border-indigo-100"
-               >
-                 {t('classes.classReport')}
-               </button>
-            </div>
-          ))}
-        </div>
+        {classes.length === 0 ? (
+          <div className="glass p-20 text-center rounded-3xl border border-dashed border-slate-200 dark:border-slate-800">
+             <p className="text-slate-400 font-bold uppercase tracking-widest">{t('classes.noClasses')}</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {Object.values(classStats).map((stat: ClassStat) => (
+              <div key={stat.id} className="glass p-6 rounded-3xl border border-white/20 dark:border-slate-800 shadow-xl shadow-indigo-500/5 flex flex-col items-center text-center">
+                 <span className="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-2">{stat.name}</span>
+                 <h2 className="text-4xl font-black text-slate-800 dark:text-white">{stat.avg}</h2>
+                 <p className="text-xs text-slate-400 font-bold uppercase mt-1">{t('analytics.averageScore')}</p>
+                 <div className="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full mt-4 overflow-hidden"><div className="h-full bg-indigo-500" style={{ width: `${stat.avg}%` }}></div></div>
+                 <button 
+                   onClick={() => startPrintProcess(stat.id)} 
+                   className="mt-6 text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-xl transition-all w-full border border-indigo-100 flex items-center justify-center gap-2"
+                 >
+                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3"><path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.618 0-1.113-.493-1.12-1.112L5.882 18m11.778 0H5.882M6.72 13.829l1.41-5.64m1.41 5.64H14.25m5.341-3.172l-1.41-5.64m1.41 5.64l.842 3.368a1.125 1.125 0 01-1.12 1.405h-1.076M14.25 13.829v-1.125c0-.621.504-1.125 1.125-1.125h1.275m-4.5 1.125v-1.125c0-.621.504-1.125 1.125-1.125H14.25m-2.625 0H12m-2.625 0H9m-2.625 0H6M4.5 9h15M10.125 1.5h3.75a1.125 1.125 0 011.125 1.125v2.625h-6V2.625a1.125 1.125 0 011.125-1.125z" /></svg>
+                   {t('classes.classReport')}
+                 </button>
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-1 glass p-8 rounded-3xl border border-white/20 dark:border-slate-800 shadow-sm space-y-6">
@@ -174,17 +199,8 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
 
       {/* --- CLASS ACHIEVEMENT REPORT (PRINT ONLY) --- */}
       {reportClass && (
-        <div className="hidden print:block fixed inset-0 bg-white z-[9999] p-0 m-0 w-full h-full text-slate-900 overflow-visible">
-           <style>{`
-             @media print {
-               body * { visibility: hidden; }
-               .print-container, .print-container * { visibility: visible; }
-               .print-container { position: absolute; left: 0; top: 0; width: 100%; }
-               @page { size: A4; margin: 1cm; }
-             }
-           `}</style>
-           
-           <div className="print-container space-y-8 p-4">
+        <div className="print-area hidden">
+           <div className="space-y-8 p-4 bg-white text-slate-900">
               <div className="flex justify-between items-center border-b-2 border-slate-900 pb-4">
                  <div className="flex items-center gap-4">
                     <img 
@@ -231,7 +247,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
                             {row.exam ? `%${row.exam.overallScore}` : '-'}
                           </td>
                           <td className="border border-slate-200 p-2 text-center text-[9px] text-slate-400 font-medium">
-                             {row.exam ? new Date(row.exam.date).toLocaleDateString(i18n.language.startsWith('tr') ? 'tr-TR' : 'en-US') : 'N/A'}
+                             {row.exam ? new Date(row.exam.date).toLocaleDateString(i18n.language.startsWith('tr') ? 'tr-TR' : 'en-US') : '-'}
                           </td>
                        </tr>
                     ))}
@@ -239,13 +255,13 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
                  <tfoot>
                     <tr className="bg-slate-900 text-white font-black border-t-2 border-slate-900">
                        <td colSpan={2} className="p-3 text-[11px] uppercase tracking-widest pl-4">CLASS AVERAGE PERFORMANCE</td>
-                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.rapport ?? '-'}</td>
-                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.organisation ?? '-'}</td>
-                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.delivery ?? '-'}</td>
-                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.languageUse ?? '-'}</td>
-                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.creativity ?? '-'}</td>
+                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.rapport || '-'}</td>
+                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.organisation || '-'}</td>
+                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.delivery || '-'}</td>
+                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.languageUse || '-'}</td>
+                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.creativity || '-'}</td>
                        <td className="p-3 text-center text-[14px] bg-indigo-600">
-                         {classStats[reportClass.id] ? `%${classStats[reportClass.id].avg}` : '-'}
+                         {classStats[reportClass.id] && classStats[reportClass.id].count > 0 ? `%${classStats[reportClass.id].avg}` : '-'}
                        </td>
                        <td className="p-3"></td>
                     </tr>

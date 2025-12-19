@@ -26,6 +26,85 @@ const resources = {
         print: "Print / Save as PDF",
         send: "Send"
       },
+      dashboard: {
+        selectTask: "Select Task",
+        recentAttempts: "Recent Attempts",
+        startRecording: "Start Recording",
+        stopRecording: "Stop Recording",
+        processing: "Processing...",
+        recording: "Recording...",
+        usageCount: "Total Practices",
+        examMode: "Teacher Exam Mode",
+        examModeDesc: "Create exams, pick questions with a lucky wheel, and download professional reports.",
+        manageClasses: "Class Management",
+        analytics: "Analytics & Comparison",
+        processingSteps: {
+          uploading: "Uploading audio...",
+          transcribing: "Transcribing speech...",
+          analyzing: "Analyzing metrics...",
+          finalizing: "Finalizing report..."
+        },
+        estimatedTime: "Estimated time: ~{{seconds}}s"
+      },
+      exam: {
+        title: "Speaking Exam Session",
+        beginExam: "Start Exam",
+        studentInfo: "Student Details",
+        selectClass: "Select Class",
+        selectStudent: "Select Student",
+        studentNumber: "Student Number",
+        firstName: "First Name",
+        lastName: "Last Name",
+        class: "Class/Grade",
+        selectQuestions: "Select Questions for the Wheel",
+        minQuestions: "Please select at least 2 questions.",
+        selectedQuestionsCount: "{{count}} questions selected",
+        startWheel: "Open Lucky Wheel",
+        spinWheel: "Spin the Wheel",
+        spinning: "Spinning...",
+        reportTitle: "Speaking Assessment Report",
+        examDate: "Exam Date",
+        selectedTopic: "Exam Topic",
+        teacherNotes: "Teacher's Assessment Notes"
+      },
+      classes: {
+        title: "Class Management",
+        addClass: "Add New Class",
+        className: "Class Name (e.g. 9-A)",
+        noClasses: "No classes created yet.",
+        studentList: "Student List",
+        bulkAdd: "Bulk Add",
+        bulkHelp: "Format: 'Number FirstName LastName' (one per line)",
+        bulkPlaceholder: "101 Ahmet Yılmaz\n102 Ayşe Demir",
+        addStudent: "Add Student",
+        avgScore: "Average Score",
+        totalExams: "Total Exams",
+        examHistory: "Exam History",
+        noAttempts: "No exams recorded yet.",
+        classReport: "Generate Class Report"
+      },
+      analytics: {
+        title: "Performance Analytics",
+        averageScore: "Class Average",
+        classComparison: "Class Comparison",
+        selectClasses: "Select classes to compare metrics",
+        classReportTitle: "Class Achievement Report"
+      },
+      evaluation: {
+        overallScore: "Overall Score",
+        pronunciation: "Pronunciation Feedback",
+        transcription: "Speech Transcription"
+      },
+      history: {
+        title: "Practice History",
+        empty: "No history found yet."
+      },
+      recorder: {
+        micHelp: "Please ensure your microphone is connected and you have granted permission in your browser settings.",
+        speakUp: "Please speak a bit louder!",
+        liveTranscript: "Live Transcription",
+        listening: "Listening..."
+      },
       feedback: {
         title: "Send Feedback",
         desc: "Your thoughts help us improve. Write a comment or suggestion below.",
@@ -52,54 +131,59 @@ const resources = {
         testimonialsTitle: "User Reviews",
         teacherTestimonials: {
           star5: [
-            { name: "Selin A.", role: "English Teacher", comment: "The lucky wheel feature turned my exams into a fun activity! My students are finally excited to speak English." },
-            { name: "Murat B.", role: "English Teacher", comment: "This tool is a lifesaver during exam weeks. It aligns perfectly with the new curriculum standards." },
-            { name: "Canan C.", role: "English Teacher", comment: "The AI analysis is incredibly accurate. It saves me so much time while providing objective results." },
-            { name: "Ahmet D.", role: "English Teacher", comment: "Finally, an app that actually understands the needs of high school teachers. Highly recommended." },
-            { name: "Elif E.", role: "English Teacher", comment: "My students' pronunciation improved drastically after using the feedback feature regularly." },
-            { name: "Burak F.", role: "English Teacher", comment: "The reporting system is very professional. I use it for my official school documentation." }
+            { name: "Selin A.", role: "English Teacher", comment: "The lucky wheel feature turned my exams into a fun activity! My students are finally excited." },
+            { name: "Murat B.", role: "English Teacher", comment: "Saves me hours of manual grading. Aligns perfectly with the new curriculum standards." },
+            { name: "Canan C.", role: "English Teacher", comment: "The AI analysis is incredibly accurate and provides objective results." },
+            { name: "Ahmet D.", role: "English Teacher", comment: "Highly recommended for high school teachers. It's a game changer." },
+            { name: "Elif E.", role: "English Teacher", comment: "My students' pronunciation improved drastically after regular use." },
+            { name: "Burak F.", role: "English Teacher", comment: "The reporting system is professional and useful for official records." }
           ],
           star4: [
-            { name: "Zeynep G.", role: "English Teacher", comment: "Great for class engagement. The kids love the competitive aspect of the scores." },
-            { name: "Deniz H.", role: "English Teacher", comment: "Very effective for individual practice. I assign it as homework for speaking skills." },
-            { name: "Merve I.", role: "English Teacher", comment: "The transcript feature helps me identify common grammatical mistakes across the class." },
-            { name: "Kerem J.", role: "English Teacher", comment: "User-friendly interface and fast processing. A solid companion for the classroom." },
-            { name: "Pelin K.", role: "English Teacher", comment: "It bridges the gap between learning theory and speaking practice perfectly." },
-            { name: "Hakan L.", role: "English Teacher", comment: "Detailed feedback allows students to work on their weaknesses independently." }
+            { name: "Zeynep G.", role: "English Teacher", comment: "Great for class engagement. Kids love the competitive scores." },
+            { name: "Deniz H.", role: "English Teacher", comment: "Very effective for individual speaking homework." },
+            { name: "Merve I.", role: "English Teacher", comment: "The transcript feature helps identify common grammatical mistakes." },
+            { name: "Kerem J.", role: "English Teacher", comment: "User-friendly interface and fast processing. A solid classroom companion." },
+            { name: "Pelin K.", role: "English Teacher", comment: "Bridges the gap between theory and practice perfectly." },
+            { name: "Hakan L.", role: "English Teacher", comment: "Detailed feedback allows students to work independently." }
           ],
           star3: [
-            { name: "Sibel M.", role: "English Teacher", comment: "Useful tool, but works best in quiet environments. Good for mock exams." },
-            { name: "Tolga N.", role: "English Teacher", comment: "Helps set a standard for grading. A bit dependent on internet speed though." },
-            { name: "Ayşe O.", role: "English Teacher", comment: "Provides a good baseline for speaking levels. Looking forward to more features." },
-            { name: "Okan P.", role: "English Teacher", comment: "Interesting concept. My 11th graders find it helpful for their exam prep." },
-            { name: "Nihal R.", role: "English Teacher", comment: "A good assistant for large classes where I can't listen to everyone individually." }
+            { name: "Sibel M.", role: "English Teacher", comment: "Useful tool, works best in quiet environments." },
+            { name: "Tolga N.", role: "English Teacher", comment: "Helps set a standard for grading. Very helpful." },
+            { name: "Ayşe O.", role: "English Teacher", comment: "Provides a good baseline for speaking levels." },
+            { name: "Okan P.", role: "English Teacher", comment: "Interesting concept. My students find it helpful for exam prep." },
+            { name: "Nihal R.", role: "English Teacher", comment: "A good assistant for large classes." }
           ]
         },
         studentTestimonials: {
           star5: [
-            { name: "Arda A.", role: "9th Grade Student", comment: "I was so scared of speaking exams, but practicing here made me feel like a pro. I got my first 100!" },
-            { name: "Selin B.", role: "11th Grade Student", comment: "The pronunciation corrections are so helpful. I've finally fixed my accent on common words." },
-            { name: "Mert C.", role: "10th Grade Student", comment: "I love how it saves my history. Seeing my score go up every week is super motivating." },
-            { name: "Ece D.", role: "12th Grade Student", comment: "Great for YDT preparation. I wish I found this earlier in the year." },
-            { name: "Umut E.", role: "9th Grade Student", comment: "The topics are exactly what we see in school. No more surprises in the real exam!" },
-            { name: "Defne F.", role: "10th Grade Student", comment: "It feels like having a private tutor at home. The feedback is very clear." }
+            { name: "Arda A.", role: "9th Grade Student", comment: "I was so scared of exams, but this made me feel like a pro. I got a 100!" },
+            { name: "Selin B.", role: "11th Grade Student", comment: "The pronunciation corrections are so helpful. I fixed my common errors." },
+            { name: "Mert C.", role: "10th Grade Student", comment: "Seeing my score go up every week is super motivating." },
+            { name: "Ece D.", role: "12th Grade Student", comment: "Great for YDT preparation. Amazing tool!" },
+            { name: "Umut E.", role: "9th Grade Student", comment: "The topics are exactly what we see in school. No surprises!" },
+            { name: "Defne F.", role: "10th Grade Student", comment: "It feels like having a private tutor at home. Clear feedback." }
           ],
           star4: [
-            { name: "Berk G.", role: "11th Grade Student", comment: "Really easy to use. I practice for 10 minutes every day and I feel much more confident." },
-            { name: "Azra H.", role: "12th Grade Student", comment: "The transcript helps me see exactly what I said wrong. It's better than just a grade." },
-            { name: "Emre I.", role: "9th Grade Student", comment: "Cool design and the wheel feature is fun. My English is getting better already." },
-            { name: "Melis J.", role: "10th Grade Student", comment: "Helps me overcome my fear of speaking. Now I don't hesitate when the teacher calls me." },
-            { name: "Kaan K.", role: "11th Grade Student", comment: "Good practice for real-life conversations too, not just for school exams." },
-            { name: "Irmak L.", role: "12th Grade Student", comment: "A great tool for busy students. Fast and effective feedback every time." }
+            { name: "Berk G.", role: "11th Grade Student", comment: "Really easy to use. I feel much more confident now." },
+            { name: "Azra H.", role: "12th Grade Student", comment: "The transcript helps me see exactly what I said wrong." },
+            { name: "Emre I.", role: "9th Grade Student", comment: "Cool design and the wheel is fun. My English is getting better." },
+            { name: "Melis J.", role: "10th Grade Student", comment: "Helps me overcome my fear of speaking." },
+            { name: "Kaan K.", role: "11th Grade Student", comment: "Good practice for real-life conversations too." },
+            { name: "Irmak L.", role: "12th Grade Student", comment: "Fast and effective feedback every time." }
           ],
           star3: [
-            { name: "Can M.", role: "9th Grade Student", comment: "Good for practice but sometimes it doesn't hear me when it's noisy." },
-            { name: "Beril N.", role: "10th Grade Student", comment: "Useful app. I like comparing my scores with my previous attempts." },
-            { name: "Onur O.", role: "11th Grade Student", comment: "Helps me prepare for the speaking section. Simple and helpful." },
-            { name: "Simge P.", role: "12th Grade Student", comment: "Good for testing my level. I use it before every big exam." },
-            { name: "Yiğit R.", role: "11th Grade Student", comment: "A helpful app to check if I'm pronouncing the words correctly." }
+            { name: "Can M.", role: "9th Grade Student", comment: "Good for practice but needs a quiet room." },
+            { name: "Beril N.", role: "10th Grade Student", comment: "Useful app. I like comparing my scores." },
+            { name: "Onur O.", role: "11th Grade Student", comment: "Helps me prepare for the speaking section." },
+            { name: "Simge P.", role: "12th Grade Student", comment: "Good for testing my level before exams." },
+            { name: "Yiğit R.", role: "11th Grade Student", comment: "A helpful app to check pronunciation." }
           ]
         }
+      },
+      errors: {
+        micPermission: "Microphone access is required. Please enable it in your browser settings.",
+        generic: "Something went wrong. Please try again.",
+        noSpeechDetected: "No speech detected. Please speak clearly."
       }
     }
   },
@@ -124,6 +208,85 @@ const resources = {
         requestAccess: "İzin Ver",
         print: "Yazdır / PDF Olarak Kaydet",
         send: "Gönder"
+      },
+      dashboard: {
+        selectTask: "Görev Seçin",
+        recentAttempts: "Son Denemeler",
+        startRecording: "Kaydı Başlat",
+        stopRecording: "Kaydı Bitir",
+        processing: "İşleniyor...",
+        recording: "Kaydediliyor...",
+        usageCount: "Toplam Pratik",
+        examMode: "Öğretmen Sınav Modu",
+        examModeDesc: "Sınav oturumları oluşturun, soruları çarkla seçin ve profesyonel raporlar alın.",
+        manageClasses: "Sınıf Yönetimi",
+        analytics: "Analiz ve Karşılaştırma",
+        processingSteps: {
+          uploading: "Ses yükleniyor...",
+          transcribing: "Konuşma deşifre ediliyor...",
+          analyzing: "Metrikler analiz ediliyor...",
+          finalizing: "Rapor hazırlanıyor..."
+        },
+        estimatedTime: "Tahmini süre: ~{{seconds}}sn"
+      },
+      exam: {
+        title: "Konuşma Sınavı Oturumu",
+        beginExam: "Sınavı Başlat",
+        studentInfo: "Öğrenci Bilgileri",
+        selectClass: "Sınıf Seçin",
+        selectStudent: "Öğrenci Seçin",
+        studentNumber: "Okul No",
+        firstName: "Adı",
+        lastName: "Soyadı",
+        class: "Sınıfı",
+        selectQuestions: "Çark Sorularını Seçin",
+        minQuestions: "Lütfen en az 2 soru seçin.",
+        selectedQuestionsCount: "{{count}} soru seçildi",
+        startWheel: "Şans Çarkını Aç",
+        spinWheel: "Çarkı Çevir",
+        spinning: "Çevriliyor...",
+        reportTitle: "Konuşma Analiz Raporu",
+        examDate: "Sınav Tarihi",
+        selectedTopic: "Sınav Konusu",
+        teacherNotes: "Öğretmen Değerlendirme Notları"
+      },
+      classes: {
+        title: "Sınıf Yönetimi",
+        addClass: "Yeni Sınıf Ekle",
+        className: "Sınıf Adı (Örn: 9-A)",
+        noClasses: "Henüz sınıf oluşturulmadı.",
+        studentList: "Öğrenci Listesi",
+        bulkAdd: "Toplu Ekle",
+        bulkHelp: "Format: 'No Ad Soyad' (her satıra bir kişi)",
+        bulkPlaceholder: "101 Ahmet Yılmaz\n102 Ayşe Demir",
+        addStudent: "Öğrenci Ekle",
+        avgScore: "Ortalama Puan",
+        totalExams: "Toplam Sınav",
+        examHistory: "Sınav Geçmişi",
+        noAttempts: "Henüz sınav kaydı yok.",
+        classReport: "Sınıf Raporu Al"
+      },
+      analytics: {
+        title: "Performans Analizi",
+        averageScore: "Sınıf Ortalaması",
+        classComparison: "Sınıf Karşılaştırma",
+        selectClasses: "Karşılaştırmak istediğiniz sınıfları seçin",
+        classReportTitle: "Sınıf Başarı Raporu"
+      },
+      evaluation: {
+        overallScore: "Genel Puan",
+        pronunciation: "Telaffuz Geri Bildirimi",
+        transcription: "Konuşma Dökümü"
+      },
+      history: {
+        title: "Pratik Geçmişi",
+        empty: "Henüz kayıt bulunamadı."
+      },
+      recorder: {
+        micHelp: "Lütfen mikrofonunuzun takılı olduğundan ve tarayıcı ayarlarından izin verdiğinizden emin olun.",
+        speakUp: "Lütfen biraz daha yüksek sesle konuşun!",
+        liveTranscript: "Anlık Deşifre",
+        listening: "Dinliyor..."
       },
       feedback: {
         title: "Yorum Yapın",
@@ -151,54 +314,59 @@ const resources = {
         testimonialsTitle: "Kullanıcı Yorumları",
         teacherTestimonials: {
           star5: [
-            { name: "Selin A.", role: "İngilizce Öğretmeni", comment: "Çark özelliği konuşma sınavlarını bir kabus olmaktan çıkarıp eğlenceli bir aktiviteye dönüştürdü. 9. sınıflarım artık derse çok daha istekli katılıyor." },
-            { name: "Murat B.", role: "İngilizce Öğretmeni", comment: "Puanlama yükünü üzerimden alması harika. Yeni müfredatın gerektirdiği tüm analizleri saniyeler içinde raporlayabiliyorum." },
-            { name: "Canan C.", role: "İngilizce Öğretmeni", comment: "Yapay zeka analizi inanılmaz derecede isabetli. Objektif sonuçlar sunması sınav adaletini artırıyor." },
+            { name: "Selin A.", role: "İngilizce Öğretmeni", comment: "Çark özelliği konuşma sınavlarını eğlenceli bir aktiviteye dönüştürdü. 9. sınıflarım artık derse çok daha istekli." },
+            { name: "Murat B.", role: "İngilizce Öğretmeni", comment: "Yeni müfredatın gerektirdiği tüm analizleri saniyeler içinde raporlayabiliyorum. Büyük kolaylık." },
+            { name: "Canan C.", role: "İngilizce Öğretmeni", comment: "Yapay zeka analizi inanılmaz derecede isabetli. Objektif sonuçlar sunuyor." },
             { name: "Ahmet D.", role: "İngilizce Öğretmeni", comment: "Lise öğretmenlerinin ihtiyaçlarını gerçekten anlayan bir uygulama. Kesinlikle tavsiye ediyorum." },
             { name: "Elif E.", role: "İngilizce Öğretmeni", comment: "Geri bildirim özelliği sayesinde öğrencilerimin telaffuz hataları gözle görülür şekilde azaldı." },
             { name: "Burak F.", role: "İngilizce Öğretmeni", comment: "Raporlama sistemi çok profesyonel. Resmi evraklarımda gönül rahatlığıyla kullanıyorum." }
           ],
           star4: [
-            { name: "Zeynep G.", role: "İngilizce Öğretmeni", comment: "Sınıf içi katılımı artırmak için harika bir araç. Öğrenciler aldıkları puanlarla birbirleriyle yarışıyor." },
-            { name: "Deniz H.", role: "İngilizce Öğretmeni", comment: "Bireysel pratikler için çok etkili. Konuşma ödevi olarak öğrencilerime düzenli kullandırıyorum." },
-            { name: "Merve I.", role: "İngilizce Öğretmeni", comment: "Döküm özelliği, sınıf genelinde yapılan gramer hatalarını tespit etmemde bana çok yardımcı oluyor." },
+            { name: "Zeynep G.", role: "İngilizce Öğretmeni", comment: "Sınıf içi katılımı artırmak için harika bir araç. Puanlar öğrencileri motive ediyor." },
+            { name: "Deniz H.", role: "İngilizce Öğretmeni", comment: "Bireysel pratikler için çok etkili. Ödev takibi için kullanıyorum." },
+            { name: "Merve I.", role: "İngilizce Öğretmeni", comment: "Döküm özelliği sınıf genelindeki hataları tespit etmemde yardımcı oluyor." },
             { name: "Kerem J.", role: "İngilizce Öğretmeni", comment: "Kullanıcı dostu arayüzü ve hızlı işlem gücüyle derslerin vazgeçilmez bir parçası oldu." },
-            { name: "Pelin K.", role: "İngilizce Öğretmeni", comment: "Teorik bilgi ile konuşma pratiği arasındaki boşluğu mükemmel şekilde dolduruyor." },
-            { name: "Hakan L.", role: "İngilizce Öğretmeni", comment: "Detaylı geri bildirimler sayesinde öğrencilerim eksiklerini kendi başlarına görebiliyorlar." }
+            { name: "Pelin K.", role: "İngilizce Öğretmeni", comment: "Teorik bilgi ile pratik arasındaki boşluğu mükemmel şekilde dolduruyor." },
+            { name: "Hakan L.", role: "İngilizce Öğretmeni", comment: "Detaylı geri bildirimler öğrencilerin eksiklerini kendilerinin görmesini sağlıyor." }
           ],
           star3: [
-            { name: "Sibel M.", role: "İngilizce Öğretmeni", comment: "Kullanışlı bir uygulama, sessiz ortamlarda çok daha iyi sonuç veriyor. Deneme sınavları için ideal." },
-            { name: "Tolga N.", role: "İngilizce Öğretmeni", comment: "Puanlama standartı oluşturmak için yardımcı. Ancak internet hızına biraz bağımlı çalışıyor." },
-            { name: "Ayşe O.", role: "İngilizce Öğretmeni", comment: "Seviye belirleme için güzel bir temel sunuyor. Yeni özelliklerle daha da gelişeceğine inanıyorum." },
-            { name: "Okan P.", role: "İngilizce Öğretmeni", comment: "İlginç bir konsept. 11. sınıflarım sınav hazırlık sürecinde oldukça faydalı buldular." },
-            { name: "Nihal R.", role: "İngilizce Öğretmeni", comment: "Her öğrenciyi tek tek dinleyemediğim kalabalık sınıflarda en büyük yardımcım." }
+            { name: "Sibel M.", role: "İngilizce Öğretmeni", comment: "Kullanışlı uygulama, sessiz ortamlarda çok daha başarılı." },
+            { name: "Tolga N.", role: "İngilizce Öğretmeni", comment: "Puanlama standartı oluşturmak için güzel bir yardımcı." },
+            { name: "Ayşe O.", role: "İngilizce Öğretmeni", comment: "Seviye belirleme için güzel bir temel sunuyor." },
+            { name: "Okan P.", role: "İngilizce Öğretmeni", comment: "İlginç bir konsept. Sınav hazırlık sürecinde faydalı bulduk." },
+            { name: "Nihal R.", role: "İngilizce Öğretmeni", comment: "Kalabalık sınıflarda tek tek dinleyemediğim durumlar için ideal." }
           ]
         },
         studentTestimonials: {
           star5: [
-            { name: "Arda A.", role: "9. Sınıf Öğrencisi", comment: "Sınavda heyecandan konuşamıyordum. ChitIQ ile evde defalarca pratik yaptım ve sonunda sınavdan 100 almayı başardım!" },
-            { name: "Selin B.", role: "11. Sınıf Öğrencisi", comment: "Telaffuzumu düzeltmek için harika bir asistan. Kelimeleri yanlış söylediğimde hemen uyarması çok iyi oluyor." },
-            { name: "Mert C.", role: "10. Sınıf Öğrencisi", comment: "Geçmiş puanlarımı görmek beni çok motive ediyor. Her hafta puanımın yükseldiğini görmek harika bir duygu." },
-            { name: "Ece D.", role: "12. Sınıf Öğrencisi", comment: "YDT hazırlık sürecinde konuşma pratiği yapmak için kullanıyorum. Keşke daha önce keşfetseydim." },
-            { name: "Umut E.", role: "9. Sınıf Öğrencisi", comment: "Konular tam okulda işlediklerimiz gibi. Gerçek sınavda artık hiçbir şey sürpriz gelmiyor!" },
-            { name: "Defne F.", role: "10. Sınıf Öğrencisi", comment: "Evde özel ders alıyor gibi hissediyorum. Geri bildirimler çok anlaşılır ve geliştirici." }
+            { name: "Arda A.", role: "9. Sınıf Öğrencisi", comment: "Sınavda heyecandan konuşamıyordum. ChitIQ ile çalıştım ve sonunda 100 aldım!" },
+            { name: "Selin B.", role: "11. Sınıf Öğrencisi", comment: "Telaffuzumu düzeltmek için harika. Kelimeleri yanlış söyleyince hemen uyarıyor." },
+            { name: "Mert C.", role: "10. Sınıf Öğrencisi", comment: "Geçmiş puanlarımı görmek beni çok motive ediyor. Her hafta gelişiyorum." },
+            { name: "Ece D.", role: "12. Sınıf Öğrencisi", comment: "YDT hazırlık sürecinde konuşma pratiği için mükemmel bir uygulama." },
+            { name: "Umut E.", role: "9. Sınıf Öğrencisi", comment: "Konular tam okulda işlediklerimiz gibi. Sınavda sürpriz kalmadı!" },
+            { name: "Defne F.", role: "10. Sınıf Öğrencisi", comment: "Evde özel ders alıyor gibi hissediyorum. Geri bildirimler çok anlaşılır." }
           ],
           star4: [
-            { name: "Berk G.", role: "11. Sınıf Öğrencisi", comment: "Kullanımı çok basit. Günde 10 dakika pratikle bile kendime olan güvenim çok arttı." },
-            { name: "Azra H.", role: "12. Sınıf Öğrencisi", comment: "Döküm özelliği sayesinde neyi yanlış söylediğimi net görüyorum. Sadece puan almaktan çok daha iyi." },
-            { name: "Emre I.", role: "9. Sınıf Öğrencisi", comment: "Tasarımı çok şık, çark özelliği de çok eğlenceli. İngilizcem şimdiden gelişmeye başladı." },
-            { name: "Melis J.", role: "10. Sınıf Öğrencisi", comment: "Konuşma korkumu yenmeme yardımcı oldu. Artık derste hoca söz verdiğinde çekinmiyorum." },
-            { name: "Kaan K.", role: "11. Sınıf Öğrencisi", comment: "Sadece sınavlar için değil, günlük konuşmalar için de güzel bir çalışma alanı sunuyor." },
-            { name: "Irmak L.", role: "12. Sınıf Öğrencisi", comment: "Vakti kısıtlı öğrenciler için harika bir araç. Her denemede hızlı ve etkili geri bildirim alıyorum." }
+            { name: "Berk G.", role: "11. Sınıf Öğrencisi", comment: "Kullanımı çok basit. Günde 10 dakika pratikle güvenim arttı." },
+            { name: "Azra H.", role: "12. Sınıf Öğrencisi", comment: "Döküm özelliği sayesinde neyi yanlış söylediğimi net görüyorum." },
+            { name: "Emre I.", role: "9. Sınıf Öğrencisi", comment: "Tasarımı çok şık, çark özelliği de çok eğlenceli." },
+            { name: "Melis J.", role: "10. Sınıf Öğrencisi", comment: "Konuşma korkumu yenmeme yardımcı oldu. Artık derste çekinmiyorum." },
+            { name: "Kaan K.", role: "11. Sınıf Öğrencisi", comment: "Sadece sınavlar için değil, günlük pratik için de harika." },
+            { name: "Irmak L.", role: "12. Sınıf Öğrencisi", comment: "Vakti kısıtlı öğrenciler için hızlı ve etkili geri bildirim." }
           ],
           star3: [
-            { name: "Can M.", role: "9. Sınıf Öğrencisi", comment: "Pratik için güzel ama bazen gürültülü ortamlarda söylediklerimi tam anlamıyor." },
-            { name: "Beril N.", role: "10. Sınıf Öğrencisi", comment: "Faydalı bir uygulama. Eski puanlarımla yenilerini karşılaştırmak hoşuma gidiyor." },
-            { name: "Onur O.", role: "11. Sınıf Öğrencisi", comment: "Konuşma sınavına hazırlanırken yardımcı oluyor. Basit ve işlevsel bir yapısı var." },
-            { name: "Simge P.", role: "12. Sınıf Öğrencisi", comment: "Seviyemi test etmek için güzel. Her büyük sınavdan önce mutlaka bir iki deneme yapıyorum." },
-            { name: "Yiğit R.", role: "11. Sınıf Öğrencisi", comment: "Kelimeleri doğru telaffuz edip etmediğimi kontrol etmek için kullandığım başarılı bir uygulama." }
+            { name: "Can M.", role: "9. Sınıf Öğrencisi", comment: "Pratik için güzel ama gürültüde bazen tam anlamıyor." },
+            { name: "Beril N.", role: "10. Sınıf Öğrencisi", comment: "Faydalı bir uygulama. Puanlarımı karşılaştırmak hoşuma gidiyor." },
+            { name: "Onur O.", role: "11. Sınıf Öğrencisi", comment: "Konuşma sınavına hazırlanırken yardımcı oluyor." },
+            { name: "Simge P.", role: "12. Sınıf Öğrencisi", comment: "Seviyemi test etmek için her büyük sınavdan önce kullanıyorum." },
+            { name: "Yiğit R.", role: "11. Sınıf Öğrencisi", comment: "Kelimeleri doğru telaffuz edip etmediğimi kontrol ediyorum." }
           ]
         }
+      },
+      errors: {
+        micPermission: "Mikrofon erişimi gerekli. Lütfen tarayıcı ayarlarınızdan izin verin.",
+        generic: "Bir hata oluştu. Lütfen tekrar deneyin.",
+        noSpeechDetected: "Ses algılanamadı. Lütfen net konuşun."
       }
     }
   }

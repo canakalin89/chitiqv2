@@ -1,3 +1,4 @@
+
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
@@ -18,7 +19,9 @@ const resources = {
         clearAll: "Clear All",
         delete: "Delete",
         confirmDeleteAll: "Are you sure you want to delete all history?",
-        confirmDelete: "Delete this item?"
+        confirmDelete: "Delete this item?",
+        retry: "Try Again",
+        requestAccess: "Grant Permission"
       },
       dashboard: {
         selectTask: "Select Task",
@@ -27,6 +30,7 @@ const resources = {
         stopRecording: "Stop Recording",
         processing: "Processing...",
         recording: "Recording...",
+        usageCount: "Usage Count",
         processingSteps: {
           uploading: "Uploading audio...",
           transcribing: "Transcribing speech...",
@@ -38,7 +42,8 @@ const resources = {
       recorder: {
         liveTranscript: "Live Transcript",
         listening: "Listening...",
-        speakUp: "Speak up! I can't hear you clearly."
+        speakUp: "Speak up! I can't hear you clearly.",
+        micHelp: "If you don't see the prompt, check your browser's address bar (click the lock icon) to allow microphone access."
       },
       evaluation: {
         rapport: "Rapport",
@@ -70,7 +75,27 @@ const resources = {
         step3Title: "Get Feedback",
         step3Desc: "Receive instant scores and detailed advice on 5 key performance metrics.",
         criteriaTitle: "What We Evaluate",
-        criteriaDesc: "Our AI evaluates your speech based on these 5 core pillars:"
+        criteriaDesc: "Our AI evaluates your speech based on these 5 core pillars:",
+        testimonialsTitle: "What Our Students Say",
+        testimonials: [
+          { name: "Ahmet Y.", comment: "I used to get very nervous before speaking exams, but practicing with ChitIQ gave me confidence!", role: "11th Grade Student" },
+          { name: "Zeynep K.", comment: "The detailed feedback on my delivery helped me get a full score on my finals!", role: "12th Grade Student" },
+          { name: "Caner D.", comment: "It's like having a private English tutor available 24/7. Definitely the best study tool.", role: "10th Grade Student" },
+          { name: "Elif S.", comment: "As a 9th grader, I was worried about high school English, but this app made it fun and easy.", role: "9th Grade Student" },
+          { name: "Mert Ö.", comment: "The AI understands me perfectly even when I make small mistakes. Very impressive!", role: "11th Grade Student" },
+          { name: "Selin B.", comment: "I improved my pronunciation score from 60 to 95 in just two weeks of practice.", role: "9th Grade Student" },
+          { name: "Burak T.", comment: "Perfect for IELTS preparation. The feedback is very professional and clear.", role: "12th Grade Student" },
+          { name: "Ece V.", comment: "I love the user-friendly interface. It's so easy to just pick a topic and start speaking.", role: "10th Grade Student" },
+          { name: "Deniz G.", comment: "My teacher recommended this app to the whole class. We all love it!", role: "9th Grade Student" },
+          { name: "Yigit A.", comment: "The 'Century of Türkiye' alignment makes me feel like I'm studying exactly what I need.", role: "11th Grade Student" },
+          { name: "Gamze R.", comment: "I used to struggle with organizing my thoughts. The AI's feedback on organization is a lifesaver.", role: "12th Grade Student" },
+          { name: "Bora L.", comment: "Finally an app that gives specific feedback instead of just a generic score!", role: "9th Grade Student" },
+          { name: "Derya P.", comment: "The real-time transcription helps me see where I hesitate. Truly useful tool.", role: "11th Grade Student" },
+          { name: "Kerem U.", comment: "Helped me overcome my fear of speaking in front of the class.", role: "10th Grade Student" },
+          { name: "Sude N.", comment: "I like how it tracks my history. Seeing my scores go up is so motivating.", role: "9th Grade Student" },
+          { name: "Ozan C.", comment: "Best way to practice speaking without feeling judged. Very supportive tool.", role: "11th Grade Student" },
+          { name: "Asli F.", comment: "The variety of topics is amazing. There is always something new to talk about.", role: "12th Grade Student" }
+        ]
       },
       errors: {
         micPermission: "Microphone access is required to evaluate your speech. Please enable it in your browser settings.",
@@ -94,7 +119,9 @@ const resources = {
         clearAll: "Tümünü Temizle",
         delete: "Sil",
         confirmDeleteAll: "Tüm geçmişi silmek istediğinize emin misiniz?",
-        confirmDelete: "Bu kaydı sil?"
+        confirmDelete: "Bu kaydı sil?",
+        retry: "Tekrar Dene",
+        requestAccess: "İzin Ver"
       },
       dashboard: {
         selectTask: "Görev Seçin",
@@ -103,6 +130,7 @@ const resources = {
         stopRecording: "Kaydı Bitir",
         processing: "İşleniyor...",
         recording: "Kaydediliyor...",
+        usageCount: "Kullanılma Sayısı",
         processingSteps: {
           uploading: "Ses yükleniyor...",
           transcribing: "Konuşma deşifre ediliyor...",
@@ -114,7 +142,8 @@ const resources = {
       recorder: {
         liveTranscript: "Canlı Döküm",
         listening: "Dinleniyor...",
-        speakUp: "Daha yüksek sesle konuşun! Sizi duyamıyorum."
+        speakUp: "Daha yüksek sesle konuşun! Sizi duyamıyorum.",
+        micHelp: "Eğer mikrofon isteği gelmiyorsa, tarayıcınızın adres çubuğundaki kilit simgesine tıklayarak mikrofon iznini 'İzin Ver' olarak değiştirin."
       },
       evaluation: {
         rapport: "Uyum",
@@ -146,7 +175,27 @@ const resources = {
         step3Title: "Geri Bildirim Alın",
         step3Desc: "5 temel performans kriteri üzerinden anında puanlar ve detaylı tavsiyeler alın.",
         criteriaTitle: "Neleri Değerlendiriyoruz?",
-        criteriaDesc: "Yapay zekamız konuşmanızı bu 5 temel esas üzerinden değerlendirir:"
+        criteriaDesc: "Yapay zekamız konuşmanızı bu 5 temel esas üzerinden değerlendirir:",
+        testimonialsTitle: "Öğrencilerimiz Ne Diyor?",
+        testimonials: [
+          { name: "Ahmet Y.", comment: "Konuşma sınavlarından önce çok geriliyordum ama ChitIQ ile pratik yapmak bana güven verdi!", role: "11. Sınıf Öğrencisi" },
+          { name: "Zeynep K.", comment: "Sunum konusundaki detaylı geri bildirimler final sınavından 100 almama yardımcı oldu!", role: "12. Sınıf Öğrencisi" },
+          { name: "Caner D.", comment: "7/24 yanımda olan bir özel İngilizce öğretmeni gibi. Kesinlikle harika bir araç.", role: "10. Sınıf Öğrencisi" },
+          { name: "Elif S.", comment: "9. sınıf olarak lise İngilizcesinden korkuyordum ama bu uygulama işi çok kolaylaştırdı.", role: "9. Sınıf Öğrencisi" },
+          { name: "Mert Ö.", comment: "Yapay zeka küçük hatalarımı bile anlıyor ve düzeltiyor. Çok etkileyici bir sistem.", role: "11. Sınıf Öğrencisi" },
+          { name: "Selin B.", comment: "İki haftalık pratikle telaffuz puanımı 60'tan 95'e çıkardım. Çok mutluyum!", role: "9. Sınıf Öğrencisi" },
+          { name: "Burak T.", comment: "IELTS hazırlığı için mükemmel. Geri bildirimler çok profesyonel ve yol gösterici.", role: "12. Sınıf Öğrencisi" },
+          { name: "Ece V.", comment: "Kullanıcı arayüzü çok şık ve kolay. Konu seçip konuşmaya başlamak saniyeler sürüyor.", role: "10. Sınıf Öğrencisi" },
+          { name: "Deniz G.", comment: "Öğretmenimiz tüm sınıfa tavsiye etti. Hepimiz severek kullanıyoruz.", role: "9. Sınıf Öğrencisi" },
+          { name: "Yiğit A.", comment: "Maarif Modeli ile uyumlu olması tam olarak sınavda çıkacak şeylere odaklanmamı sağlıyor.", role: "11. Sınıf Öğrencisi" },
+          { name: "Gamze R.", comment: "Düşüncelerimi organize etmekte zorlanıyordum. Organizasyon geri bildirimleri hayat kurtarıcı.", role: "12. Sınıf Öğrencisi" },
+          { name: "Bora L.", comment: "Sadece puan vermek yerine gerçek tavsiyeler sunan ilk uygulama!", role: "9. Sınıf Öğrencisi" },
+          { name: "Derya P.", comment: "Canlı döküm sayesinde nerede durakladığımı görebiliyorum. Çok faydalı.", role: "11. Sınıf Öğrencisi" },
+          { name: "Kerem U.", comment: "Sınıf önünde konuşma korkumu yenmemde çok büyük desteği oldu.", role: "10. Sınıf Öğrencisi" },
+          { name: "Sude N.", comment: "Geçmişimi takip edebilmeyi seviyorum. Puanlarımın arttığını görmek çok motive edici.", role: "9. Sınıf Öğrencisi" },
+          { name: "Ozan C.", comment: "Yargılanma korkusu olmadan konuşma pratiği yapmanın en iyi yolu.", role: "11. Sınıf Öğrencisi" },
+          { name: "Aslı F.", comment: "Konu çeşitliliği harika. Her gün konuşacak yeni ve ilginç bir başlık bulabiliyorum.", role: "12. Sınıf Öğrencisi" }
+        ]
       },
       errors: {
         micPermission: "Konuşmanızı değerlendirmek için mikrofon erişimi gereklidir. Lütfen tarayıcı ayarlarınızdan etkinleştirin.",
@@ -162,13 +211,11 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    // Explicitly set 'tr' as default if no language is found in localStorage.
-    // We strictly look at localStorage first, then fallback to 'tr', ignoring navigator.
     lng: localStorage.getItem('i18nextLng') || 'tr',
     fallbackLng: 'tr',
     detection: {
-      order: ['localStorage'], // Only look at local storage
-      caches: ['localStorage'], // Cache selection in local storage
+      order: ['localStorage'],
+      caches: ['localStorage'],
       lookupLocalStorage: 'i18nextLng'
     },
     debug: false,

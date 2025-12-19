@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { GoogleGenAI, LiveServerMessage, Modality } from "@google/genai";
@@ -140,6 +141,7 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
   };
 
   const startRecording = async () => {
+    setError(null);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
@@ -245,7 +247,7 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
 
     } catch (err: any) {
       console.error("Error accessing microphone:", err);
-      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+      if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError' || err.name === 'NotFoundError') {
         setError(t('errors.micPermission'));
       } else {
         setError(t('errors.generic'));
@@ -311,21 +313,44 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
 
   if (error) {
     return (
-      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-8 text-center max-w-md mx-auto">
-        <p className="text-red-600 dark:text-red-400 mb-6 text-lg">{error}</p>
-        <button 
-          onClick={onCancel}
-          className="px-6 py-2 bg-white dark:bg-slate-800 border border-gray-300 dark:border-slate-700 rounded-lg shadow-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-slate-700"
-        >
-          {t('common.goBack')}
-        </button>
+      <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl p-8 text-center max-w-xl mx-auto shadow-2xl animate-fade-in">
+        <div className="w-20 h-20 bg-rose-100 dark:bg-rose-900/30 rounded-full flex items-center justify-center mx-auto mb-6 text-rose-500">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-10 h-10">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+          </svg>
+        </div>
+        <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-4">Mikrofon Erişimi Gerekli</h3>
+        <p className="text-slate-600 dark:text-slate-400 mb-6 text-lg leading-relaxed">
+          {error}
+        </p>
+        
+        <div className="bg-slate-50 dark:bg-slate-950/50 p-6 rounded-2xl border border-slate-200 dark:border-slate-800 mb-8 text-left">
+           <p className="text-sm font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest mb-3">Rehber</p>
+           <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed">
+             {t('recorder.micHelp')}
+           </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <button 
+            onClick={onCancel}
+            className="px-8 py-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 font-bold transition-all"
+          >
+            {t('common.goBack')}
+          </button>
+          <button 
+            onClick={() => startRecording()}
+            className="px-8 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-lg shadow-indigo-500/30 font-bold transition-all transform hover:scale-105"
+          >
+            {t('common.retry')}
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
     <div className="w-full max-w-4xl mx-auto glass rounded-3xl shadow-2xl border border-white/20 dark:border-slate-800 overflow-hidden flex flex-col h-[600px] transition-all duration-300">
-      {/* Header */}
       <div className="bg-white/50 dark:bg-slate-900/50 px-8 py-5 flex justify-between items-center border-b border-slate-200/50 dark:border-slate-700/50 backdrop-blur-sm">
         <div className="flex items-center gap-4">
           <div className="flex items-center justify-center w-10 h-10 rounded-full bg-red-100 dark:bg-red-900/30">
@@ -343,14 +368,12 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
         </div>
       </div>
 
-      {/* Visualizer & Content */}
       <div className="flex-1 relative flex flex-col items-center justify-center p-8 overflow-hidden bg-gradient-to-b from-slate-50/50 to-white/50 dark:from-slate-900/50 dark:to-slate-950/50">
         
         <div className="absolute top-6 left-0 right-0 text-center z-10 px-6">
            <h3 className="text-slate-800 dark:text-white font-bold text-xl md:text-2xl truncate max-w-3xl mx-auto drop-shadow-sm leading-relaxed">{topic}</h3>
         </div>
 
-        {/* Dynamic Canvas Visualizer */}
         <div className="relative w-full h-[250px] flex items-center justify-center mb-8">
            <canvas 
              ref={canvasRef}
@@ -358,20 +381,17 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
              height={300}
              className="absolute inset-0 w-full h-full opacity-80"
            />
-           {/* Mic Icon Overlay */}
            <div className="relative z-10 bg-white dark:bg-slate-800 p-8 rounded-full shadow-2xl shadow-indigo-500/20 border-4 border-slate-50 dark:border-slate-700/50">
              <MicIcon className="w-12 h-12 text-indigo-500 dark:text-indigo-400 animate-pulse-slow" />
            </div>
         </div>
 
-        {/* Silence Warning */}
         {isSilent && timer > 5 && (
            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-32 bg-amber-500 text-white px-6 py-2 rounded-full text-sm font-bold animate-bounce shadow-lg z-20">
              {t('recorder.speakUp')}
            </div>
         )}
 
-        {/* Live Transcript Container */}
         <div className="w-full max-w-3xl bg-white/60 dark:bg-slate-900/60 backdrop-blur-md rounded-2xl border border-white/50 dark:border-slate-700 shadow-sm h-40 flex flex-col z-20">
           <div className="px-6 py-3 border-b border-slate-100 dark:border-slate-800/50 bg-white/40 dark:bg-slate-900/40 rounded-t-2xl">
              <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 uppercase tracking-widest">{t('recorder.liveTranscript')}</span>
@@ -385,7 +405,6 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
         </div>
       </div>
 
-      {/* Controls */}
       <div className="bg-white dark:bg-slate-900 p-8 flex justify-center gap-8 border-t border-slate-200 dark:border-slate-800 z-30">
         <button
           onClick={onCancel}

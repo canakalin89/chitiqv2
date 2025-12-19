@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react';
+
+import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SPEAKING_TOPICS, CRITERIA } from './constants';
 import { Evaluation, EvaluationResultData } from './types';
@@ -18,6 +19,18 @@ import { HomeIcon } from './icons/HomeIcon';
 import { HistoryIcon } from './icons/HistoryIcon';
 
 type ViewState = 'landing' | 'dashboard' | 'recorder' | 'evaluating' | 'result' | 'history';
+
+// Standard User Placeholder Icon
+const UserPlaceholder = ({ className }: { className?: string }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    fill="currentColor" 
+    className={className || "w-full h-full p-2"}
+  >
+    <path fillRule="evenodd" d="M7.5 6a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM3.751 20.105a8.25 8.25 0 0116.498 0 .75.75 0 01-.437.695A18.683 18.683 0 0112 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 01-.437-.695z" clipRule="evenodd" />
+  </svg>
+);
 
 const App: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -44,6 +57,18 @@ const App: React.FC = () => {
   const [evaluationData, setEvaluationData] = useState<EvaluationResultData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Random Testimonials Logic
+  const selectedTestimonials = useMemo(() => {
+    const all = t('landing.testimonials', { returnObjects: true }) as any[];
+    if (!Array.isArray(all)) return [];
+    const shuffled = [...all].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, 3);
+  }, [t, view === 'landing']); // Reshuffle when returning to landing
+
+  // Counter State
+  const [displayCount, setDisplayCount] = useState(0);
+  const targetCount = 1354 + history.length;
+
   // Loading State
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [estimatedTimeLeft, setEstimatedTimeLeft] = useState(15);
@@ -64,6 +89,27 @@ const App: React.FC = () => {
     localStorage.setItem('history', JSON.stringify(history));
   }, [history]);
 
+  // Counter Animation
+  useEffect(() => {
+    if (view === 'landing') {
+      let start = 0;
+      const duration = 2000;
+      const increment = targetCount / (duration / 16);
+      
+      const timer = setInterval(() => {
+        start += increment;
+        if (start >= targetCount) {
+          setDisplayCount(targetCount);
+          clearInterval(timer);
+        } else {
+          setDisplayCount(Math.floor(start));
+        }
+      }, 16);
+
+      return () => clearInterval(timer);
+    }
+  }, [view, targetCount]);
+
   // Simulated Progress Logic
   useEffect(() => {
     let progressInterval: any;
@@ -73,24 +119,19 @@ const App: React.FC = () => {
       setLoadingProgress(0);
       setEstimatedTimeLeft(15);
 
-      // 1. Progress Bar Simulation (Logarithmic-ish)
       progressInterval = setInterval(() => {
         setLoadingProgress((prev) => {
-          if (prev >= 95) return 95; // Stall at 95% until real response comes
-          
-          // Move fast at first, then slow down
+          if (prev >= 95) return 95;
           const remaining = 100 - prev;
           const increment = Math.max(0.2, remaining / 30); 
-          // Randomize slightly for organic feel
           const noise = Math.random() * 0.5;
           return Math.min(95, prev + increment + noise);
         });
       }, 100);
 
-      // 2. Countdown Simulation
       timeInterval = setInterval(() => {
         setEstimatedTimeLeft((prev) => {
-          if (prev <= 1) return 1; // Stuck at ~1s if it takes longer
+          if (prev <= 1) return 1;
           return prev - 1;
         });
       }, 1000);
@@ -145,8 +186,6 @@ const App: React.FC = () => {
       setEvaluationData(result);
       setHistory(prev => [newEvaluation, ...prev]);
       
-      // Small artificial delay to show 100% if response was super fast, 
-      // but mostly to transition smoothly
       setLoadingProgress(100);
       setTimeout(() => {
         setView('result');
@@ -177,7 +216,6 @@ const App: React.FC = () => {
     }
   };
 
-  // Helper to determine status text based on progress
   const getLoadingStatusText = (progress: number) => {
     if (progress < 25) return t('dashboard.processingSteps.uploading');
     if (progress < 60) return t('dashboard.processingSteps.transcribing');
@@ -185,19 +223,40 @@ const App: React.FC = () => {
     return t('dashboard.processingSteps.finalizing');
   };
 
-  // Views
   const renderContent = () => {
     switch (view) {
       case 'landing':
         return (
           <div className="flex flex-col items-center justify-center min-h-[70vh] text-center space-y-10 animate-fade-in relative z-10 pb-20">
-            {/* Maarif Modeli Badge */}
-            <div className="mt-8 inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/50 text-red-600 dark:text-red-400 text-xs sm:text-sm font-bold shadow-sm animate-fade-in cursor-default hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
-               <span className="relative flex h-2 w-2">
-                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                 <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-               </span>
-               {t('landing.badge')}
+            {/* Maarif Modeli Badge Group */}
+            <div className="mt-8 flex flex-col items-center gap-4">
+              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/50 text-red-600 dark:text-red-400 text-xs sm:text-sm font-bold shadow-sm animate-fade-in cursor-default hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
+                 <span className="relative flex h-2 w-2">
+                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                   <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                 </span>
+                 {t('landing.badge')}
+              </div>
+              
+              {/* Usage Counter Badge */}
+              <div className="inline-flex items-center gap-3 px-5 py-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl shadow-indigo-500/5 transform hover:scale-105 transition-all duration-300">
+                <div className="flex -space-x-2">
+                  {[1,2,3,4].map(i => (
+                    <div key={i} className={`w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center overflow-hidden text-white ${
+                      i % 2 === 0 ? 'bg-indigo-500' : 'bg-purple-500'
+                    }`}>
+                       <UserPlaceholder className="w-4 h-4" />
+                    </div>
+                  ))}
+                </div>
+                <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+                <div className="text-left">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-none mb-0.5">{t('dashboard.usageCount')}</p>
+                  <p className="text-lg font-extrabold text-indigo-600 dark:text-indigo-400 leading-none">
+                    {displayCount.toLocaleString()}
+                  </p>
+                </div>
+              </div>
             </div>
 
             <div className="transform hover:scale-105 transition-transform duration-500 ease-out">
@@ -223,67 +282,68 @@ const App: React.FC = () => {
               </svg>
             </button>
             
-            {/* How It Works Section */}
-            <div className="mt-24 w-full max-w-6xl px-4 space-y-16">
-              <div className="text-center space-y-4">
-                <h2 className="text-3xl font-bold text-slate-900 dark:text-white">{t('landing.howItWorks')}</h2>
-                <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-lg">
-                  {t('landing.howDesc')}
-                </p>
-              </div>
+            <div className="mt-24 w-full max-w-6xl px-4 space-y-24">
+              {/* How It Works Section */}
+              <div className="space-y-16">
+                <div className="text-center space-y-4">
+                  <h2 className="text-3xl font-bold text-slate-900 dark:text-white">{t('landing.howItWorks')}</h2>
+                  <p className="text-slate-600 dark:text-slate-400 max-w-2xl mx-auto text-lg">
+                    {t('landing.howDesc')}
+                  </p>
+                </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
-                {/* Connecting Line (Desktop) */}
-                <div className="hidden md:block absolute top-8 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-indigo-200 via-purple-200 to-indigo-200 dark:from-indigo-800 dark:via-purple-800 dark:to-indigo-800 -z-10"></div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+                  <div className="hidden md:block absolute top-8 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-indigo-200 via-purple-200 to-indigo-200 dark:from-indigo-800 dark:via-purple-800 dark:to-indigo-800 -z-10"></div>
 
-                {[
-                  { 
-                    step: "1", 
-                    title: t('landing.step1Title'), 
-                    desc: t('landing.step1Desc'),
-                    icon: (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
-                      </svg>
-                    )
-                  },
-                  { 
-                    step: "2", 
-                    title: t('landing.step2Title'), 
-                    desc: t('landing.step2Desc'),
-                    icon: (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
-                      </svg>
-                    )
-                  },
-                  { 
-                    step: "3", 
-                    title: t('landing.step3Title'), 
-                    desc: t('landing.step3Desc'),
-                    icon: (
-                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-                      </svg>
-                    )
-                  }
-                ].map((item, idx) => (
-                  <div key={idx} className="relative flex flex-col items-center">
-                    <div className="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 border border-indigo-100 dark:border-indigo-900/50 shadow-lg shadow-indigo-500/10 flex items-center justify-center mb-6 z-10 text-indigo-600 dark:text-indigo-400">
-                      {item.icon}
-                    </div>
-                    <div className="glass w-full h-full p-8 rounded-2xl border border-white/40 dark:border-slate-800 hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
-                      <div className="inline-block px-3 py-1 mb-4 text-xs font-bold text-white bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full">
-                         Step {item.step}
+                  {[
+                    { 
+                      step: "1", 
+                      title: t('landing.step1Title'), 
+                      desc: t('landing.step1Desc'),
+                      icon: (
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
+                        </svg>
+                      )
+                    },
+                    { 
+                      step: "2", 
+                      title: t('landing.step2Title'), 
+                      desc: t('landing.step2Desc'),
+                      icon: (
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M12 18.75a6 6 0 006-6v-1.5m-6 7.5a6 6 0 01-6-6v-1.5m6 7.5v3.75m-3.75 0h7.5M12 15.75a3 3 0 01-3-3V4.5a3 3 0 116 0v8.25a3 3 0 01-3 3z" />
+                        </svg>
+                      )
+                    },
+                    { 
+                      step: "3", 
+                      title: t('landing.step3Title'), 
+                      desc: t('landing.step3Desc'),
+                      icon: (
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+                        </svg>
+                      )
+                    }
+                  ].map((item, idx) => (
+                    <div key={idx} className="relative flex flex-col items-center">
+                      <div className="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 border border-indigo-100 dark:border-indigo-900/50 shadow-lg shadow-indigo-500/10 flex items-center justify-center mb-6 z-10 text-indigo-600 dark:text-indigo-400">
+                        {item.icon}
                       </div>
-                      <h3 className="font-bold text-xl text-slate-800 dark:text-slate-100 mb-3">{item.title}</h3>
-                      <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-sm">{item.desc}</p>
+                      <div className="glass w-full h-full p-8 rounded-2xl border border-white/40 dark:border-slate-800 hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
+                        <div className="inline-block px-3 py-1 mb-4 text-xs font-bold text-white bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full">
+                           Step {item.step}
+                        </div>
+                        <h3 className="font-bold text-xl text-slate-800 dark:text-slate-100 mb-3">{item.title}</h3>
+                        <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-sm">{item.desc}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
 
-              {/* Evaluation Criteria Section */}
+              {/* Criteria Section */}
               <div className="glass rounded-3xl p-8 md:p-12 border border-white/20 dark:border-slate-800 shadow-xl shadow-indigo-500/5 text-left">
                  <div className="flex flex-col md:flex-row gap-10 items-center">
                     <div className="flex-1 space-y-6">
@@ -308,6 +368,38 @@ const App: React.FC = () => {
                           ))}
                        </div>
                     </div>
+                 </div>
+              </div>
+
+              {/* Testimonials Section */}
+              <div className="space-y-16">
+                 <div className="text-center space-y-4">
+                    <h2 className="text-3xl font-bold text-slate-900 dark:text-white">{t('landing.testimonialsTitle')}</h2>
+                 </div>
+                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {selectedTestimonials.map((t: any, idx: number) => (
+                       <div key={idx} className="glass p-8 rounded-3xl border border-white/20 dark:border-slate-800 text-left flex flex-col justify-between hover:shadow-2xl transition-all duration-500 group">
+                          <div className="mb-6">
+                             <div className="flex text-amber-400 mb-4">
+                                {[1,2,3,4,5].map(i => (
+                                   <svg key={i} xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
+                                      <path fillRule="evenodd" d="M10.868 2.884c-.321-.772-1.415-.772-1.736 0l-1.83 4.401-4.753.381c-.833.067-1.171 1.107-.536 1.651l3.62 3.102-1.106 4.637c-.194.813.691 1.456 1.405 1.02L10 15.591l4.069 2.485c.713.436 1.598-.207 1.404-1.02l-1.106-4.637 3.62-3.102c.635-.544.297-1.584-.536-1.65l-4.752-.382-1.831-4.401z" clipRule="evenodd" />
+                                   </svg>
+                                ))}
+                             </div>
+                             <p className="text-slate-600 dark:text-slate-300 italic leading-relaxed">"{t.comment}"</p>
+                          </div>
+                          <div className="flex items-center gap-4 border-t border-slate-100 dark:border-slate-800 pt-6">
+                             <div className="w-12 h-12 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 flex items-center justify-center font-bold text-lg overflow-hidden shadow-sm group-hover:scale-110 transition-transform">
+                                <UserPlaceholder className="w-6 h-6" />
+                             </div>
+                             <div>
+                                <h4 className="font-bold text-slate-900 dark:text-white leading-none">{t.name}</h4>
+                                <p className="text-xs text-slate-400 mt-1 font-medium">{t.role}</p>
+                             </div>
+                          </div>
+                       </div>
+                    ))}
                  </div>
               </div>
 
@@ -359,12 +451,8 @@ const App: React.FC = () => {
         return (
           <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8 animate-fade-in relative z-10">
             <div className="relative w-56 h-56 flex items-center justify-center">
-               {/* Background Glow */}
                <div className="absolute inset-0 bg-indigo-500 blur-3xl opacity-20 rounded-full animate-pulse-slow"></div>
-               
-               {/* SVG Progress Circle */}
                <svg className="w-full h-full" viewBox="0 0 224 224">
-                 {/* Track */}
                  <circle
                    cx="112"
                    cy="112"
@@ -374,7 +462,6 @@ const App: React.FC = () => {
                    fill="transparent"
                    className="text-slate-200 dark:text-slate-800"
                  />
-                 {/* Indicator */}
                  <circle
                    cx="112"
                    cy="112"
@@ -387,7 +474,6 @@ const App: React.FC = () => {
                    strokeLinecap="round"
                    className="text-indigo-600 dark:text-indigo-500 transition-all duration-300 ease-linear origin-center -rotate-90"
                  />
-                 {/* Percentage Text inside SVG for perfect centering */}
                  <text
                     x="112"
                     y="112"
@@ -446,13 +532,11 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors duration-500 overflow-hidden relative font-sans">
-      {/* Ambient Background */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-200/30 dark:bg-indigo-900/20 rounded-full blur-[120px] animate-blob"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-[120px] animate-blob animation-delay-2000"></div>
       </div>
 
-      {/* Sticky Header */}
       <header className="sticky top-0 z-50 glass border-b border-white/20 dark:border-slate-800 transition-colors duration-300">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <div 
@@ -513,12 +597,10 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 relative z-10">
         {renderContent()}
       </main>
 
-      {/* Footer */}
       <footer className="w-full py-8 text-center relative z-10 border-t border-slate-200/50 dark:border-slate-800/50 bg-white/30 dark:bg-slate-900/30 backdrop-blur-sm mt-auto">
         <div className="max-w-7xl mx-auto px-4">
           <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">

@@ -57,7 +57,8 @@ const resources = {
         studentList: "Students",
         deleteClass: "Delete Class",
         compareClasses: "Compare Classes",
-        studentAdded: "Student added to class."
+        studentAdded: "Student added to class.",
+        classReport: "Generate Class Report"
       },
       analytics: {
         title: "Analytics Dashboard",
@@ -66,7 +67,11 @@ const resources = {
         studentPerformance: "Student Performance",
         classComparison: "Class Comparison",
         selectClasses: "Select Classes to Compare",
-        noData: "Not enough exam data for analytics."
+        noData: "Not enough exam data for analytics.",
+        totalExams: "Total Exams",
+        classReportTitle: "Class Achievement Report",
+        studentName: "Student Name",
+        total: "Total"
       },
       exam: {
         title: "Teacher Exam Mode",
@@ -206,7 +211,8 @@ const resources = {
         studentList: "Öğrenci Listesi",
         deleteClass: "Sınıfı Sil",
         compareClasses: "Sınıfları Karşılaştır",
-        studentAdded: "Öğrenci sınıfa kaydedildi."
+        studentAdded: "Öğrenci sınıfa kaydedildi.",
+        classReport: "Sınıf Raporu Oluştur"
       },
       analytics: {
         title: "Analiz Paneli",
@@ -215,7 +221,11 @@ const resources = {
         studentPerformance: "Öğrenci Performansı",
         classComparison: "Sınıf Karşılaştırması",
         selectClasses: "Karşılaştırmak İçin Sınıf Seçin",
-        noData: "Analiz için yeterli sınav verisi bulunamadı."
+        noData: "Analiz için yeterli sınav verisi bulunamadı.",
+        totalExams: "Toplam Sınav",
+        classReportTitle: "Sınıf Başarı Çizelgesi",
+        studentName: "Öğrenci Adı Soyadı",
+        total: "Top."
       },
       exam: {
         title: "Öğretmen Sınav Modu",

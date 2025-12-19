@@ -53,7 +53,7 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
 
   const langKey = i18n.language.startsWith('tr') ? 'tr' : 'en';
 
-  const renderRadarChart = (chartRadius: number = 90, size: number = 260) => {
+  const renderRadarChart = (chartRadius: number = 85, size: number = 240) => {
     const center = size / 2;
     const criteriaKeys = Object.keys(data.scores);
     const totalPoints = criteriaKeys.length;
@@ -73,7 +73,7 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
       return getPoint(val, i, chartRadius);
     });
     const dataPath = dataPoints.map((p, i) => (i === 0 ? `M ${p.x},${p.y}` : `L ${p.x},${p.y}`)).join(' ') + ' Z';
-    const levels = [20, 40, 60, 80, 100];
+    const levels = [25, 50, 75, 100];
     
     return (
       <svg width="100%" height="100%" viewBox={`0 0 ${size} ${size}`} className="overflow-visible">
@@ -109,12 +109,12 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
           );
         })}
         <path d={dataPath} fill="currentColor" className="text-indigo-500/20 dark:text-indigo-400/20 print:text-indigo-100" />
-        <path d={dataPath} fill="transparent" stroke="currentColor" className="text-indigo-600 dark:text-indigo-400 print:text-indigo-600" strokeWidth="2.5" />
+        <path d={dataPath} fill="transparent" stroke="currentColor" className="text-indigo-600 dark:text-indigo-400 print:text-indigo-600" strokeWidth="2" />
         {dataPoints.map((p, i) => (
-           <circle key={i} cx={p.x} cy={p.y} r="4" className="fill-indigo-600 dark:fill-indigo-400 stroke-white dark:stroke-slate-900 stroke-2 print:fill-indigo-600 print:stroke-white" />
+           <circle key={i} cx={p.x} cy={p.y} r="3" className="fill-indigo-600 dark:fill-indigo-400 stroke-white dark:stroke-slate-900 stroke-2 print:fill-indigo-600 print:stroke-white" />
         ))}
         {criteriaKeys.map((key, i) => {
-           const p = getPoint(115, i, chartRadius); 
+           const p = getPoint(110, i, chartRadius); 
            // @ts-ignore
            const label = CRITERIA[langKey][key].split(' ')[0]; 
            return (
@@ -124,7 +124,7 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
                y={p.y}
                textAnchor="middle"
                dominantBaseline="middle"
-               className="text-[10px] font-bold fill-slate-500 dark:fill-slate-400 print:fill-gray-600 uppercase tracking-wider"
+               className="text-[9px] font-bold fill-slate-500 dark:fill-slate-400 print:fill-gray-600 uppercase tracking-wider"
              >
                {label}
              </text>
@@ -135,7 +135,7 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
   };
 
   return (
-    <div className="space-y-8 animate-fade-in pb-12">
+    <div className="space-y-6 animate-fade-in pb-12 max-w-5xl mx-auto print:p-0 print:space-y-4">
       {/* Navigation & Header (Hidden on Print) */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 print:hidden">
         <button
@@ -157,66 +157,70 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
                 {t('common.print')}
               </button>
            )}
-           <h1 className="text-xl font-bold text-slate-900 dark:text-white truncate max-w-xl text-center md:text-right">
+           <h1 className="text-xl font-bold text-slate-900 dark:text-white truncate max-w-md text-center md:text-right">
             {data.topic}
            </h1>
         </div>
       </div>
 
       {/* --- EXAM REPORT HEADER (Visible only on Print) --- */}
-      <div className="hidden print:block space-y-8 mb-12 border-b-2 border-slate-900 pb-8">
-         <div className="flex justify-between items-start">
-            <div className="flex items-center gap-4">
+      <div className="hidden print:block space-y-4 mb-6 border-b border-slate-300 pb-4">
+         <div className="flex justify-between items-center">
+            <div className="flex items-center gap-3">
                <img 
                  src="https://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/dosyalar/2025_11/03215750_speaksmartaltlogo.png" 
                  alt="Logo" 
-                 className="w-16 h-16 object-contain"
+                 className="w-12 h-12 object-contain"
                />
                <div>
-                  <h1 className="text-2xl font-black text-slate-900 uppercase tracking-tight">{t('exam.reportTitle')}</h1>
-                  <p className="text-slate-500 font-bold tracking-widest uppercase text-xs">ChitIQ Powered by AI</p>
+                  <h1 className="text-xl font-black text-slate-900 uppercase tracking-tight leading-none mb-1">{t('exam.reportTitle')}</h1>
+                  <p className="text-slate-500 font-bold tracking-widest uppercase text-[9px]">ChitIQ AI Speaking Analytics</p>
                </div>
             </div>
             <div className="text-right">
-               <p className="text-sm font-bold text-slate-400 uppercase">{t('exam.examDate')}</p>
-               <p className="text-lg font-bold text-slate-900">{new Date().toLocaleDateString(i18n.language.startsWith('tr') ? 'tr-TR' : 'en-US')}</p>
+               <p className="text-[10px] font-bold text-slate-400 uppercase leading-none mb-1">{t('exam.examDate')}</p>
+               <p className="text-sm font-bold text-slate-900 leading-none">{new Date().toLocaleDateString(i18n.language.startsWith('tr') ? 'tr-TR' : 'en-US')}</p>
             </div>
          </div>
 
-         <div className="grid grid-cols-3 gap-8 bg-slate-50 p-6 rounded-2xl">
+         <div className="grid grid-cols-4 gap-4 bg-slate-50 p-4 rounded-xl">
             <div>
-               <p className="text-xs font-bold text-slate-400 uppercase mb-1">{t('exam.firstName')}</p>
-               <p className="text-xl font-bold text-slate-900">{studentInfo?.firstName || '-'}</p>
+               <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.firstName')}</p>
+               <p className="text-sm font-bold text-slate-900">{studentInfo?.firstName || '-'}</p>
             </div>
             <div>
-               <p className="text-xs font-bold text-slate-400 uppercase mb-1">{t('exam.lastName')}</p>
-               <p className="text-xl font-bold text-slate-900">{studentInfo?.lastName || '-'}</p>
+               <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.lastName')}</p>
+               <p className="text-sm font-bold text-slate-900">{studentInfo?.lastName || '-'}</p>
             </div>
             <div>
-               <p className="text-xs font-bold text-slate-400 uppercase mb-1">{t('exam.class')}</p>
-               <p className="text-xl font-bold text-slate-900">{studentInfo?.studentClass || '-'}</p>
+               <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.class')}</p>
+               <p className="text-sm font-bold text-slate-900">{studentInfo?.studentClass || '-'}</p>
+            </div>
+            <div className="text-right">
+                <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('evaluation.overallScore')}</p>
+                <p className="text-2xl font-black text-indigo-600">%{data.overallScore}</p>
             </div>
          </div>
 
-         <div className="space-y-2">
-            <p className="text-xs font-bold text-slate-400 uppercase">{t('exam.selectedTopic')}</p>
-            <p className="text-lg font-semibold text-slate-800 leading-tight italic">"{data.topic}"</p>
+         <div className="flex gap-2 items-baseline">
+            <p className="text-[9px] font-bold text-slate-400 uppercase flex-shrink-0">{t('exam.selectedTopic')}:</p>
+            <p className="text-xs font-semibold text-slate-700 italic truncate">"{data.topic}"</p>
          </div>
       </div>
 
       {/* --- CONTENT GRID --- */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 print:grid-cols-1">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 print:grid-cols-1 print:gap-4">
         
-        <div className="lg:col-span-1 space-y-6 print:flex print:flex-row print:gap-8 print:items-start print:space-y-0">
-          {/* Overall Score Card */}
-          <div className="glass bg-white dark:bg-slate-900 rounded-3xl p-8 border border-white/20 dark:border-slate-800 shadow-xl flex flex-col items-center relative overflow-hidden print:shadow-none print:border-2 print:border-slate-100 print:w-1/2">
-            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600 print:bg-indigo-600"></div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-6 print:text-indigo-600">{t('evaluation.overallScore')}</h3>
-            <div className="relative w-48 h-48 print:w-40 print:h-40">
-              <svg viewBox="0 0 192 192" className="w-full h-full drop-shadow-lg print:drop-shadow-none">
-                <circle cx="96" cy="96" r={radius} stroke="currentColor" strokeWidth="12" fill="transparent" className="text-slate-100 dark:text-slate-800 print:text-slate-50" />
-                <circle cx="96" cy="96" r={radius} stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round" className={`${getScoreColor(data.overallScore)} transition-all duration-1000 ease-out origin-center -rotate-90 print:text-indigo-600`} />
-                <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" dy="0.3em" className={`text-6xl font-extrabold tracking-tighter ${getScoreColor(data.overallScore)} fill-current print:text-indigo-600`} style={{ fontVariantNumeric: 'tabular-nums' }}>
+        <div className="lg:col-span-1 space-y-6 print:flex print:flex-row print:gap-6 print:items-start print:space-y-0">
+          {/* Overall Score Card (Hidden on print if we use the header) */}
+          <div className="glass bg-white dark:bg-slate-900 rounded-3xl p-8 border border-white/20 dark:border-slate-800 shadow-xl flex flex-col items-center relative overflow-hidden print:hidden">
+            <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-6">{t('evaluation.overallScore')}</h3>
+            <div className="relative w-48 h-48">
+              <svg viewBox="0 0 192 192" className="w-full h-full drop-shadow-lg">
+                <circle cx="96" cy="96" r={radius} stroke="currentColor" strokeWidth="12" fill="transparent" className="text-slate-100 dark:text-slate-800" />
+                <circle cx="96" cy="96" r={radius} stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round" className={`${getScoreColor(data.overallScore)} transition-all duration-1000 ease-out origin-center -rotate-90`} />
+                <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" dy="0.3em" className={`text-6xl font-extrabold tracking-tighter ${getScoreColor(data.overallScore)} fill-current`} style={{ fontVariantNumeric: 'tabular-nums' }}>
                   {data.overallScore}
                 </text>
               </svg>
@@ -224,60 +228,68 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
           </div>
 
           {/* Radar Chart Card */}
-          <div className="glass bg-white dark:bg-slate-900 rounded-3xl p-6 border border-white/20 dark:border-slate-800 shadow-lg flex flex-col items-center print:shadow-none print:border-2 print:border-slate-100 print:w-1/2">
-             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2">Skill Breakdown</h3>
-             <div className="w-full aspect-square max-w-[260px] print:max-w-[200px]">
+          <div className="glass bg-white dark:bg-slate-900 rounded-3xl p-6 border border-white/20 dark:border-slate-800 shadow-lg flex flex-col items-center print:shadow-none print:border print:border-slate-100 print:w-1/3 print:p-3 print:rounded-xl">
+             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 print:text-[8px] print:mb-1">Skill Chart</h3>
+             <div className="w-full aspect-square max-w-[260px] print:max-w-[140px]">
                 {renderRadarChart()}
              </div>
           </div>
+
+          {/* Summary Card for Print (Compact) */}
+          <div className="hidden print:block flex-1 border border-slate-100 p-4 rounded-xl bg-slate-50/50">
+             <div className="flex items-center gap-2 mb-2">
+                <div className="p-1 bg-indigo-100 rounded-md text-indigo-600">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-3 h-3"><path d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625z" /></svg>
+                </div>
+                <h3 className="text-[10px] font-bold text-slate-800 uppercase tracking-widest">{t('common.summary')}</h3>
+             </div>
+             <p className="text-[10px] text-slate-700 leading-normal italic line-clamp-6">
+                {data.feedback.summary}
+             </p>
+          </div>
         </div>
 
-        <div className="lg:col-span-2 space-y-6 print:lg:col-span-1 print:space-y-8">
+        <div className="lg:col-span-2 space-y-6 print:lg:col-span-1 print:space-y-4">
           
           {/* Audio (Hidden on print) */}
           {audioUrl && (
              <div className="glass bg-white dark:bg-slate-900 rounded-2xl p-4 border border-white/20 dark:border-slate-800 shadow-sm flex items-center gap-4 print:hidden">
-                <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                    <path fillRule="evenodd" d="M19.957 4.276a1.75 1.75 0 10-2.475-2.475L7.468 11.815a2.5 2.5 0 000 3.535l10.014 10.014a1.75 1.75 0 102.475-2.475l-1.414-1.414c.162-.162.3-.35.405-.558a2.502 2.502 0 00-2.435-3.553c-1.037.112-1.928-.542-1.928-1.579 0-1.037.891-1.69 1.928-1.58a2.502 2.502 0 002.435-3.552c-.105-.209-.243-.396-.405-.559l1.414-1.414zM4.75 8a.75.75 0 00-.75.75v6.5c0 .414.336.75.75.75h2.25a.75.75 0 00.75-.75v-6.5a.75.75 0 00-.75-.75h-2.25z" clipRule="evenodd" />
-                  </svg>
-                </div>
                 <audio controls src={audioUrl} className="w-full h-10" />
              </div>
           )}
 
-          {/* Summary */}
-          <div className="glass bg-indigo-50/50 dark:bg-indigo-900/10 rounded-2xl p-8 border border-indigo-100 dark:border-indigo-900/30 shadow-sm print:bg-white print:border-2 print:border-slate-100 print:p-6">
+          {/* Summary (Hidden on print here because it's in the side box) */}
+          <div className="glass bg-indigo-50/50 dark:bg-indigo-900/10 rounded-2xl p-8 border border-indigo-100 dark:border-indigo-900/30 shadow-sm print:hidden">
              <div className="flex items-center gap-3 mb-4">
-                <div className="p-2.5 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl text-indigo-600 dark:text-indigo-400 print:bg-slate-100 print:text-slate-800">
+                <div className="p-2.5 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl text-indigo-600 dark:text-indigo-400">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
                     <path fillRule="evenodd" d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625zM7.5 15a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 017.5 15zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H8.25z" clipRule="evenodd" />
                   </svg>
                 </div>
-                <h3 className="text-xl font-bold text-slate-800 dark:text-white print:text-slate-900">{t('common.summary')}</h3>
+                <h3 className="text-xl font-bold text-slate-800 dark:text-white">{t('common.summary')}</h3>
              </div>
-             <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-lg whitespace-pre-line print:text-sm print:text-slate-700">
+             <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-lg whitespace-pre-line">
                 {data.feedback.summary}
              </p>
           </div>
 
-          {/* Criteria Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 print:grid-cols-2">
+          {/* Criteria Grid (Optimized for Print) */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 print:grid-cols-3 print:gap-2">
              {Object.entries(data.scores).map(([key, score]) => (
-               <div key={key} className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm print:p-4 print:border-slate-100 print:bg-white print:shadow-none">
-                 <div className="flex justify-between items-center mb-4">
-                   <h4 className="font-bold text-slate-700 dark:text-slate-200 print:text-slate-900">
+               <div key={key} className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm print:p-3 print:border print:border-slate-100 print:bg-white print:rounded-xl">
+                 <div className="flex justify-between items-center mb-3 print:mb-1">
+                   <h4 className="font-bold text-slate-700 dark:text-slate-200 print:text-indigo-700 print:text-[8px] uppercase tracking-tighter">
                      {/* @ts-ignore */}
                      {CRITERIA[langKey][key]}
                    </h4>
-                   <span className={`font-bold px-3 py-1 rounded-full text-sm ${getScoreColor(score as number).replace('text-', 'bg-').replace('500', '100').replace('400', '900/30')} ${getScoreColor(score as number)} print:bg-slate-100 print:text-slate-900`}>
+                   <span className={`font-bold px-2.5 py-0.5 rounded-full text-sm ${getScoreColor(score as number).replace('text-', 'bg-').replace('500', '100').replace('400', '900/30')} ${getScoreColor(score as number)} print:bg-transparent print:p-0 print:text-[10px]`}>
                      {score}
                    </span>
                  </div>
-                 <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 mb-4 overflow-hidden print:bg-slate-50">
-                   <div className={`h-2 rounded-full ${getProgressBarColor(score as number)} transition-all duration-1000 ease-out print:bg-indigo-600`} style={{ width: `${score}%` }}></div>
+                 <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 mb-3 overflow-hidden print:mb-1.5 print:h-1">
+                   <div className={`h-full rounded-full ${getProgressBarColor(score as number)} transition-all duration-1000 ease-out print:bg-indigo-600`} style={{ width: `${score}%` }}></div>
                  </div>
-                 <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed whitespace-pre-line print:text-[11px] print:text-slate-600">
+                 <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed whitespace-pre-line print:text-[8px] print:leading-tight print:text-slate-600 line-clamp-4">
                    {/* @ts-ignore */}
                    {data.feedback[key]}
                  </p>
@@ -285,31 +297,34 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
              ))}
            </div>
 
-           {/* Pronunciation Card (Inline for print) */}
-           <div className="hidden print:block bg-slate-50 rounded-2xl p-6">
-              <h3 className="font-bold text-slate-900 mb-2">{t('evaluation.pronunciation')}</h3>
-              <p className="text-sm text-slate-700 leading-relaxed">{data.feedback.pronunciation}</p>
-           </div>
+           {/* Pronunciation & Transcription (Print optimization: two columns) */}
+           <div className="grid grid-cols-1 gap-6 print:grid-cols-2 print:gap-4">
+               {/* Pronunciation */}
+               <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 print:p-3 print:rounded-xl">
+                  <h3 className="font-bold text-slate-800 dark:text-white mb-2 print:text-[9px] print:text-indigo-600 uppercase tracking-widest">{t('evaluation.pronunciation')}</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed print:text-[8px] print:leading-tight">{data.feedback.pronunciation}</p>
+               </div>
 
-           {/* Transcription (Simplified for print) */}
-           <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-8 print:border-slate-100 print:p-6 print:shadow-none">
-              <h3 className="font-bold text-slate-700 dark:text-slate-200 mb-4 print:text-slate-900">{t('evaluation.transcription')}</h3>
-              <p className="font-mono text-sm text-slate-600 dark:text-slate-400 leading-relaxed whitespace-pre-wrap bg-slate-50 dark:bg-slate-950 p-4 rounded-xl print:bg-white print:p-0 print:border-none print:text-xs">
-                 {data.feedback.transcription}
-              </p>
+               {/* Transcription */}
+               <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 print:p-3 print:rounded-xl print:border-slate-100 print:shadow-none">
+                  <h3 className="font-bold text-slate-700 dark:text-slate-200 mb-3 print:text-[9px] print:text-indigo-600 uppercase tracking-widest">{t('evaluation.transcription')}</h3>
+                  <div className="font-mono text-xs text-slate-500 dark:text-slate-400 leading-relaxed whitespace-pre-wrap bg-slate-50 dark:bg-slate-950 p-4 rounded-xl print:bg-transparent print:p-0 print:text-[7px] print:leading-tight print:max-h-24 print:overflow-hidden line-clamp-[10]">
+                     {data.feedback.transcription}
+                  </div>
+               </div>
            </div>
         </div>
       </div>
 
       {/* --- TEACHER SIGNATURE AREA (Only Print) --- */}
-      <div className="hidden print:flex justify-between mt-12 pt-12 border-t border-slate-200">
-         <div className="w-1/3">
-            <p className="text-xs font-bold text-slate-400 uppercase mb-8">{t('exam.teacherNotes')}</p>
-            <div className="h-24 border-b border-slate-200"></div>
+      <div className="hidden print:flex justify-between items-end mt-4 pt-4 border-t border-slate-200">
+         <div className="w-1/2">
+            <p className="text-[8px] font-bold text-slate-400 uppercase mb-2">{t('exam.teacherNotes')}</p>
+            <div className="h-10 border-b border-dashed border-slate-300"></div>
          </div>
-         <div className="w-1/3 text-center">
-            <p className="text-xs font-bold text-slate-400 uppercase mb-16">Teacher Signature</p>
-            <p className="border-t border-slate-400 pt-2 font-bold text-slate-800">Can AKALIN</p>
+         <div className="text-right">
+            <p className="text-[8px] font-bold text-slate-400 uppercase mb-6">Instructor Signature</p>
+            <p className="border-t border-slate-400 pt-1 font-bold text-slate-800 text-[10px]">Can AKALIN</p>
          </div>
       </div>
     </div>

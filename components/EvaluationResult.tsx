@@ -135,7 +135,7 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
   };
 
   return (
-    <div className="space-y-6 animate-fade-in pb-12 max-w-5xl mx-auto print:p-0 print:space-y-2 print:pb-0 print:m-0">
+    <div className="space-y-6 animate-fade-in pb-12 max-w-5xl mx-auto print:p-0 print:space-y-1 print:pb-0 print:m-0 print:max-w-none">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 print:hidden">
         <button
           onClick={onBack}
@@ -161,7 +161,7 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
       </div>
 
       {/* Report Header for Print */}
-      <div className="hidden print:block space-y-2 mb-2 border-b-2 border-slate-900 pb-2">
+      <div className="hidden print:block space-y-1 mb-2 border-b-2 border-slate-900 pb-1">
          <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
                <img src="https://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/dosyalar/2025_11/03215750_speaksmartaltlogo.png" alt="Logo" className="w-10 h-10 object-contain" />
@@ -169,57 +169,57 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
                   <h1 className="text-lg font-black text-slate-900 uppercase tracking-tight leading-none mb-0.5">
                     {studentInfo ? t('exam.reportTitle') : t('evaluation.reportTitle')}
                   </h1>
-                  <p className="text-slate-500 font-bold tracking-widest uppercase text-[8px]">ChitIQ AI Speaking Analytics</p>
+                  <p className="text-slate-500 font-bold tracking-widest uppercase text-[7px]">ChitIQ AI Speaking Analytics</p>
                </div>
             </div>
             <div className="text-right">
-               <p className="text-[9px] font-bold text-slate-400 uppercase leading-none mb-0.5">{t('exam.examDate')}</p>
+               <p className="text-[8px] font-bold text-slate-400 uppercase leading-none mb-0.5">{t('exam.examDate')}</p>
                <p className="text-xs font-bold text-slate-900 leading-none">{new Date().toLocaleDateString(langKey === 'tr' ? 'tr-TR' : 'en-US')}</p>
             </div>
          </div>
          
          {studentInfo ? (
-            <div className="grid grid-cols-5 gap-2 bg-slate-50 p-2 rounded-lg border border-slate-200">
+            <div className="grid grid-cols-5 gap-2 bg-slate-50 p-1.5 rounded-lg border border-slate-200">
               <div>
-                <p className="text-[7px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.studentNumber')}</p>
-                <p className="text-[10px] font-bold text-slate-900">{studentInfo.studentNumber || '-'}</p>
+                <p className="text-[6px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.studentNumber')}</p>
+                <p className="text-[9px] font-bold text-slate-900">{studentInfo.studentNumber || '-'}</p>
               </div>
               <div>
-                <p className="text-[7px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.firstName')}</p>
-                <p className="text-[10px] font-bold text-slate-900 uppercase">{studentInfo.firstName || '-'}</p>
+                <p className="text-[6px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.firstName')}</p>
+                <p className="text-[9px] font-bold text-slate-900 uppercase">{studentInfo.firstName || '-'}</p>
               </div>
               <div>
-                <p className="text-[7px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.lastName')}</p>
-                <p className="text-[10px] font-bold text-slate-900 uppercase">{studentInfo.lastName || '-'}</p>
+                <p className="text-[6px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.lastName')}</p>
+                <p className="text-[9px] font-bold text-slate-900 uppercase">{studentInfo.lastName || '-'}</p>
               </div>
               <div>
-                <p className="text-[7px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.class')}</p>
-                <p className="text-[10px] font-bold text-slate-900">{studentInfo.studentClass || '-'}</p>
+                <p className="text-[6px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.class')}</p>
+                <p className="text-[9px] font-bold text-slate-900">{studentInfo.studentClass || '-'}</p>
               </div>
               <div className="text-right border-l border-slate-200 pl-2">
-                  <p className="text-[7px] font-bold text-slate-400 uppercase mb-0.5">{t('evaluation.overallScore')}</p>
-                  <p className="text-xl font-black text-indigo-600">%{data.overallScore}</p>
+                  <p className="text-[6px] font-bold text-slate-400 uppercase mb-0.5">{t('evaluation.overallScore')}</p>
+                  <p className="text-lg font-black text-indigo-600">%{data.overallScore}</p>
               </div>
             </div>
          ) : (
-            <div className="bg-slate-50 p-2 rounded-lg border border-slate-200 flex justify-between items-center">
+            <div className="bg-slate-50 p-1.5 rounded-lg border border-slate-200 flex justify-between items-center">
               <div>
-                 <p className="text-[8px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Oturum Tipi</p>
-                 <p className="text-[10px] font-black text-slate-800 uppercase">Bireysel Pratik Oturumu</p>
+                 <p className="text-[7px] font-bold text-slate-400 uppercase tracking-widest mb-0.5">Oturum Tipi</p>
+                 <p className="text-[9px] font-black text-slate-800 uppercase">Bireysel Pratik Oturumu</p>
               </div>
               <div className="text-right">
-                  <p className="text-[7px] font-bold text-slate-400 uppercase mb-0.5">{t('evaluation.overallScore')}</p>
-                  <p className="text-xl font-black text-indigo-600">%{data.overallScore}</p>
+                  <p className="text-[6px] font-bold text-slate-400 uppercase mb-0.5">{t('evaluation.overallScore')}</p>
+                  <p className="text-lg font-black text-indigo-600">%{data.overallScore}</p>
               </div>
             </div>
          )}
          <div className="flex gap-2 items-baseline">
-            <p className="text-[8px] font-bold text-slate-400 uppercase flex-shrink-0">{t('exam.selectedTopic')}:</p>
-            <p className="text-[9px] font-semibold text-slate-700 italic truncate">"{data.topic}"</p>
+            <p className="text-[7px] font-bold text-slate-400 uppercase flex-shrink-0">{t('exam.selectedTopic')}:</p>
+            <p className="text-[8px] font-semibold text-slate-700 italic truncate">"{data.topic}"</p>
          </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 print:grid-cols-1 print:gap-2">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 print:grid-cols-1 print:gap-1">
         <div className="lg:col-span-1 space-y-6 print:flex print:flex-row print:gap-2 print:items-start print:space-y-0">
           {/* Main Score Circle (Hidden in Print to save space) */}
           <div className="glass bg-white dark:bg-slate-900 rounded-3xl p-8 border border-white/20 dark:border-slate-800 shadow-xl flex flex-col items-center relative overflow-hidden print:hidden">
@@ -237,23 +237,23 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
           </div>
 
           {/* Skill Radar Chart */}
-          <div className="glass bg-white dark:bg-slate-900 rounded-3xl p-6 border border-white/20 dark:border-slate-800 shadow-lg flex flex-col items-center print:shadow-none print:border print:border-slate-200 print:w-1/4 print:p-2 print:rounded-lg">
-             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 print:text-[7px] print:mb-1">Performans Grafiği</h3>
-             <div className="w-full aspect-square max-w-[260px] print:max-w-[120px]">
-                {renderRadarChart(70, 200)}
+          <div className="glass bg-white dark:bg-slate-900 rounded-3xl p-6 border border-white/20 dark:border-slate-800 shadow-lg flex flex-col items-center print:shadow-none print:border print:border-slate-200 print:w-1/4 print:p-1.5 print:rounded-lg">
+             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 print:text-[6px] print:mb-0.5">Performans Grafiği</h3>
+             <div className="w-full aspect-square max-w-[260px] print:max-w-[100px]">
+                {renderRadarChart(65, 180)}
              </div>
           </div>
 
           {/* Summary Text (Shown next to chart in print) */}
           <div className="hidden print:block flex-1 border border-slate-200 p-2 rounded-lg bg-slate-50/50">
-             <div className="flex items-center gap-1 mb-1">
-                <h3 className="text-[8px] font-black text-slate-800 uppercase tracking-widest">{t('common.summary')}</h3>
+             <div className="flex items-center gap-1 mb-0.5">
+                <h3 className="text-[7px] font-black text-slate-800 uppercase tracking-widest">{t('common.summary')}</h3>
              </div>
-             <p className="text-[9px] text-slate-700 leading-tight italic line-clamp-6">{data.feedback.summary}</p>
+             <p className="text-[8px] text-slate-700 leading-tight italic line-clamp-5">{data.feedback.summary}</p>
           </div>
         </div>
 
-        <div className="lg:col-span-2 space-y-6 print:lg:col-span-1 print:space-y-2">
+        <div className="lg:col-span-2 space-y-6 print:lg:col-span-1 print:space-y-1">
           {audioUrl && (
              <div className="glass bg-white dark:bg-slate-900 rounded-2xl p-4 border border-white/20 dark:border-slate-800 shadow-sm flex items-center gap-4 print:hidden">
                 <audio controls src={audioUrl} className="w-full h-10" />
@@ -270,51 +270,54 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
              <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-lg whitespace-pre-line">{data.feedback.summary}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 print:grid-cols-3 print:gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 print:grid-cols-3 print:gap-1.5">
              {Object.entries(data.scores).map(([key, score]) => (
-               <div key={key} className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm print:p-2 print:border print:border-slate-200 print:bg-white print:rounded-lg">
-                 <div className="flex justify-between items-center mb-2 print:mb-1">
-                   <h4 className="font-bold text-slate-700 dark:text-slate-200 print:text-indigo-700 print:text-[7px] uppercase tracking-tighter">
+               <div key={key} className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm print:p-1.5 print:border print:border-slate-200 print:bg-white print:rounded-lg">
+                 <div className="flex justify-between items-center mb-1.5 print:mb-0.5">
+                   <h4 className="font-bold text-slate-700 dark:text-slate-200 print:text-indigo-700 print:text-[6.5px] uppercase tracking-tighter">
                      {/* @ts-ignore */}
                      {CRITERIA[langKey][key]}
                    </h4>
-                   <span className={`font-bold px-2 py-0.5 rounded-full text-xs ${getScoreColor(score as number).replace('text-', 'bg-').replace('500', '100').replace('400', '900/30')} ${getScoreColor(score as number)} print:bg-transparent print:p-0 print:text-[8px]`}>{score}</span>
+                   <span className={`font-bold px-2 py-0.5 rounded-full text-xs ${getScoreColor(score as number).replace('text-', 'bg-').replace('500', '100').replace('400', '900/30')} ${getScoreColor(score as number)} print:bg-transparent print:p-0 print:text-[7.5px]`}>{score}</span>
                  </div>
-                 <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1 mb-2 overflow-hidden print:mb-1 print:h-1">
+                 <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1 mb-1.5 overflow-hidden print:mb-1 print:h-0.5">
                    <div className={`h-full rounded-full ${getProgressBarColor(score as number)} transition-all duration-1000 ease-out print:bg-indigo-600`} style={{ width: `${score}%` }}></div>
                  </div>
-                 <p className="text-xs text-slate-500 dark:text-slate-400 leading-tight whitespace-pre-line print:text-[7px] print:leading-none print:text-slate-600 line-clamp-3">{/* @ts-ignore */}{data.feedback[key]}</p>
+                 <p className="text-xs text-slate-500 dark:text-slate-400 leading-tight whitespace-pre-line print:text-[6.5px] print:leading-none print:text-slate-600 line-clamp-3">{/* @ts-ignore */}{data.feedback[key]}</p>
                </div>
              ))}
            </div>
 
-           <div className="grid grid-cols-1 gap-6 print:grid-cols-2 print:gap-2">
-               <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 print:p-2 print:rounded-lg print:border-slate-200">
+           <div className="grid grid-cols-1 gap-6 print:grid-cols-2 print:gap-1.5">
+               <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 print:p-1.5 print:rounded-lg print:border-slate-200">
                   <h3 className="font-bold text-slate-800 dark:text-white mb-2 print:text-[7px] print:text-indigo-600 uppercase tracking-widest">{t('evaluation.pronunciation')}</h3>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-tight print:text-[7px] print:leading-tight">{data.feedback.pronunciation}</p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 leading-tight print:text-[6.5px] print:leading-tight">{data.feedback.pronunciation}</p>
                </div>
-               <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 print:p-2 print:rounded-lg print:border-slate-200 print:shadow-none">
+               <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 print:p-1.5 print:rounded-lg print:border-slate-200 print:shadow-none">
                   <h3 className="font-bold text-slate-700 dark:text-slate-200 mb-3 print:text-[7px] print:text-indigo-600 uppercase tracking-widest">{t('evaluation.transcription')}</h3>
-                  <div className="font-mono text-[10px] text-slate-500 dark:text-slate-400 leading-tight whitespace-pre-wrap bg-slate-50 dark:bg-slate-950 p-4 rounded-xl print:bg-transparent print:p-0 print:text-[6px] print:leading-tight print:max-h-20 print:overflow-hidden line-clamp-6">{data.feedback.transcription}</div>
+                  <div className="font-mono text-[10px] text-slate-500 dark:text-slate-400 leading-tight whitespace-pre-wrap bg-slate-50 dark:bg-slate-950 p-4 rounded-xl print:bg-transparent print:p-0 print:text-[5.5px] print:leading-tight print:max-h-16 print:overflow-hidden line-clamp-5">{data.feedback.transcription}</div>
                </div>
            </div>
         </div>
       </div>
 
-      <div className="hidden print:flex justify-between items-end mt-2 pt-2 border-t border-slate-900">
-         <div className="w-1/2">
-            <p className="text-[7px] font-black text-slate-400 uppercase mb-4 tracking-widest">
-              {studentInfo ? t('exam.teacherNotes') : 'Gözlemci / Katılımcı Notları'}
-            </p>
-            <div className="h-8 border-b border-dashed border-slate-300"></div>
-         </div>
-         <div className="text-right">
-            <p className="text-[7px] font-black text-slate-400 uppercase mb-4 tracking-widest">Onay / İmza</p>
-            <p className="border-t border-slate-900 pt-0.5 font-black text-slate-900 text-[8px] min-w-[120px] uppercase">
-              {studentInfo ? 'Ders Öğretmeni' : 'Değerlendirici'}
-            </p>
-         </div>
-      </div>
+      {/* Conditional Signature Section */}
+      {studentInfo && (
+        <div className="hidden print:flex justify-between items-end mt-1 pt-1 border-t border-slate-900">
+          <div className="w-1/2">
+              <p className="text-[6px] font-black text-slate-400 uppercase mb-2 tracking-widest">
+                {t('exam.teacherNotes')}
+              </p>
+              <div className="h-6 border-b border-dashed border-slate-300"></div>
+          </div>
+          <div className="text-right">
+              <p className="text-[6px] font-black text-slate-400 uppercase mb-2 tracking-widest">Onay / İmza</p>
+              <p className="border-t border-slate-900 pt-0.5 font-black text-slate-900 text-[7px] min-w-[120px] uppercase">
+                Ders Öğretmeni
+              </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

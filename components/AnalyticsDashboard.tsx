@@ -32,20 +32,19 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
 
   const examData = useMemo(() => history.filter(h => 'isExam' in h && h.isExam) as ExamSession[], [history]);
 
-  // Reliable print trigger
+  // Handle printing trigger
   useEffect(() => {
     if (reportClassId && isPrinting) {
+      // Give React enough time to render the print area
       const timer = setTimeout(() => {
         window.print();
         setIsPrinting(false);
-        // Keep the reportClassId briefly so the print dialog has content
-        setTimeout(() => setReportClassId(null), 1000);
-      }, 500);
+      }, 600);
       return () => clearTimeout(timer);
     }
   }, [reportClassId, isPrinting]);
 
-  // Calculate stats for ALL classes, even those with 0 exams
+  // Calculate stats for all classes
   const classStats = useMemo(() => {
     const stats: Record<string, ClassStat> = {};
     classes.forEach(c => {
@@ -78,7 +77,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
     setIsPrinting(true);
   };
 
-  const reportClass = classes.find(c => c.id === reportClassId);
+  const reportClass = useMemo(() => classes.find(c => c.id === reportClassId), [classes, reportClassId]);
   
   const reportRows = useMemo(() => {
     if (!reportClass) return [];
@@ -90,7 +89,6 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
         return noA - noB;
       })
       .map(student => {
-        // Find the latest exam for this student
         const studentExams = examData.filter(e => 
           e.studentInfo.studentNumber === student.studentNumber || 
           (e.studentInfo.firstName.toLowerCase() === student.firstName.toLowerCase() && 
@@ -102,37 +100,30 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
   }, [reportClass, examData]);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-10 animate-fade-in relative z-10 pb-20">
+    <div className="max-w-7xl mx-auto pb-20 relative">
       <style>{`
         @media print {
-          /* Hide everything by default */
-          body * { display: none !important; }
-          /* Show only the print container and its children */
-          .print-area, .print-area * { display: block !important; }
-          /* Reset layout for print */
-          .print-area { 
-            display: block !important; 
-            position: absolute !important; 
-            left: 0 !important; 
-            top: 0 !important; 
-            width: 100% !important; 
-            background: white !important;
-            padding: 0 !important;
-            margin: 0 !important;
-          }
-          table { display: table !important; width: 100% !important; border-collapse: collapse !important; }
-          tr { display: table-row !important; }
-          td, th { display: table-cell !important; border: 1px solid #000 !important; padding: 4px !important; }
-          thead { display: table-header-group !important; }
-          tfoot { display: table-footer-group !important; }
           @page { size: A4; margin: 1.5cm; }
+          body { background: white !important; }
+          .print-container { 
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            background: white !important;
+            color: black !important;
+          }
+          table { border-collapse: collapse !important; width: 100% !important; }
+          th, td { border: 1px solid #334155 !important; }
         }
       `}</style>
 
-      {/* --- DASHBOARD UI --- */}
-      <div className="space-y-10 print:hidden">
+      {/* --- DASHBOARD UI (Hidden during print) --- */}
+      <div className="space-y-10 print:hidden animate-fade-in">
         <div className="flex items-center gap-4">
-          <button onClick={onBack} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"><BackIcon className="w-6 h-6" /></button>
+          <button onClick={onBack} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors">
+            <BackIcon className="w-6 h-6" />
+          </button>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white">{t('analytics.title')}</h1>
         </div>
 
@@ -152,7 +143,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
                    onClick={() => startPrintProcess(stat.id)} 
                    className="mt-6 text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-xl transition-all w-full border border-indigo-100 flex items-center justify-center gap-2"
                  >
-                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3 h-3"><path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.618 0-1.113-.493-1.12-1.112L5.882 18m11.778 0H5.882M6.72 13.829l1.41-5.64m1.41 5.64H14.25m5.341-3.172l-1.41-5.64m1.41 5.64l.842 3.368a1.125 1.125 0 01-1.12 1.405h-1.076M14.25 13.829v-1.125c0-.621.504-1.125 1.125-1.125h1.275m-4.5 1.125v-1.125c0-.621.504-1.125 1.125-1.125H14.25m-2.625 0H12m-2.625 0H9m-2.625 0H6M4.5 9h15M10.125 1.5h3.75a1.125 1.125 0 011.125 1.125v2.625h-6V2.625a1.125 1.125 0 011.125-1.125z" /></svg>
+                   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-3.5 h-3.5"><path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.618 0-1.113-.493-1.12-1.112L5.882 18m11.778 0H5.882M6.72 13.829l1.41-5.64m1.41 5.64H14.25m5.341-3.172l-1.41-5.64m1.41 5.64l.842 3.368a1.125 1.125 0 01-1.12 1.405h-1.076M14.25 13.829v-1.125c0-.621.504-1.125 1.125-1.125h1.275m-4.5 1.125v-1.125c0-.621.504-1.125 1.125-1.125H14.25m-2.625 0H12m-2.625 0H9m-2.625 0H6M4.5 9h15M10.125 1.5h3.75a1.125 1.125 0 011.125 1.125v2.625h-6V2.625a1.125 1.125 0 011.125-1.125z" /></svg>
                    {t('classes.classReport')}
                  </button>
               </div>
@@ -197,90 +188,90 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
         </div>
       </div>
 
-      {/* --- CLASS ACHIEVEMENT REPORT (PRINT ONLY) --- */}
-      {reportClass && (
-        <div className="print-area hidden">
-           <div className="space-y-8 p-4 bg-white text-slate-900">
-              <div className="flex justify-between items-center border-b-2 border-slate-900 pb-4">
-                 <div className="flex items-center gap-4">
-                    <img 
-                      src="https://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/dosyalar/2025_11/03215750_speaksmartaltlogo.png" 
-                      alt="Logo" 
-                      className="w-12 h-12 object-contain"
-                    />
-                    <div>
-                       <h2 className="text-2xl font-black uppercase text-slate-900 leading-tight">{t('analytics.classReportTitle')}</h2>
-                       <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">ChitIQ Teacher Analytics Portal</p>
-                    </div>
-                 </div>
-                 <div className="text-right">
-                    <p className="text-xl font-black text-indigo-600 leading-none">{reportClass.name}</p>
-                    <p className="text-[9px] font-bold text-slate-400 uppercase mt-1">Total Students: {reportClass.students.length}</p>
-                 </div>
-              </div>
+      {/* --- CLASS ACHIEVEMENT REPORT (ONLY VISIBLE ON PRINT) --- */}
+      <div className="hidden print:block print-container">
+        {reportClass && (
+          <div className="space-y-8 p-4 bg-white text-slate-900 min-h-screen">
+            <div className="flex justify-between items-center border-b-2 border-slate-900 pb-4">
+               <div className="flex items-center gap-4">
+                  <img 
+                    src="https://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/dosyalar/2025_11/03215750_speaksmartaltlogo.png" 
+                    alt="Logo" 
+                    className="w-14 h-14 object-contain"
+                  />
+                  <div>
+                     <h2 className="text-2xl font-black uppercase text-slate-900 leading-tight">{t('analytics.classReportTitle')}</h2>
+                     <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">ChitIQ Teacher Analytics Portal</p>
+                  </div>
+               </div>
+               <div className="text-right">
+                  <p className="text-2xl font-black text-indigo-600 leading-none">{reportClass.name}</p>
+                  <p className="text-[10px] font-bold text-slate-400 uppercase mt-2">Student Count: {reportClass.students.length}</p>
+               </div>
+            </div>
 
-              <table className="w-full border-collapse">
-                 <thead>
-                    <tr className="bg-slate-100 border-y-2 border-slate-900">
-                       <th className="border border-slate-300 p-2 text-center text-[10px] font-black uppercase text-slate-700 w-12">{t('analytics.studentNo')}</th>
-                       <th className="border border-slate-300 p-2 text-left text-[10px] font-black uppercase text-slate-700">{t('analytics.studentName')}</th>
-                       <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-500">Rapport</th>
-                       <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-500">Org.</th>
-                       <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-500">Deliv.</th>
-                       <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-500">Lang.</th>
-                       <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-500">Creat.</th>
-                       <th className="border border-slate-300 p-2 text-center text-[10px] font-black uppercase text-indigo-700 bg-indigo-50 w-20">{t('analytics.total')}</th>
-                       <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-500 w-24">{t('exam.examDate')}</th>
-                    </tr>
-                 </thead>
-                 <tbody>
-                    {reportRows.map((row) => (
-                       <tr key={row.student.id} className="border-b border-slate-200">
-                          <td className="border border-slate-200 p-2 text-center text-[11px] font-bold text-slate-900 bg-slate-50/50">{row.student.studentNumber}</td>
-                          <td className="border border-slate-200 p-2 text-[11px] font-bold text-slate-900">{row.student.firstName} {row.student.lastName}</td>
-                          <td className="border border-slate-200 p-2 text-center text-[10px] text-slate-600">{row.exam?.scores.rapport ?? '-'}</td>
-                          <td className="border border-slate-200 p-2 text-center text-[10px] text-slate-600">{row.exam?.scores.organisation ?? '-'}</td>
-                          <td className="border border-slate-200 p-2 text-center text-[10px] text-slate-600">{row.exam?.scores.delivery ?? '-'}</td>
-                          <td className="border border-slate-200 p-2 text-center text-[10px] text-slate-600">{row.exam?.scores.languageUse ?? '-'}</td>
-                          <td className="border border-slate-200 p-2 text-center text-[10px] text-slate-600">{row.exam?.scores.creativity ?? '-'}</td>
-                          <td className="border border-slate-200 p-2 text-center text-[12px] font-black text-indigo-700 bg-indigo-50/30">
-                            {row.exam ? `%${row.exam.overallScore}` : '-'}
-                          </td>
-                          <td className="border border-slate-200 p-2 text-center text-[9px] text-slate-400 font-medium">
-                             {row.exam ? new Date(row.exam.date).toLocaleDateString(i18n.language.startsWith('tr') ? 'tr-TR' : 'en-US') : '-'}
-                          </td>
-                       </tr>
-                    ))}
-                 </tbody>
-                 <tfoot>
-                    <tr className="bg-slate-900 text-white font-black border-t-2 border-slate-900">
-                       <td colSpan={2} className="p-3 text-[11px] uppercase tracking-widest pl-4">CLASS AVERAGE PERFORMANCE</td>
-                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.rapport || '-'}</td>
-                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.organisation || '-'}</td>
-                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.delivery || '-'}</td>
-                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.languageUse || '-'}</td>
-                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.creativity || '-'}</td>
-                       <td className="p-3 text-center text-[14px] bg-indigo-600">
-                         {classStats[reportClass.id] && classStats[reportClass.id].count > 0 ? `%${classStats[reportClass.id].avg}` : '-'}
-                       </td>
-                       <td className="p-3"></td>
-                    </tr>
-                 </tfoot>
-              </table>
+            <table className="w-full">
+               <thead>
+                  <tr className="bg-slate-100 border-y-2 border-slate-900">
+                     <th className="p-2 text-center text-[11px] font-black uppercase text-slate-700 w-14">{t('analytics.studentNo')}</th>
+                     <th className="p-2 text-left text-[11px] font-black uppercase text-slate-700">{t('analytics.studentName')}</th>
+                     <th className="p-2 text-center text-[9px] font-bold uppercase text-slate-500">Rapport</th>
+                     <th className="p-2 text-center text-[9px] font-bold uppercase text-slate-500">Org.</th>
+                     <th className="p-2 text-center text-[9px] font-bold uppercase text-slate-500">Deliv.</th>
+                     <th className="p-2 text-center text-[9px] font-bold uppercase text-slate-500">Lang.</th>
+                     <th className="p-2 text-center text-[9px] font-bold uppercase text-slate-500">Creat.</th>
+                     <th className="p-2 text-center text-[11px] font-black uppercase text-indigo-700 bg-indigo-50 w-24">{t('analytics.total')}</th>
+                     <th className="p-2 text-center text-[9px] font-bold uppercase text-slate-500 w-28">{t('exam.examDate')}</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  {reportRows.map((row) => (
+                     <tr key={row.student.id} className="border-b border-slate-200">
+                        <td className="p-2 text-center text-[12px] font-bold text-slate-900 bg-slate-50/50">{row.student.studentNumber}</td>
+                        <td className="p-2 text-[12px] font-bold text-slate-900">{row.student.firstName} {row.student.lastName}</td>
+                        <td className="p-2 text-center text-[11px] text-slate-600">{row.exam?.scores.rapport ?? '-'}</td>
+                        <td className="p-2 text-center text-[11px] text-slate-600">{row.exam?.scores.organisation ?? '-'}</td>
+                        <td className="p-2 text-center text-[11px] text-slate-600">{row.exam?.scores.delivery ?? '-'}</td>
+                        <td className="p-2 text-center text-[11px] text-slate-600">{row.exam?.scores.languageUse ?? '-'}</td>
+                        <td className="p-2 text-center text-[11px] text-slate-600">{row.exam?.scores.creativity ?? '-'}</td>
+                        <td className="p-2 text-center text-[13px] font-black text-indigo-700 bg-indigo-50/30">
+                          {row.exam ? `%${row.exam.overallScore}` : '-'}
+                        </td>
+                        <td className="p-2 text-center text-[10px] text-slate-400 font-medium">
+                           {row.exam ? new Date(row.exam.date).toLocaleDateString(i18n.language.startsWith('tr') ? 'tr-TR' : 'en-US') : '-'}
+                        </td>
+                     </tr>
+                  ))}
+               </tbody>
+               <tfoot>
+                  <tr className="bg-slate-900 text-white font-black border-t-2 border-slate-900">
+                     <td colSpan={2} className="p-4 text-[12px] uppercase tracking-widest pl-6">CLASS PERFORMANCE OVERVIEW</td>
+                     <td className="p-4 text-center text-[12px]">{classStats[reportClass.id]?.metrics.rapport || '-'}</td>
+                     <td className="p-4 text-center text-[12px]">{classStats[reportClass.id]?.metrics.organisation || '-'}</td>
+                     <td className="p-4 text-center text-[12px]">{classStats[reportClass.id]?.metrics.delivery || '-'}</td>
+                     <td className="p-4 text-center text-[12px]">{classStats[reportClass.id]?.metrics.languageUse || '-'}</td>
+                     <td className="p-4 text-center text-[12px]">{classStats[reportClass.id]?.metrics.creativity || '-'}</td>
+                     <td className="p-4 text-center text-[16px] bg-indigo-600">
+                       {classStats[reportClass.id] && classStats[reportClass.id].count > 0 ? `%${classStats[reportClass.id].avg}` : '-'}
+                     </td>
+                     <td className="p-4"></td>
+                  </tr>
+               </tfoot>
+            </table>
 
-              <div className="flex justify-between items-end mt-16 pt-6 border-t border-slate-300">
-                 <div className="w-1/2">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase mb-8">Official Assessment Notes</p>
-                    <div className="border-b border-dashed border-slate-300 h-16 w-3/4"></div>
-                 </div>
-                 <div className="text-right">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase mb-8">Authorized Instructor Signature</p>
-                    <p className="border-t-2 border-slate-900 pt-2 font-black text-slate-900 text-[12px]">Can AKALIN</p>
-                 </div>
-              </div>
-           </div>
-        </div>
-      )}
+            <div className="flex justify-between items-end mt-24 pt-8 border-t border-slate-300">
+               <div className="w-1/2">
+                  <p className="text-[11px] font-bold text-slate-400 uppercase mb-10">Official Assessment Notes</p>
+                  <div className="border-b border-dashed border-slate-300 h-20 w-3/4"></div>
+               </div>
+               <div className="text-right">
+                  <p className="text-[11px] font-bold text-slate-400 uppercase mb-10">Authorized Instructor Signature</p>
+                  <p className="border-t-2 border-slate-900 pt-3 font-black text-slate-900 text-[14px]">Can AKALIN</p>
+               </div>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

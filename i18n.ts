@@ -58,7 +58,12 @@ const resources = {
         deleteClass: "Delete Class",
         compareClasses: "Compare Classes",
         studentAdded: "Student added to class.",
-        classReport: "Generate Class Report"
+        classReport: "Generate Class Report",
+        studentProfile: "Student Profile",
+        noAttempts: "No exam records found for this student.",
+        examHistory: "Exam History",
+        avgScore: "Average Score",
+        totalExams: "Exams Taken"
       },
       analytics: {
         title: "Analytics Dashboard",
@@ -214,7 +219,12 @@ const resources = {
         deleteClass: "Sınıfı Sil",
         compareClasses: "Sınıfları Karşılaştır",
         studentAdded: "Öğrenci sınıfa kaydedildi.",
-        classReport: "Sınıf Raporu Oluştur"
+        classReport: "Sınıf Raporu Oluştur",
+        studentProfile: "Öğrenci Profili",
+        noAttempts: "Bu öğrenciye ait sınav kaydı bulunamadı.",
+        examHistory: "Sınav Geçmişi",
+        avgScore: "Ortalama Puan",
+        totalExams: "Sınav Sayısı"
       },
       analytics: {
         title: "Analiz Paneli",

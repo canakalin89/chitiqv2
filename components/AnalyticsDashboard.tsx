@@ -1,7 +1,7 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Evaluation, ExamSession, ClassRoom } from '../types';
+import { Evaluation, ExamSession, ClassRoom, Student } from '../types';
 import { BackIcon } from '../icons/BackIcon';
 
 interface ClassStat {
@@ -28,8 +28,21 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
   const { t, i18n } = useTranslation();
   const [selectedClassIds, setSelectedClassIds] = useState<string[]>([]);
   const [reportClassId, setReportClassId] = useState<string | null>(null);
+  const [isPrinting, setIsPrinting] = useState(false);
 
   const examData = useMemo(() => history.filter(h => 'isExam' in h && h.isExam) as ExamSession[], [history]);
+
+  // Handle printing trigger after DOM update
+  useEffect(() => {
+    if (reportClassId && isPrinting) {
+      const timer = setTimeout(() => {
+        window.print();
+        setIsPrinting(false);
+        setTimeout(() => setReportClassId(null), 500);
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [reportClassId, isPrinting]);
 
   const classStats = useMemo(() => {
     const stats: Record<string, ClassStat> = {};
@@ -59,25 +72,31 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
     setSelectedClassIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   };
 
-  const handlePrintClassReport = (classId: string) => {
+  const startPrintProcess = (classId: string) => {
     setReportClassId(classId);
-    // Use a slight delay to ensure the DOM is updated before printing
-    setTimeout(() => {
-      window.print();
-      // Keep it set for a moment then clear
-      setTimeout(() => setReportClassId(null), 500);
-    }, 200);
+    setIsPrinting(true);
   };
 
   const reportClass = classes.find(c => c.id === reportClassId);
-  const reportExams = useMemo(() => {
+  
+  // Create a list of ALL students in the class and pair them with their best/latest exam if it exists
+  const reportRows = useMemo(() => {
     if (!reportClass) return [];
-    return examData
-      .filter(e => e.studentInfo.classId === reportClass.id || e.studentInfo.studentClass === reportClass.name)
+    
+    return [...reportClass.students]
       .sort((a, b) => {
-        const noA = parseInt(a.studentInfo.studentNumber || '0');
-        const noB = parseInt(b.studentInfo.studentNumber || '0');
+        const noA = parseInt(a.studentNumber, 10) || 0;
+        const noB = parseInt(b.studentNumber, 10) || 0;
         return noA - noB;
+      })
+      .map(student => {
+        // Find the exam result for this student
+        const studentExam = examData.find(e => 
+          e.studentInfo.studentNumber === student.studentNumber || 
+          (e.studentInfo.firstName.toLowerCase() === student.firstName.toLowerCase() && 
+           e.studentInfo.lastName.toLowerCase() === student.lastName.toLowerCase())
+        );
+        return { student, exam: studentExam };
       });
   }, [reportClass, examData]);
 
@@ -92,8 +111,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-10 animate-fade-in relative z-10 pb-20 print:p-0">
-      {/* --- DASHBOARD UI (Hidden on Print) --- */}
+    <div className="max-w-7xl mx-auto space-y-10 animate-fade-in relative z-10 pb-20">
       <div className="space-y-10 print:hidden">
         <div className="flex items-center gap-4">
           <button onClick={onBack} className="p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg transition-colors"><BackIcon className="w-6 h-6" /></button>
@@ -107,7 +125,12 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
                <h2 className="text-4xl font-black text-slate-800 dark:text-white">{stat.avg}</h2>
                <p className="text-xs text-slate-400 font-bold uppercase mt-1">{t('analytics.averageScore')}</p>
                <div className="w-full h-1 bg-slate-100 dark:bg-slate-800 rounded-full mt-4 overflow-hidden"><div className="h-full bg-indigo-500" style={{ width: `${stat.avg}%` }}></div></div>
-               <button onClick={() => handlePrintClassReport(stat.id)} className="mt-6 text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-xl transition-all w-full">{t('classes.classReport')}</button>
+               <button 
+                 onClick={() => startPrintProcess(stat.id)} 
+                 className="mt-6 text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-xl transition-all w-full border border-indigo-100"
+               >
+                 {t('classes.classReport')}
+               </button>
             </div>
           ))}
         </div>
@@ -151,72 +174,93 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
 
       {/* --- CLASS ACHIEVEMENT REPORT (PRINT ONLY) --- */}
       {reportClass && (
-        <div className="hidden print:block fixed inset-0 bg-white z-[9999] p-8 overflow-y-auto">
-           <div className="flex justify-between items-center border-b-2 border-slate-900 pb-4">
-              <div className="flex items-center gap-3">
-                 <img src="https://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/dosyalar/2025_11/03215750_speaksmartaltlogo.png" alt="Logo" className="w-10 h-10" />
-                 <div>
-                    <h2 className="text-xl font-black uppercase text-slate-900">{t('analytics.classReportTitle')}</h2>
-                    <p className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Teacher Analytics Portal</p>
+        <div className="hidden print:block fixed inset-0 bg-white z-[9999] p-0 m-0 w-full h-full text-slate-900 overflow-visible">
+           <style>{`
+             @media print {
+               body * { visibility: hidden; }
+               .print-container, .print-container * { visibility: visible; }
+               .print-container { position: absolute; left: 0; top: 0; width: 100%; }
+               @page { size: A4; margin: 1cm; }
+             }
+           `}</style>
+           
+           <div className="print-container space-y-8 p-4">
+              <div className="flex justify-between items-center border-b-2 border-slate-900 pb-4">
+                 <div className="flex items-center gap-4">
+                    <img 
+                      src="https://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/dosyalar/2025_11/03215750_speaksmartaltlogo.png" 
+                      alt="Logo" 
+                      className="w-12 h-12 object-contain"
+                    />
+                    <div>
+                       <h2 className="text-2xl font-black uppercase text-slate-900 leading-tight">{t('analytics.classReportTitle')}</h2>
+                       <p className="text-[10px] font-bold text-slate-500 uppercase tracking-[0.2em]">ChitIQ Teacher Analytics Portal</p>
+                    </div>
+                 </div>
+                 <div className="text-right">
+                    <p className="text-xl font-black text-indigo-600 leading-none">{reportClass.name}</p>
+                    <p className="text-[9px] font-bold text-slate-400 uppercase mt-1">Total Students: {reportClass.students.length}</p>
                  </div>
               </div>
-              <div className="text-right">
-                 <p className="text-lg font-black text-indigo-600">{reportClass.name}</p>
-                 <p className="text-[9px] font-bold text-slate-400 uppercase">{t('analytics.totalExams')}: {reportExams.length}</p>
-              </div>
-           </div>
 
-           <table className="w-full border-collapse mt-8">
-              <thead>
-                 <tr className="bg-slate-100">
-                    <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-600">{t('analytics.studentNo')}</th>
-                    <th className="border border-slate-300 p-2 text-left text-[9px] font-bold uppercase text-slate-600">{t('analytics.studentName')}</th>
-                    <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-600">Rapport</th>
-                    <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-600">Org.</th>
-                    <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-600">Deliv.</th>
-                    <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-600">Lang.</th>
-                    <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-600">Creat.</th>
-                    <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-indigo-700 bg-indigo-50">{t('analytics.total')}</th>
-                    <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-600">{t('exam.examDate')}</th>
-                 </tr>
-              </thead>
-              <tbody>
-                 {reportExams.map((exam) => (
-                    <tr key={exam.id} className="hover:bg-slate-50">
-                       <td className="border border-slate-200 p-2 text-center text-[10px] font-bold text-slate-800">{exam.studentInfo.studentNumber}</td>
-                       <td className="border border-slate-200 p-2 text-[10px] font-bold text-slate-800">{exam.studentInfo.firstName} {exam.studentInfo.lastName}</td>
-                       <td className="border border-slate-200 p-2 text-center text-[10px] text-slate-600">{exam.scores.rapport}</td>
-                       <td className="border border-slate-200 p-2 text-center text-[10px] text-slate-600">{exam.scores.organisation}</td>
-                       <td className="border border-slate-200 p-2 text-center text-[10px] text-slate-600">{exam.scores.delivery}</td>
-                       <td className="border border-slate-200 p-2 text-center text-[10px] text-slate-600">{exam.scores.languageUse}</td>
-                       <td className="border border-slate-200 p-2 text-center text-[10px] text-slate-600">{exam.scores.creativity}</td>
-                       <td className="border border-slate-200 p-2 text-center text-[11px] font-black text-indigo-700 bg-indigo-50/30">%{exam.overallScore}</td>
-                       <td className="border border-slate-200 p-2 text-center text-[8px] text-slate-400 font-medium">{new Date(exam.date).toLocaleDateString(i18n.language.startsWith('tr') ? 'tr-TR' : 'en-US')}</td>
+              <table className="w-full border-collapse">
+                 <thead>
+                    <tr className="bg-slate-100 border-y-2 border-slate-900">
+                       <th className="border border-slate-300 p-2 text-center text-[10px] font-black uppercase text-slate-700 w-12">{t('analytics.studentNo')}</th>
+                       <th className="border border-slate-300 p-2 text-left text-[10px] font-black uppercase text-slate-700">{t('analytics.studentName')}</th>
+                       <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-500">Rapport</th>
+                       <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-500">Org.</th>
+                       <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-500">Deliv.</th>
+                       <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-500">Lang.</th>
+                       <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-500">Creat.</th>
+                       <th className="border border-slate-300 p-2 text-center text-[10px] font-black uppercase text-indigo-700 bg-indigo-50 w-20">{t('analytics.total')}</th>
+                       <th className="border border-slate-300 p-2 text-center text-[9px] font-bold uppercase text-slate-500 w-24">{t('exam.examDate')}</th>
                     </tr>
-                 ))}
-              </tbody>
-              <tfoot>
-                 <tr className="bg-slate-100 font-bold">
-                    <td colSpan={2} className="border border-slate-300 p-2 text-[9px] uppercase text-slate-700">Class Average</td>
-                    <td className="border border-slate-300 p-2 text-center text-[10px]">{classStats[reportClass.id]?.metrics.rapport}</td>
-                    <td className="border border-slate-300 p-2 text-center text-[10px]">{classStats[reportClass.id]?.metrics.organisation}</td>
-                    <td className="border border-slate-300 p-2 text-center text-[10px]">{classStats[reportClass.id]?.metrics.delivery}</td>
-                    <td className="border border-slate-300 p-2 text-center text-[10px]">{classStats[reportClass.id]?.metrics.languageUse}</td>
-                    <td className="border border-slate-300 p-2 text-center text-[10px]">{classStats[reportClass.id]?.metrics.creativity}</td>
-                    <td className="border border-slate-300 p-2 text-center text-[12px] font-black text-indigo-700 bg-indigo-50">%{classStats[reportClass.id]?.avg}</td>
-                    <td className="border border-slate-300 p-2"></td>
-                 </tr>
-              </tfoot>
-           </table>
+                 </thead>
+                 <tbody>
+                    {reportRows.map((row) => (
+                       <tr key={row.student.id} className="border-b border-slate-200">
+                          <td className="border border-slate-200 p-2 text-center text-[11px] font-bold text-slate-900 bg-slate-50/50">{row.student.studentNumber}</td>
+                          <td className="border border-slate-200 p-2 text-[11px] font-bold text-slate-900">{row.student.firstName} {row.student.lastName}</td>
+                          <td className="border border-slate-200 p-2 text-center text-[10px] text-slate-600">{row.exam?.scores.rapport ?? '-'}</td>
+                          <td className="border border-slate-200 p-2 text-center text-[10px] text-slate-600">{row.exam?.scores.organisation ?? '-'}</td>
+                          <td className="border border-slate-200 p-2 text-center text-[10px] text-slate-600">{row.exam?.scores.delivery ?? '-'}</td>
+                          <td className="border border-slate-200 p-2 text-center text-[10px] text-slate-600">{row.exam?.scores.languageUse ?? '-'}</td>
+                          <td className="border border-slate-200 p-2 text-center text-[10px] text-slate-600">{row.exam?.scores.creativity ?? '-'}</td>
+                          <td className="border border-slate-200 p-2 text-center text-[12px] font-black text-indigo-700 bg-indigo-50/30">
+                            {row.exam ? `%${row.exam.overallScore}` : '-'}
+                          </td>
+                          <td className="border border-slate-200 p-2 text-center text-[9px] text-slate-400 font-medium">
+                             {row.exam ? new Date(row.exam.date).toLocaleDateString(i18n.language.startsWith('tr') ? 'tr-TR' : 'en-US') : 'N/A'}
+                          </td>
+                       </tr>
+                    ))}
+                 </tbody>
+                 <tfoot>
+                    <tr className="bg-slate-900 text-white font-black border-t-2 border-slate-900">
+                       <td colSpan={2} className="p-3 text-[11px] uppercase tracking-widest pl-4">CLASS AVERAGE PERFORMANCE</td>
+                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.rapport ?? '-'}</td>
+                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.organisation ?? '-'}</td>
+                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.delivery ?? '-'}</td>
+                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.languageUse ?? '-'}</td>
+                       <td className="p-3 text-center text-[11px]">{classStats[reportClass.id]?.metrics.creativity ?? '-'}</td>
+                       <td className="p-3 text-center text-[14px] bg-indigo-600">
+                         {classStats[reportClass.id] ? `%${classStats[reportClass.id].avg}` : '-'}
+                       </td>
+                       <td className="p-3"></td>
+                    </tr>
+                 </tfoot>
+              </table>
 
-           <div className="flex justify-between items-end mt-12 pt-4 border-t border-slate-200">
-              <div className="w-1/2">
-                 <p className="text-[8px] font-bold text-slate-400 uppercase mb-8">Official Notes</p>
-                 <div className="border-b border-dashed border-slate-300 h-10"></div>
-              </div>
-              <div className="text-right">
-                 <p className="text-[8px] font-bold text-slate-400 uppercase mb-8">Teacher Signature</p>
-                 <p className="border-t border-slate-900 pt-1 font-bold text-slate-900 text-[10px]">Can AKALIN</p>
+              <div className="flex justify-between items-end mt-16 pt-6 border-t border-slate-300">
+                 <div className="w-1/2">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase mb-8">Official Assessment Notes</p>
+                    <div className="border-b border-dashed border-slate-300 h-16 w-3/4"></div>
+                 </div>
+                 <div className="text-right">
+                    <p className="text-[10px] font-bold text-slate-400 uppercase mb-8">Authorized Instructor Signature</p>
+                    <p className="border-t-2 border-slate-900 pt-2 font-black text-slate-900 text-[12px]">Can AKALIN</p>
+                 </div>
               </div>
            </div>
         </div>

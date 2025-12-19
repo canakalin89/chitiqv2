@@ -282,7 +282,7 @@ const AnalyticsDashboard: React.FC<AnalyticsDashboardProps> = ({ history, classe
                </div>
                <div className="text-right">
                   <p className="text-[8px] font-bold text-slate-400 uppercase mb-4">Instructor Signature</p>
-                  <p className="border-t-2 border-slate-900 pt-1 font-black text-slate-900 text-[10px]">Can AKALIN</p>
+                  <p className="border-t-2 border-slate-900 pt-1 font-black text-slate-900 text-[10px] min-w-[120px]">&nbsp;</p>
                </div>
             </div>
           </div>

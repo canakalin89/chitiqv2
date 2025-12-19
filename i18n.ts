@@ -74,7 +74,7 @@ const resources = {
         selectClasses: "Select Classes to Compare",
         noData: "Not enough exam data for analytics.",
         totalExams: "Total Exams",
-        classReportTitle: "Class Achievement Report",
+        classReportTitle: "Speaking Exam Class Achievement List",
         studentName: "Student Name",
         total: "Total",
         studentNo: "No."
@@ -235,7 +235,7 @@ const resources = {
         selectClasses: "Karşılaştırmak İçin Sınıf Seçin",
         noData: "Analiz için yeterli sınav verisi bulunamadı.",
         totalExams: "Toplam Sınav",
-        classReportTitle: "Sınıf Başarı Çizelgesi",
+        classReportTitle: "Konuşma Sınavı Sınıf Başarı Çizelgesi",
         studentName: "Öğrenci Adı Soyadı",
         total: "Top.",
         studentNo: "No."

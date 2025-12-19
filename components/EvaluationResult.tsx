@@ -286,7 +286,7 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
          </div>
          <div className="text-right">
             <p className="text-[8px] font-bold text-slate-400 uppercase mb-6">Instructor Signature</p>
-            <p className="border-t border-slate-400 pt-1 font-bold text-slate-800 text-[10px]">Can AKALIN</p>
+            <p className="border-t border-slate-400 pt-1 font-bold text-slate-800 text-[10px] min-w-[120px]">&nbsp;</p>
          </div>
       </div>
     </div>

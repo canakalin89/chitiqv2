@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -122,6 +123,30 @@
       }
       .dark .glass {
         background: rgba(15, 23, 42, 0.6);
+      }
+
+      /* Print Optimization to force single page */
+      @media print {
+        @page {
+          size: A4;
+          margin: 0.5cm;
+        }
+        body {
+          background: white !important;
+          color: black !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          height: auto !important;
+          min-height: 0 !important;
+        }
+        #root {
+          height: auto !important;
+          min-height: 0 !important;
+        }
+        /* Remove any backgrounds or effects that might bleed into second page */
+        .fixed, .absolute-blob {
+          display: none !important;
+        }
       }
     </style>
   </head>

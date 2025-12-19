@@ -62,8 +62,8 @@ const resources = {
         startWheel: "Open Lucky Wheel",
         spinWheel: "Spin the Wheel",
         spinning: "Spinning...",
-        reportTitle: "Speaking Assessment Report",
-        examDate: "Exam Date",
+        reportTitle: "Speaking Assessment Exam Report",
+        examDate: "Date",
         selectedTopic: "Exam Topic",
         teacherNotes: "Teacher's Assessment Notes"
       },
@@ -94,7 +94,7 @@ const resources = {
         overallScore: "Overall Score",
         pronunciation: "Pronunciation Feedback",
         transcription: "Speech Transcription",
-        reportTitle: "Speaking Performance Report"
+        reportTitle: "Speaking Performance Analysis Report"
       },
       history: {
         title: "Practice History",
@@ -246,8 +246,8 @@ const resources = {
         startWheel: "Şans Çarkını Aç",
         spinWheel: "Çarkı Çevir",
         spinning: "Çevriliyor...",
-        reportTitle: "Konuşma Analiz Raporu",
-        examDate: "Sınav Tarihi",
+        reportTitle: "Konuşma Sınavı Analiz Raporu",
+        examDate: "Tarih",
         selectedTopic: "Sınav Konusu",
         teacherNotes: "Öğretmen Değerlendirme Notları"
       },
@@ -278,7 +278,7 @@ const resources = {
         overallScore: "Genel Puan",
         pronunciation: "Telaffuz Geri Bildirimi",
         transcription: "Konuşma Dökümü",
-        reportTitle: "Konuşma Performans Raporu"
+        reportTitle: "Konuşma Performans Analiz Raporu"
       },
       history: {
         title: "Pratik Geçmişi",

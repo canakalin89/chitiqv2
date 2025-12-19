@@ -30,10 +30,23 @@ export interface Evaluation extends EvaluationResultData {
   date: string; // ISO 8601 format
 }
 
+export interface Student {
+  id: string;
+  firstName: string;
+  lastName: string;
+}
+
+export interface ClassRoom {
+  id: string;
+  name: string;
+  students: Student[];
+}
+
 export interface StudentInfo {
   firstName: string;
   lastName: string;
   studentClass: string;
+  classId?: string;
 }
 
 export interface ExamSession extends Evaluation {

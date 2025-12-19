@@ -1,10 +1,11 @@
 
-import { GoogleGenAI, Type, Schema } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import { EvaluationResultData } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-const evaluationSchema: Schema = {
+// Using a plain object for schema as recommended in guidelines
+const evaluationSchema = {
   type: Type.OBJECT,
   properties: {
     topic: {
@@ -89,8 +90,9 @@ export const evaluateSpeech = async (
   `;
 
   try {
+    // Using gemini-3-pro-preview for complex reasoning tasks like speech evaluation
     const response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3-pro-preview',
       contents: {
         parts: [
           {

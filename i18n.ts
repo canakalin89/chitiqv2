@@ -13,6 +13,7 @@ const resources = {
       common: {
         goBack: "Go Back",
         cancel: "Cancel",
+        save: "Save",
         summary: "Summary",
         history: "History",
         viewAllHistory: "View All History",
@@ -34,6 +35,8 @@ const resources = {
         usageCount: "Usage Count",
         examMode: "Teacher Exam Mode",
         examModeDesc: "Create structured exams, pick questions with a lucky wheel, and download reports.",
+        manageClasses: "Class Management",
+        analytics: "Analytics & Comparison",
         processingSteps: {
           uploading: "Uploading audio...",
           transcribing: "Transcribing speech...",
@@ -42,9 +45,34 @@ const resources = {
         },
         estimatedTime: "Estimated time: ~{{seconds}}s"
       },
+      classes: {
+        title: "Class Management",
+        addClass: "Add New Class",
+        className: "Class Name (e.g., 9-A)",
+        addStudent: "Add Student",
+        bulkAdd: "Bulk Add Students",
+        bulkPlaceholder: "Paste names here (One per line: First Last)",
+        bulkHelp: "Paste your student list. Format: 'Name Surname' on each line.",
+        noClasses: "No classes defined yet.",
+        studentList: "Students",
+        deleteClass: "Delete Class",
+        compareClasses: "Compare Classes",
+        studentAdded: "Student added to class."
+      },
+      analytics: {
+        title: "Analytics Dashboard",
+        classStats: "Class Statistics",
+        averageScore: "Average Score",
+        studentPerformance: "Student Performance",
+        classComparison: "Class Comparison",
+        selectClasses: "Select Classes to Compare",
+        noData: "Not enough exam data for analytics."
+      },
       exam: {
         title: "Teacher Exam Mode",
         studentInfo: "Student Information",
+        selectClass: "Select Class",
+        selectStudent: "Select Student",
         firstName: "First Name",
         lastName: "Last Name",
         class: "Class",
@@ -134,6 +162,7 @@ const resources = {
       common: {
         goBack: "Geri Dön",
         cancel: "İptal",
+        save: "Kaydet",
         summary: "Özet",
         history: "Geçmiş",
         viewAllHistory: "Tüm Geçmişi Gör",
@@ -155,6 +184,8 @@ const resources = {
         usageCount: "Kullanılma Sayısı",
         examMode: "Öğretmen Sınav Modu",
         examModeDesc: "Sınav oturumları oluşturun, soruları çarkla seçin ve resmi raporlar alın.",
+        manageClasses: "Sınıf Yönetimi",
+        analytics: "Analiz ve Karşılaştırma",
         processingSteps: {
           uploading: "Ses yükleniyor...",
           transcribing: "Konuşma deşifre ediliyor...",
@@ -163,9 +194,34 @@ const resources = {
         },
         estimatedTime: "Tahmini süre: ~{{seconds}}sn"
       },
+      classes: {
+        title: "Sınıf Yönetimi",
+        addClass: "Yeni Sınıf Ekle",
+        className: "Sınıf Adı (Örn: 9-A)",
+        addStudent: "Öğrenci Ekle",
+        bulkAdd: "Toplu Öğrenci Ekle",
+        bulkPlaceholder: "İsimleri buraya yapıştırın (Her satıra bir kişi: Ad Soyad)",
+        bulkHelp: "Öğrenci listenizi yapıştırın. Format: Her satırda 'Ad Soyad' olmalıdır.",
+        noClasses: "Henüz tanımlanmış sınıf yok.",
+        studentList: "Öğrenci Listesi",
+        deleteClass: "Sınıfı Sil",
+        compareClasses: "Sınıfları Karşılaştır",
+        studentAdded: "Öğrenci sınıfa kaydedildi."
+      },
+      analytics: {
+        title: "Analiz Paneli",
+        classStats: "Sınıf İstatistikleri",
+        averageScore: "Ortalama Puan",
+        studentPerformance: "Öğrenci Performansı",
+        classComparison: "Sınıf Karşılaştırması",
+        selectClasses: "Karşılaştırmak İçin Sınıf Seçin",
+        noData: "Analiz için yeterli sınav verisi bulunamadı."
+      },
       exam: {
         title: "Öğretmen Sınav Modu",
         studentInfo: "Öğrenci Bilgileri",
+        selectClass: "Sınıf Seçin",
+        selectStudent: "Öğrenci Seçin",
         firstName: "Adı",
         lastName: "Soyadı",
         class: "Sınıfı",

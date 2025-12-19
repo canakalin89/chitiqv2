@@ -122,46 +122,52 @@ const resources = {
         empty: "No history available yet."
       },
       landing: {
-        heroTitle: "Ace Your Speaking Exams",
-        heroDesc: "The smartest way for high school students to prepare for English exams. Fully aligned with the Century of Türkiye Education Model.",
-        badge: "Aligned with Century of Türkiye Education Model",
-        features: "Features",
-        startBtn: "Start Evaluating",
+        heroTitle: "Master Your Speaking Exams",
+        heroDesc: "The ultimate AI assistant for English teachers and students. Aligned with the Century of Türkiye Education Model.",
+        badge: "Century of Türkiye Education Model",
+        startBtn: "Start Practicing",
         howItWorks: "How It Works",
-        howDesc: "Three simple steps to master your speaking skills.",
-        step1Title: "Choose a Topic",
-        step1Desc: "Select from exam-focused topics or freestyle to practice specific scenarios.",
-        step2Title: "Record Speech",
-        step2Desc: "Speak naturally. Our AI listens, transcribes, and analyzes your speech in real-time.",
-        step3Title: "Get Feedback",
-        step3Desc: "Receive instant scores and detailed advice on 5 key performance metrics.",
-        criteriaTitle: "What We Evaluate",
-        criteriaDesc: "Our AI evaluates your speech based on these 5 core pillars:",
-        testimonialsTitle: "What Our Students Say",
-        testimonials: [
-          { name: "Ahmet Y.", comment: "I used to get very nervous before speaking exams, but practicing with ChitIQ gave me confidence!", role: "11th Grade Student" },
-          { name: "Zeynep K.", comment: "The detailed feedback on my delivery helped me get a full score on my finals!", role: "12th Grade Student" },
-          { name: "Caner D.", comment: "It's like having a private English tutor available 24/7. Definitely the best study tool.", role: "10th Grade Student" },
-          { name: "Elif S.", comment: "As a 9th grader, I was worried about high school English, but this app made it fun and easy.", role: "9th Grade Student" },
-          { name: "Mert Ö.", comment: "The AI understands me perfectly even when I make small mistakes. Very impressive!", role: "11th Grade Student" },
-          { name: "Selin B.", comment: "I improved my pronunciation score from 60 to 95 in just two weeks of practice.", role: "9th Grade Student" },
-          { name: "Burak T.", comment: "Perfect for IELTS preparation. The feedback is very professional and clear.", role: "12th Grade Student" },
-          { name: "Ece V.", comment: "I love the user-friendly interface. It's so easy to just pick a topic and start speaking.", role: "10th Grade Student" },
-          { name: "Deniz G.", comment: "My teacher recommended this app to the whole class. We all love it!", role: "9th Grade Student" },
-          { name: "Yigit A.", comment: "The 'Century of Türkiye' alignment makes me feel like I'm studying exactly what I need.", role: "11th Grade Student" },
-          { name: "Gamze R.", comment: "I used to struggle with organizing my thoughts. The AI's feedback on organization is a lifesaver.", role: "12th Grade Student" },
-          { name: "Bora L.", comment: "Finally an app that gives specific feedback instead of just a generic score!", role: "9th Grade Student" },
-          { name: "Derya P.", comment: "The real-time transcription helps me see where I hesitate. Truly useful tool.", role: "11th Grade Student" },
-          { name: "Kerem U.", comment: "Helped me overcome my fear of speaking in front of the class.", role: "10th Grade Student" },
-          { name: "Sude N.", comment: "I like how it tracks my history. Seeing my scores go up is so motivating.", role: "9th Grade Student" },
-          { name: "Ozan C.", comment: "Best way to practice speaking without feeling judged. Very supportive tool.", role: "11th Grade Student" },
-          { name: "Asli F.", comment: "The variety of topics is amazing. There is always something new to talk about.", role: "12th Grade Student" }
-        ]
+        howDesc: "Achieve fluency in three simple steps.",
+        step1Title: "Pick Your Topic",
+        step1Desc: "Choose from curriculum-based speaking tasks.",
+        step2Title: "Record & Transcribe",
+        step2Desc: "Speak naturally. AI transcribes your words in real-time.",
+        step3Title: "Smart Analysis",
+        step3Desc: "Get instant scores and accurate feedback on 5 metrics.",
+        criteriaTitle: "Evaluation Metrics",
+        criteriaDesc: "Our AI evaluates performance based on these core pillars.",
+        testimonialsTitle: "What They Say",
+        teachers: "English Teachers",
+        students: "Students",
+        teacherTestimonials: {
+          star5: [
+            { name: "Mrs. Sarah L.", role: "9th Grade English Teacher", comment: "The luck wheel feature is a game changer for class participation! My students actually look forward to speaking exams now." },
+            { name: "Mr. David W.", role: "English Teacher", comment: "Perfect alignment with the new curriculum. It saves me hours of manual grading while providing professional reports." }
+          ],
+          star4: [
+            { name: "Ms. Emily R.", role: "9th Grade English Teacher", comment: "The transcription is very accurate. It helps me pinpoint exactly where students are making grammatical errors." }
+          ],
+          star3: [
+            { name: "Mr. James H.", role: "High School ELT", comment: "Helpful tool, but it requires a very quiet room to work perfectly. Great for one-on-one sessions though." }
+          ]
+        },
+        studentTestimonials: {
+          star5: [
+            { name: "Alex K.", role: "9th Grade Student", comment: "I used to be so nervous before exams. Practicing with ChitIQ gave me the confidence I needed to get an A!" },
+            { name: "Maya S.", role: "11th Grade Student", comment: "The pronunciation feedback is amazing. I can see my mistakes and correct them immediately." }
+          ],
+          star4: [
+            { name: "Liam O.", role: "10th Grade Student", comment: "Cool design and very easy to use. I like seeing my progress in the history section." }
+          ],
+          star3: [
+            { name: "Sofia P.", role: "9th Grade Student", comment: "It's good for practice but sometimes it takes a bit long to load the results on slow Wi-Fi." }
+          ]
+        }
       },
       errors: {
-        micPermission: "Microphone access is required to evaluate your speech. Please enable it in your browser settings.",
+        micPermission: "Microphone access is required. Please enable it in your browser.",
         generic: "Something went wrong. Please try again.",
-        noSpeechDetected: "No speech detected. Please try again."
+        noSpeechDetected: "No speech detected. Please speak clearly."
       }
     }
   },
@@ -283,46 +289,52 @@ const resources = {
         empty: "Henüz geçmiş kaydı yok."
       },
       landing: {
-        heroTitle: "İngilizce Konuşma Sınavlarında Başarıya Ulaşın",
-        heroDesc: "Lise öğrencilerinin sınavlara hazırlanması için en akıllı yol. Türkiye Yüzyılı Maarif Modeli ile tam uyumlu.",
-        badge: "Türkiye Yüzyılı Maarif Modeli ile Uyumlu",
-        features: "Özellikler",
-        startBtn: "Değerlendirmeye Başla",
+        heroTitle: "Konuşma Sınavlarında Başarıyı Yakalayın",
+        heroDesc: "İngilizce öğretmenleri ve öğrencileri için akıllı yapay zeka asistanı. Türkiye Yüzyılı Maarif Modeli ile tam uyumlu.",
+        badge: "Türkiye Yüzyılı Maarif Modeli",
+        startBtn: "Çalışmaya Başla",
         howItWorks: "Nasıl Çalışır?",
-        howDesc: "Konuşma becerilerinizi geliştirmek için üç basit adım.",
+        howDesc: "Akıcı konuşmaya üç basit adımda ulaşın.",
         step1Title: "Konu Seçin",
-        step1Desc: "Sınav müfredatına uygun konulardan veya serbest konulardan birini seçin.",
-        step2Title: "Ses Kaydı Yapın",
-        step2Desc: "Doğal bir şekilde konuşun. Yapay zekamız sizi dinler, dökümünü alır ve analiz eder.",
-        step3Title: "Geri Bildirim Alın",
-        step3Desc: "5 temel performans kriteri üzerinden anında puanlar ve detaylı tavsiyeler alın.",
-        criteriaTitle: "Neleri Değerlendiriyoruz?",
-        criteriaDesc: "Yapay zekamız konuşmanızı bu 5 temel esas üzerinden değerlendirir:",
-        testimonialsTitle: "Öğrencilerimiz Ne Diyor?",
-        testimonials: [
-          { name: "Ahmet Y.", comment: "Konuşma sınavlarından önce çok geriliyordum ama ChitIQ ile pratik yapmak bana güven verdi!", role: "11. Sınıf Öğrencisi" },
-          { name: "Zeynep K.", comment: "Sunum konusundaki detaylı geri bildirimler final sınavından 100 almama yardımcı oldu!", role: "12. Sınıf Öğrencisi" },
-          { name: "Caner D.", comment: "7/24 yanımda olan bir özel İngilizce öğretmeni gibi. Kesinlikle harika bir araç.", role: "10. Sınıf Öğrencisi" },
-          { name: "Elif S.", comment: "9. sınıf olarak lise İngilizcesinden korkuyordum ama bu uygulama işi çok kolaylaştırdı.", role: "9. Sınıf Öğrencisi" },
-          { name: "Mert Ö.", comment: "Yapay zeka küçük hatalarımı bile anlıyor ve düzeltiyor. Çok etkileyici bir sistem.", role: "11. Sınıf Öğrencisi" },
-          { name: "Selin B.", comment: "İki haftalık pratikle telaffuz puanımı 60'tan 95'e çıkardım. Çok mutluyum!", role: "9. Sınıf Öğrencisi" },
-          { name: "Burak T.", comment: "IELTS hazırlığı için mükemmel. Geri bildirimler çok profesyonel ve yol gösterici.", role: "12. Sınıf Öğrencisi" },
-          { name: "Ece V.", comment: "Kullanıcı arayüzü çok şık ve kolay. Konu seçip konuşmaya başlamak saniyeler sürüyor.", role: "10. Sınıf Öğrencisi" },
-          { name: "Deniz G.", comment: "Öğretmenimiz tüm sınıfa tavsiye etti. Hepimiz severek kullanıyoruz.", role: "9. Sınıf Öğrencisi" },
-          { name: "Yiğit A.", comment: "Maarif Modeli ile uyumlu olması tam olarak sınavda çıkacak şeylere odaklanmamı sağlıyor.", role: "11. Sınıf Öğrencisi" },
-          { name: "Gamze R.", comment: "Düşüncelerimi organize etmekte zorlanıyordum. Organizasyon geri bildirimleri hayat kurtarıcı.", role: "12. Sınıf Öğrencisi" },
-          { name: "Bora L.", comment: "Sadece puan vermek yerine gerçek tavsiyeler sunan ilk uygulama!", role: "9. Sınıf Öğrencisi" },
-          { name: "Derya P.", comment: "Canlı döküm sayesinde nerede durakladığımı görebiliyorum. Çok faydalı.", role: "11. Sınıf Öğrencisi" },
-          { name: "Kerem U.", comment: "Sınıf önünde konuşma korkumu yenmemde çok büyük desteği oldu.", role: "10. Sınıf Öğrencisi" },
-          { name: "Sude N.", comment: "Geçmişimi takip edebilmeyi seviyorum. Puanlarımın arttığını görmek çok motive edici.", role: "9. Sınıf Öğrencisi" },
-          { name: "Ozan C.", comment: "Yargılanma korkusu olmadan konuşma pratiği yapmanın en iyi yolu.", role: "11. Sınıf Öğrencisi" },
-          { name: "Aslı F.", comment: "Konu çeşitliliği harika. Her gün konuşacak yeni ve ilginç bir başlık bulabiliyorum.", role: "12. Sınıf Öğrencisi" }
-        ]
+        step1Desc: "Müfredata uygun konuşma görevlerinden birini belirleyin.",
+        step2Title: "Kaydet & Çözümle",
+        step2Desc: "Doğal konuşun, yapay zeka her kelimenizi anlık metne döksün.",
+        step3Title: "Akıllı Analiz",
+        step3Desc: "5 kriterde anlık puan ve detaylı geri bildirim alın.",
+        criteriaTitle: "Değerlendirme Kriterleri",
+        criteriaDesc: "Yapay zekamız performansınızı bu temel başlıklar üzerinden puanlar.",
+        testimonialsTitle: "Kullanıcı Yorumları",
+        teachers: "İngilizce Öğretmenleri",
+        students: "Öğrenciler",
+        teacherTestimonials: {
+          star5: [
+            { name: "Selin Y.", role: "9. Sınıf İngilizce Öğretmeni", comment: "Çark özelliği sınıf katılımını inanılmaz artırdı! Öğrencilerim artık konuşma sınavlarını iple çekiyor." },
+            { name: "Murat K.", role: "Lise Bölüm Başkanı", comment: "Maarif Modeli ile tam uyumlu. Manuel puanlama yükünü alırken profesyonel raporlar sunması harika." }
+          ],
+          star4: [
+            { name: "Canan D.", role: "9. Sınıf İngilizce Öğretmeni", comment: "Deşifre özelliği çok başarılı. Öğrencilerin hangi gramer yapılarında zorlandığını net bir şekilde görebiliyorum." }
+          ],
+          star3: [
+            { name: "Ahmet S.", role: "İngilizce Öğretmeni", comment: "Güzel bir asistan, ancak gürültülü sınıflarda bazen sesleri karıştırabiliyor. Birebir seanslarda mükemmel." }
+          ]
+        },
+        studentTestimonials: {
+          star5: [
+            { name: "Arda K.", role: "9. Sınıf Öğrencisi", comment: "Sınavlardan önce çok geriliyordum. ChitIQ ile pratik yapmak bana büyük güven verdi, sınavdan 100 aldım!" },
+            { name: "Selin B.", role: "11. Sınıf Öğrencisi", comment: "Telaffuz geri bildirimleri harika. Nerede hata yaptığımı görüp anında düzeltebiliyorum." }
+          ],
+          star4: [
+            { name: "Mert E.", role: "10. Sınıf Öğrencisi", comment: "Tasarımı çok şık ve kullanımı kolay. Geçmiş bölümünden gelişimimi takip etmek motive edici." }
+          ],
+          star3: [
+            { name: "Ece V.", role: "9. Sınıf Öğrencisi", comment: "Güzel uygulama ama internetim yavaşken sonuçların gelmesi biraz zaman alabiliyor." }
+          ]
+        }
       },
       errors: {
-        micPermission: "Konuşmanızı değerlendirmek için mikrofon erişimi gereklidir. Lütfen tarayıcı ayarlarınızdan etkinleştirin.",
-        generic: "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
-        noSpeechDetected: "Ses algılanamadı. Lütfen tekrar deneyin."
+        micPermission: "Mikrofon erişimi gerekli. Lütfen tarayıcı ayarlarınızdan izin verin.",
+        generic: "Bir hata oluştu. Lütfen tekrar deneyin.",
+        noSpeechDetected: "Ses algılanamadı. Lütfen net konuşun."
       }
     }
   }

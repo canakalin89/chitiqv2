@@ -20,7 +20,6 @@ import AnalyticsDashboard from './components/AnalyticsDashboard';
 import { Logo } from './icons/Logo';
 import { HomeIcon } from './icons/HomeIcon';
 import { HistoryIcon } from './icons/HistoryIcon';
-import { DashboardIcon } from './icons/DashboardIcon';
 
 type ViewState = 'landing' | 'dashboard' | 'recorder' | 'evaluating' | 'result' | 'history' | 'exam-setup' | 'exam-wheel' | 'exam-result' | 'class-manager' | 'analytics';
 
@@ -76,19 +75,11 @@ const App: React.FC = () => {
 
   // Counter State
   const [displayCount, setDisplayCount] = useState(0);
-  const targetCount = 1354 + history.length;
+  const targetCount = 2481 + history.length;
 
   // Loading State
   const [loadingProgress, setLoadingProgress] = useState(0);
   const [estimatedTimeLeft, setEstimatedTimeLeft] = useState(15);
-
-  // Random Testimonials Logic
-  const selectedTestimonials = useMemo(() => {
-    const all = t('landing.testimonials', { returnObjects: true }) as any[];
-    if (!Array.isArray(all)) return [];
-    const shuffled = [...all].sort(() => 0.5 - Math.random());
-    return shuffled.slice(0, 3);
-  }, [t, view === 'landing']);
 
   // Persistence Effects
   useEffect(() => {
@@ -157,6 +148,29 @@ const App: React.FC = () => {
   // Handlers
   const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
   const toggleLanguage = () => i18n.changeLanguage(i18n.language === 'tr' ? 'en' : 'tr');
+
+  const testimonials = useMemo(() => {
+    const teachersObj = t('landing.teacherTestimonials', { returnObjects: true }) as any;
+    const studentsObj = t('landing.studentTestimonials', { returnObjects: true }) as any;
+    
+    if (!teachersObj || !studentsObj) return [];
+    
+    const result: any[] = [];
+    const cats = ['star5', 'star4', 'star3'];
+    
+    cats.forEach(cat => {
+      if (teachersObj[cat]) {
+        const item = teachersObj[cat][Math.floor(Math.random() * teachersObj[cat].length)];
+        result.push({ ...item, stars: parseInt(cat.replace('star', '')), type: 'teacher' });
+      }
+      if (studentsObj[cat]) {
+        const item = studentsObj[cat][Math.floor(Math.random() * studentsObj[cat].length)];
+        result.push({ ...item, stars: parseInt(cat.replace('star', '')), type: 'student' });
+      }
+    });
+    
+    return result.sort(() => Math.random() - 0.5).slice(0, 3);
+  }, [t, i18n.language, view]);
 
   const handleStopRecording = async (blob: Blob) => {
     setAudioBlob(blob);
@@ -262,42 +276,134 @@ const App: React.FC = () => {
     switch (view) {
       case 'landing':
         return (
-          <div className="flex flex-col items-center justify-center min-h-[70vh] text-center space-y-10 animate-fade-in relative z-10 pb-20">
-            <div className="mt-8 flex flex-col items-center gap-4">
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/50 text-red-600 dark:text-red-400 text-xs sm:text-sm font-bold shadow-sm animate-fade-in cursor-default hover:bg-red-100 dark:hover:bg-red-900/30 transition-colors">
-                 <span className="relative flex h-2 w-2">
-                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                   <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
-                 </span>
-                 {t('landing.badge')}
+          <div className="flex flex-col items-center space-y-32 animate-fade-in relative z-10 pb-32">
+            {/* --- HERO SECTION --- */}
+            <div className="flex flex-col items-center text-center space-y-16 pt-12 relative w-full px-4">
+              
+              {/* Maarif Modeli Badge - Higher and separate from Logo container */}
+              <div className="z-20">
+                <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-indigo-600 dark:text-indigo-400 text-xs sm:text-sm font-black shadow-lg shadow-indigo-500/5 animate-slide-up">
+                   <span className="w-2 h-2 rounded-full bg-indigo-500"></span>
+                   {t('landing.badge')}
+                </div>
               </div>
-              <div className="inline-flex items-center gap-3 px-5 py-2 rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-xl shadow-indigo-500/5 transform hover:scale-105 transition-all duration-300">
-                <div className="flex -space-x-2">
-                  {[1,2,3,4].map(i => (
-                    <div key={i} className={`w-6 h-6 rounded-full border-2 border-white dark:border-slate-900 flex items-center justify-center overflow-hidden text-white ${i % 2 === 0 ? 'bg-indigo-500' : 'bg-purple-500'}`}>
-                       <UserPlaceholder className="w-4 h-4" />
+
+              <div className="flex flex-col items-center gap-8">
+                {/* Logo with controlled scaling to avoid overlap */}
+                <div className="relative transform hover:scale-105 transition-transform duration-500">
+                  <Logo className="md:scale-[1.8]" />
+                </div>
+                
+                <div className="space-y-6 max-w-4xl">
+                  <h1 className="text-5xl md:text-8xl font-black tracking-tight text-slate-900 dark:text-white leading-[1.1]">
+                    {t('landing.heroTitle')}
+                  </h1>
+                  <p className="text-xl md:text-2xl font-medium text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                    {t('landing.heroDesc')}
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center gap-8 pt-4">
+                <button 
+                  onClick={() => setView('dashboard')} 
+                  className="group relative inline-flex items-center justify-center px-12 py-6 text-xl font-bold text-white transition-all duration-300 bg-indigo-600 rounded-3xl focus:outline-none hover:bg-indigo-700 shadow-2xl shadow-indigo-500/30 active:scale-95"
+                >
+                  {t('landing.startBtn')}
+                  <svg className="w-6 h-6 ml-3 transition-transform group-hover:translate-x-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                </button>
+                <div className="flex flex-col items-center justify-center px-10 py-5 bg-white dark:bg-slate-900 rounded-3xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                   <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none mb-2">{t('dashboard.usageCount')}</p>
+                   <p className="text-4xl font-black text-slate-800 dark:text-white leading-none tracking-tight">{displayCount.toLocaleString()}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* --- HOW IT WORKS (SIMPLIFIED) --- */}
+            <div className="w-full max-w-6xl mx-auto px-4 space-y-16">
+              <div className="text-center space-y-4">
+                <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('landing.howItWorks')}</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-lg font-medium max-w-2xl mx-auto">{t('landing.howDesc')}</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
+                {[1, 2, 3].map(step => (
+                  <div key={step} className="flex flex-col items-center text-center space-y-6 p-10 rounded-[2.5rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-all hover:shadow-lg">
+                    <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-3xl font-black shadow-inner">
+                      {step}
                     </div>
-                  ))}
-                </div>
-                <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
-                <div className="text-left">
-                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-tighter leading-none mb-0.5">{t('dashboard.usageCount')}</p>
-                  <p className="text-lg font-extrabold text-indigo-600 dark:text-indigo-400 leading-none">{displayCount.toLocaleString()}</p>
-                </div>
+                    <div className="space-y-3">
+                      <h3 className="text-xl font-bold text-slate-800 dark:text-white">{t(`landing.step${step}Title`)}</h3>
+                      <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-sm">{t(`landing.step${step}Desc`)}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-            <div className="transform hover:scale-105 transition-transform duration-500 ease-out"><Logo className="scale-150" /></div>
-            <div className="space-y-4 max-w-3xl">
-              <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">
-                {t('landing.heroTitle')}
-                <span className="block text-2xl md:text-3xl mt-4 font-medium bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 to-purple-600 dark:from-indigo-400 dark:to-purple-400 leading-normal">{t('landing.heroDesc')}</span>
-              </h1>
+
+            {/* --- CRITERIA SECTION (MINIMAL) --- */}
+            <div className="w-full bg-slate-100/30 dark:bg-slate-900/30 py-32 border-y border-slate-200/50 dark:border-slate-800/50 backdrop-blur-sm">
+              <div className="max-w-7xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+                 <div className="space-y-8">
+                    <h2 className="text-4xl md:text-6xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-[0.9]">{t('landing.criteriaTitle')}</h2>
+                    <p className="text-lg text-slate-500 dark:text-slate-400 max-w-lg font-medium">{t('landing.criteriaDesc')}</p>
+                    <div className="h-1 w-20 bg-indigo-500 rounded-full"></div>
+                 </div>
+                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-6">
+                    {Object.keys(CRITERIA[i18n.language.startsWith('tr') ? 'tr' : 'en']).map((key) => (
+                      <div key={key} className="p-8 rounded-[2rem] bg-white dark:bg-slate-950 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col items-center text-center gap-5 transition-all hover:bg-indigo-50 dark:hover:bg-indigo-900/10">
+                        <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+                           {key === 'rapport' && <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+                           {key === 'organisation' && <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>}
+                           {key === 'delivery' && <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>}
+                           {key === 'languageUse' && <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>}
+                           {key === 'creativity' && <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>}
+                        </div>
+                        <h4 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-tight">
+                           {(CRITERIA[i18n.language.startsWith('tr') ? 'tr' : 'en'] as any)[key]}
+                        </h4>
+                      </div>
+                    ))}
+                 </div>
+              </div>
             </div>
-            <button onClick={() => setView('dashboard')} className="group relative inline-flex items-center justify-center px-10 py-5 text-lg font-bold text-white transition-all duration-200 bg-indigo-600 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-600 hover:bg-indigo-700 shadow-xl shadow-indigo-500/30 hover:shadow-2xl hover:shadow-indigo-500/40 transform hover:-translate-y-1">
-              {t('landing.startBtn')}
-              <svg className="w-5 h-5 ml-2 -mr-1 transition-transform group-hover:translate-x-1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
-            </button>
-            {/* Testimonials and features sections removed for brevity in this specific snippet but maintained in full context */}
+
+            {/* --- TESTIMONIALS SECTION --- */}
+            <div className="w-full max-w-7xl mx-auto px-4 space-y-20">
+               <div className="text-center space-y-4">
+                  <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('landing.testimonialsTitle')}</h2>
+               </div>
+               
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                 {testimonials.map((item, idx) => (
+                    <div key={idx} className="flex flex-col p-10 rounded-[3rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm relative transition-all hover:shadow-xl hover:-translate-y-2">
+                       <div className="flex items-center gap-1 mb-8">
+                          {[...Array(5)].map((_, i) => (
+                             <svg 
+                               key={i} 
+                               className={`w-5 h-5 ${i < item.stars ? 'text-amber-400' : 'text-slate-100 dark:text-slate-800'}`} 
+                               fill="currentColor" 
+                               viewBox="0 0 20 20"
+                             >
+                               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                             </svg>
+                          ))}
+                       </div>
+                       <p className="flex-1 text-slate-600 dark:text-slate-300 text-lg leading-relaxed italic mb-10">
+                          “{item.comment}”
+                       </p>
+                       <div className="flex items-center gap-4 pt-8 border-t border-slate-50 dark:border-slate-800">
+                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black shadow-md ${item.type === 'teacher' ? 'bg-indigo-600' : 'bg-purple-600'}`}>
+                             <UserPlaceholder className="w-8 h-8" />
+                          </div>
+                          <div>
+                             <h4 className="font-bold text-slate-900 dark:text-white leading-none mb-1.5">{item.name}</h4>
+                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{item.role}</p>
+                          </div>
+                       </div>
+                    </div>
+                 ))}
+               </div>
+            </div>
           </div>
         );
       case 'dashboard':

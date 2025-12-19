@@ -51,8 +51,8 @@ const resources = {
         className: "Class Name (e.g., 9-A)",
         addStudent: "Add Student",
         bulkAdd: "Bulk Add Students",
-        bulkPlaceholder: "Paste names here (One per line: First Last)",
-        bulkHelp: "Paste your student list. Format: 'Name Surname' on each line.",
+        bulkPlaceholder: "101 John Doe\n102 Jane Smith",
+        bulkHelp: "Format: 'Number Firstname Lastname' (One per line)",
         noClasses: "No classes defined yet.",
         studentList: "Students",
         deleteClass: "Delete Class",
@@ -71,7 +71,8 @@ const resources = {
         totalExams: "Total Exams",
         classReportTitle: "Class Achievement Report",
         studentName: "Student Name",
-        total: "Total"
+        total: "Total",
+        studentNo: "No."
       },
       exam: {
         title: "Teacher Exam Mode",
@@ -80,6 +81,7 @@ const resources = {
         selectStudent: "Select Student",
         firstName: "First Name",
         lastName: "Last Name",
+        studentNumber: "Student Number",
         class: "Class",
         selectQuestions: "Select Questions for the Wheel",
         minQuestions: "Please select at least 2 questions.",
@@ -205,8 +207,8 @@ const resources = {
         className: "Sınıf Adı (Örn: 9-A)",
         addStudent: "Öğrenci Ekle",
         bulkAdd: "Toplu Öğrenci Ekle",
-        bulkPlaceholder: "İsimleri buraya yapıştırın (Her satıra bir kişi: Ad Soyad)",
-        bulkHelp: "Öğrenci listenizi yapıştırın. Format: Her satırda 'Ad Soyad' olmalıdır.",
+        bulkPlaceholder: "101 Ahmet Yılmaz\n102 Ayşe Demir",
+        bulkHelp: "Format: 'No Ad Soyad' (Her satıra bir kişi)",
         noClasses: "Henüz tanımlanmış sınıf yok.",
         studentList: "Öğrenci Listesi",
         deleteClass: "Sınıfı Sil",
@@ -225,7 +227,8 @@ const resources = {
         totalExams: "Toplam Sınav",
         classReportTitle: "Sınıf Başarı Çizelgesi",
         studentName: "Öğrenci Adı Soyadı",
-        total: "Top."
+        total: "Top.",
+        studentNo: "No."
       },
       exam: {
         title: "Öğretmen Sınav Modu",
@@ -234,6 +237,7 @@ const resources = {
         selectStudent: "Öğrenci Seçin",
         firstName: "Adı",
         lastName: "Soyadı",
+        studentNumber: "Öğrenci No",
         class: "Sınıfı",
         selectQuestions: "Çark İçin Soruları Seçin",
         minQuestions: "Lütfen en az 2 soru seçin.",

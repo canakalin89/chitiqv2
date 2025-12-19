@@ -136,7 +136,6 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
 
   return (
     <div className="space-y-6 animate-fade-in pb-12 max-w-5xl mx-auto print:p-0 print:space-y-4">
-      {/* Navigation & Header (Hidden on Print) */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 print:hidden">
         <button
           onClick={onBack}
@@ -163,15 +162,10 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
         </div>
       </div>
 
-      {/* --- EXAM REPORT HEADER (Visible only on Print) --- */}
       <div className="hidden print:block space-y-4 mb-6 border-b border-slate-300 pb-4">
          <div className="flex justify-between items-center">
             <div className="flex items-center gap-3">
-               <img 
-                 src="https://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/dosyalar/2025_11/03215750_speaksmartaltlogo.png" 
-                 alt="Logo" 
-                 className="w-12 h-12 object-contain"
-               />
+               <img src="https://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/dosyalar/2025_11/03215750_speaksmartaltlogo.png" alt="Logo" className="w-12 h-12 object-contain" />
                <div>
                   <h1 className="text-xl font-black text-slate-900 uppercase tracking-tight leading-none mb-1">{t('exam.reportTitle')}</h1>
                   <p className="text-slate-500 font-bold tracking-widest uppercase text-[9px]">ChitIQ AI Speaking Analytics</p>
@@ -182,8 +176,11 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
                <p className="text-sm font-bold text-slate-900 leading-none">{new Date().toLocaleDateString(i18n.language.startsWith('tr') ? 'tr-TR' : 'en-US')}</p>
             </div>
          </div>
-
-         <div className="grid grid-cols-4 gap-4 bg-slate-50 p-4 rounded-xl">
+         <div className="grid grid-cols-5 gap-4 bg-slate-50 p-4 rounded-xl">
+            <div>
+               <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.studentNumber')}</p>
+               <p className="text-sm font-bold text-slate-900">{studentInfo?.studentNumber || '-'}</p>
+            </div>
             <div>
                <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.firstName')}</p>
                <p className="text-sm font-bold text-slate-900">{studentInfo?.firstName || '-'}</p>
@@ -201,18 +198,14 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
                 <p className="text-2xl font-black text-indigo-600">%{data.overallScore}</p>
             </div>
          </div>
-
          <div className="flex gap-2 items-baseline">
             <p className="text-[9px] font-bold text-slate-400 uppercase flex-shrink-0">{t('exam.selectedTopic')}:</p>
             <p className="text-xs font-semibold text-slate-700 italic truncate">"{data.topic}"</p>
          </div>
       </div>
 
-      {/* --- CONTENT GRID --- */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 print:grid-cols-1 print:gap-4">
-        
         <div className="lg:col-span-1 space-y-6 print:flex print:flex-row print:gap-6 print:items-start print:space-y-0">
-          {/* Overall Score Card (Hidden on print if we use the header) */}
           <div className="glass bg-white dark:bg-slate-900 rounded-3xl p-8 border border-white/20 dark:border-slate-800 shadow-xl flex flex-col items-center relative overflow-hidden print:hidden">
             <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-purple-600"></div>
             <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-6">{t('evaluation.overallScore')}</h3>
@@ -226,16 +219,12 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
               </svg>
             </div>
           </div>
-
-          {/* Radar Chart Card */}
           <div className="glass bg-white dark:bg-slate-900 rounded-3xl p-6 border border-white/20 dark:border-slate-800 shadow-lg flex flex-col items-center print:shadow-none print:border print:border-slate-100 print:w-1/3 print:p-3 print:rounded-xl">
              <h3 className="text-sm font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2 print:text-[8px] print:mb-1">Skill Chart</h3>
              <div className="w-full aspect-square max-w-[260px] print:max-w-[140px]">
                 {renderRadarChart()}
              </div>
           </div>
-
-          {/* Summary Card for Print (Compact) */}
           <div className="hidden print:block flex-1 border border-slate-100 p-4 rounded-xl bg-slate-50/50">
              <div className="flex items-center gap-2 mb-2">
                 <div className="p-1 bg-indigo-100 rounded-md text-indigo-600">
@@ -243,37 +232,24 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
                 </div>
                 <h3 className="text-[10px] font-bold text-slate-800 uppercase tracking-widest">{t('common.summary')}</h3>
              </div>
-             <p className="text-[10px] text-slate-700 leading-normal italic line-clamp-6">
-                {data.feedback.summary}
-             </p>
+             <p className="text-[10px] text-slate-700 leading-normal italic line-clamp-6">{data.feedback.summary}</p>
           </div>
         </div>
-
         <div className="lg:col-span-2 space-y-6 print:lg:col-span-1 print:space-y-4">
-          
-          {/* Audio (Hidden on print) */}
           {audioUrl && (
              <div className="glass bg-white dark:bg-slate-900 rounded-2xl p-4 border border-white/20 dark:border-slate-800 shadow-sm flex items-center gap-4 print:hidden">
                 <audio controls src={audioUrl} className="w-full h-10" />
              </div>
           )}
-
-          {/* Summary (Hidden on print here because it's in the side box) */}
           <div className="glass bg-indigo-50/50 dark:bg-indigo-900/10 rounded-2xl p-8 border border-indigo-100 dark:border-indigo-900/30 shadow-sm print:hidden">
              <div className="flex items-center gap-3 mb-4">
                 <div className="p-2.5 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl text-indigo-600 dark:text-indigo-400">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6">
-                    <path fillRule="evenodd" d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625zM7.5 15a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 017.5 15zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H8.25z" clipRule="evenodd" />
-                  </svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path fillRule="evenodd" d="M5.625 1.5c-1.036 0-1.875.84-1.875 1.875v17.25c0 1.035.84 1.875 1.875 1.875h12.75c1.035 0 1.875-.84 1.875-1.875V12.75A3.75 3.75 0 0016.5 9h-1.875a1.875 1.875 0 01-1.875-1.875V5.25A3.75 3.75 0 009 1.5H5.625zM7.5 15a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5A.75.75 0 017.5 15zm.75 2.25a.75.75 0 000 1.5H12a.75.75 0 000-1.5H8.25z" clipRule="evenodd" /></svg>
                 </div>
                 <h3 className="text-xl font-bold text-slate-800 dark:text-white">{t('common.summary')}</h3>
              </div>
-             <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-lg whitespace-pre-line">
-                {data.feedback.summary}
-             </p>
+             <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-lg whitespace-pre-line">{data.feedback.summary}</p>
           </div>
-
-          {/* Criteria Grid (Optimized for Print) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 print:grid-cols-3 print:gap-2">
              {Object.entries(data.scores).map(([key, score]) => (
                <div key={key} className="bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 shadow-sm print:p-3 print:border print:border-slate-100 print:bg-white print:rounded-xl">
@@ -282,41 +258,27 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
                      {/* @ts-ignore */}
                      {CRITERIA[langKey][key]}
                    </h4>
-                   <span className={`font-bold px-2.5 py-0.5 rounded-full text-sm ${getScoreColor(score as number).replace('text-', 'bg-').replace('500', '100').replace('400', '900/30')} ${getScoreColor(score as number)} print:bg-transparent print:p-0 print:text-[10px]`}>
-                     {score}
-                   </span>
+                   <span className={`font-bold px-2.5 py-0.5 rounded-full text-sm ${getScoreColor(score as number).replace('text-', 'bg-').replace('500', '100').replace('400', '900/30')} ${getScoreColor(score as number)} print:bg-transparent print:p-0 print:text-[10px]`}>{score}</span>
                  </div>
                  <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 mb-3 overflow-hidden print:mb-1.5 print:h-1">
                    <div className={`h-full rounded-full ${getProgressBarColor(score as number)} transition-all duration-1000 ease-out print:bg-indigo-600`} style={{ width: `${score}%` }}></div>
                  </div>
-                 <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed whitespace-pre-line print:text-[8px] print:leading-tight print:text-slate-600 line-clamp-4">
-                   {/* @ts-ignore */}
-                   {data.feedback[key]}
-                 </p>
+                 <p className="text-sm text-slate-500 dark:text-slate-400 leading-relaxed whitespace-pre-line print:text-[8px] print:leading-tight print:text-slate-600 line-clamp-4">{/* @ts-ignore */}{data.feedback[key]}</p>
                </div>
              ))}
            </div>
-
-           {/* Pronunciation & Transcription (Print optimization: two columns) */}
            <div className="grid grid-cols-1 gap-6 print:grid-cols-2 print:gap-4">
-               {/* Pronunciation */}
                <div className="bg-slate-50 dark:bg-slate-900/50 rounded-2xl p-6 border border-slate-100 dark:border-slate-800 print:p-3 print:rounded-xl">
                   <h3 className="font-bold text-slate-800 dark:text-white mb-2 print:text-[9px] print:text-indigo-600 uppercase tracking-widest">{t('evaluation.pronunciation')}</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed print:text-[8px] print:leading-tight">{data.feedback.pronunciation}</p>
                </div>
-
-               {/* Transcription */}
                <div className="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 print:p-3 print:rounded-xl print:border-slate-100 print:shadow-none">
                   <h3 className="font-bold text-slate-700 dark:text-slate-200 mb-3 print:text-[9px] print:text-indigo-600 uppercase tracking-widest">{t('evaluation.transcription')}</h3>
-                  <div className="font-mono text-xs text-slate-500 dark:text-slate-400 leading-relaxed whitespace-pre-wrap bg-slate-50 dark:bg-slate-950 p-4 rounded-xl print:bg-transparent print:p-0 print:text-[7px] print:leading-tight print:max-h-24 print:overflow-hidden line-clamp-[10]">
-                     {data.feedback.transcription}
-                  </div>
+                  <div className="font-mono text-xs text-slate-500 dark:text-slate-400 leading-relaxed whitespace-pre-wrap bg-slate-50 dark:bg-slate-950 p-4 rounded-xl print:bg-transparent print:p-0 print:text-[7px] print:leading-tight print:max-h-24 print:overflow-hidden line-clamp-[10]">{data.feedback.transcription}</div>
                </div>
            </div>
         </div>
       </div>
-
-      {/* --- TEACHER SIGNATURE AREA (Only Print) --- */}
       <div className="hidden print:flex justify-between items-end mt-4 pt-4 border-t border-slate-200">
          <div className="w-1/2">
             <p className="text-[8px] font-bold text-slate-400 uppercase mb-2">{t('exam.teacherNotes')}</p>

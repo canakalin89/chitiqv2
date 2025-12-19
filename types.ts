@@ -32,6 +32,7 @@ export interface Evaluation extends EvaluationResultData {
 
 export interface Student {
   id: string;
+  studentNumber: string;
   firstName: string;
   lastName: string;
 }
@@ -46,6 +47,7 @@ export interface StudentInfo {
   firstName: string;
   lastName: string;
   studentClass: string;
+  studentNumber?: string;
   classId?: string;
 }
 

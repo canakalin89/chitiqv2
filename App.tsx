@@ -234,20 +234,22 @@ const App: React.FC = () => {
     setIsExamMode(true);
     setView('recorder');
 
-    // Auto-save student to class if it's a new name and a class is selected
-    if (info.classId && info.firstName && info.lastName) {
+    // Auto-save student to class if it's a new name/no and a class is selected
+    if (info.classId && info.firstName && info.lastName && info.studentNumber) {
       const targetClass = classes.find(c => c.id === info.classId);
       if (targetClass) {
         const exists = targetClass.students.some(s => 
-          s.firstName.toLowerCase() === info.firstName.toLowerCase() && 
-          s.lastName.toLowerCase() === info.lastName.toLowerCase()
+          (s.firstName.toLowerCase() === info.firstName!.toLowerCase() && 
+          s.lastName.toLowerCase() === info.lastName!.toLowerCase()) ||
+          s.studentNumber === info.studentNumber
         );
 
         if (!exists) {
           const newStudent: Student = {
             id: crypto.randomUUID(),
-            firstName: info.firstName.trim(),
-            lastName: info.lastName.trim()
+            studentNumber: info.studentNumber!,
+            firstName: info.firstName!.trim(),
+            lastName: info.lastName!.trim()
           };
           setClasses(prev => prev.map(c => 
             c.id === info.classId ? { ...c, students: [...c.students, newStudent] } : c

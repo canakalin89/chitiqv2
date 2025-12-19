@@ -93,7 +93,8 @@ const resources = {
       evaluation: {
         overallScore: "Overall Score",
         pronunciation: "Pronunciation Feedback",
-        transcription: "Speech Transcription"
+        transcription: "Speech Transcription",
+        reportTitle: "Speaking Performance Report"
       },
       history: {
         title: "Practice History",
@@ -276,7 +277,8 @@ const resources = {
       evaluation: {
         overallScore: "Genel Puan",
         pronunciation: "Telaffuz Geri Bildirimi",
-        transcription: "Konuşma Dökümü"
+        transcription: "Konuşma Dökümü",
+        reportTitle: "Konuşma Performans Raporu"
       },
       history: {
         title: "Pratik Geçmişi",

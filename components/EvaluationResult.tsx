@@ -145,17 +145,15 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
           {t('common.goBack')}
         </button>
         <div className="flex items-center gap-4">
-           {isExam && (
-              <button
-                onClick={handlePrint}
-                className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 transition-all"
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.618 0-1.113-.493-1.12-1.112L5.882 18m11.778 0H5.882M6.72 13.829l1.41-5.64m1.41 5.64H14.25m5.341-3.172l-1.41-5.64m1.41 5.64l.842 3.368a1.125 1.125 0 01-1.12 1.405h-1.076M14.25 13.829v-1.125c0-.621.504-1.125 1.125-1.125h1.275m-4.5 1.125v-1.125c0-.621.504-1.125 1.125-1.125H14.25m-2.625 0H12m-2.625 0H9m-2.625 0H6M4.5 9h15M10.125 1.5h3.75a1.125 1.125 0 011.125 1.125v2.625h-6V2.625a1.125 1.125 0 011.125-1.125z" />
-                </svg>
-                {t('common.print')}
-              </button>
-           )}
+           <button
+             onClick={handlePrint}
+             className="flex items-center gap-2 px-6 py-2 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/30 hover:bg-indigo-700 transition-all"
+           >
+             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+               <path strokeLinecap="round" strokeLinejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0110.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0l.229 2.523a1.125 1.125 0 01-1.12 1.227H7.231c-.618 0-1.113-.493-1.12-1.112L5.882 18m11.778 0H5.882M6.72 13.829l1.41-5.64m1.41 5.64H14.25m5.341-3.172l-1.41-5.64m1.41 5.64l.842 3.368a1.125 1.125 0 01-1.12 1.405h-1.076M14.25 13.829v-1.125c0-.621.504-1.125 1.125-1.125h1.275m-4.5 1.125v-1.125c0-.621.504-1.125 1.125-1.125H14.25m-2.625 0H12m-2.625 0H9m-2.625 0H6M4.5 9h15M10.125 1.5h3.75a1.125 1.125 0 011.125 1.125v2.625h-6V2.625a1.125 1.125 0 011.125-1.125z" />
+             </svg>
+             {t('common.print')}
+           </button>
            <h1 className="text-xl font-bold text-slate-900 dark:text-white truncate max-w-md text-center md:text-right">
             {data.topic}
            </h1>
@@ -167,7 +165,9 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
             <div className="flex items-center gap-3">
                <img src="https://azizsancaranadolu.meb.k12.tr/meb_iys_dosyalar/59/11/765062/dosyalar/2025_11/03215750_speaksmartaltlogo.png" alt="Logo" className="w-12 h-12 object-contain" />
                <div>
-                  <h1 className="text-xl font-black text-slate-900 uppercase tracking-tight leading-none mb-1">{t('exam.reportTitle')}</h1>
+                  <h1 className="text-xl font-black text-slate-900 uppercase tracking-tight leading-none mb-1">
+                    {studentInfo ? t('exam.reportTitle') : t('evaluation.reportTitle', 'Speaking Performance Report')}
+                  </h1>
                   <p className="text-slate-500 font-bold tracking-widest uppercase text-[9px]">ChitIQ AI Speaking Analytics</p>
                </div>
             </div>
@@ -176,29 +176,42 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
                <p className="text-sm font-bold text-slate-900 leading-none">{new Date().toLocaleDateString(i18n.language.startsWith('tr') ? 'tr-TR' : 'en-US')}</p>
             </div>
          </div>
-         <div className="grid grid-cols-5 gap-4 bg-slate-50 p-4 rounded-xl">
-            <div>
-               <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.studentNumber')}</p>
-               <p className="text-sm font-bold text-slate-900">{studentInfo?.studentNumber || '-'}</p>
+         {studentInfo ? (
+            <div className="grid grid-cols-5 gap-4 bg-slate-50 p-4 rounded-xl">
+              <div>
+                <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.studentNumber')}</p>
+                <p className="text-sm font-bold text-slate-900">{studentInfo.studentNumber || '-'}</p>
+              </div>
+              <div>
+                <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.firstName')}</p>
+                <p className="text-sm font-bold text-slate-900">{studentInfo.firstName || '-'}</p>
+              </div>
+              <div>
+                <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.lastName')}</p>
+                <p className="text-sm font-bold text-slate-900">{studentInfo.lastName || '-'}</p>
+              </div>
+              <div>
+                <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.class')}</p>
+                <p className="text-sm font-bold text-slate-900">{studentInfo.studentClass || '-'}</p>
+              </div>
+              <div className="text-right">
+                  <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('evaluation.overallScore')}</p>
+                  <p className="text-2xl font-black text-indigo-600">%{data.overallScore}</p>
+              </div>
             </div>
-            <div>
-               <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.firstName')}</p>
-               <p className="text-sm font-bold text-slate-900">{studentInfo?.firstName || '-'}</p>
+         ) : (
+            <div className="bg-slate-50 p-4 rounded-xl flex justify-between items-center">
+              <div>
+                 <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Assessment Type</p>
+                 <p className="text-sm font-black text-slate-800 uppercase">Individual Practice Session</p>
+              </div>
+              <div className="text-right">
+                  <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('evaluation.overallScore')}</p>
+                  <p className="text-2xl font-black text-indigo-600">%{data.overallScore}</p>
+              </div>
             </div>
-            <div>
-               <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.lastName')}</p>
-               <p className="text-sm font-bold text-slate-900">{studentInfo?.lastName || '-'}</p>
-            </div>
-            <div>
-               <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('exam.class')}</p>
-               <p className="text-sm font-bold text-slate-900">{studentInfo?.studentClass || '-'}</p>
-            </div>
-            <div className="text-right">
-                <p className="text-[9px] font-bold text-slate-400 uppercase mb-0.5">{t('evaluation.overallScore')}</p>
-                <p className="text-2xl font-black text-indigo-600">%{data.overallScore}</p>
-            </div>
-         </div>
-         <div className="flex gap-2 items-baseline">
+         )}
+         <div className="flex gap-2 items-baseline mt-2">
             <p className="text-[9px] font-bold text-slate-400 uppercase flex-shrink-0">{t('exam.selectedTopic')}:</p>
             <p className="text-xs font-semibold text-slate-700 italic truncate">"{data.topic}"</p>
          </div>
@@ -281,11 +294,13 @@ const EvaluationResult: React.FC<EvaluationResultProps> = ({
       </div>
       <div className="hidden print:flex justify-between items-end mt-4 pt-4 border-t border-slate-200">
          <div className="w-1/2">
-            <p className="text-[8px] font-bold text-slate-400 uppercase mb-2">{t('exam.teacherNotes')}</p>
+            <p className="text-[8px] font-bold text-slate-400 uppercase mb-2">
+              {studentInfo ? t('exam.teacherNotes') : 'Participant Notes'}
+            </p>
             <div className="h-10 border-b border-dashed border-slate-300"></div>
          </div>
          <div className="text-right">
-            <p className="text-[8px] font-bold text-slate-400 uppercase mb-6">Instructor Signature</p>
+            <p className="text-[8px] font-bold text-slate-400 uppercase mb-6">Signature / Verification</p>
             <p className="border-t border-slate-400 pt-1 font-bold text-slate-800 text-[10px] min-w-[120px]">&nbsp;</p>
          </div>
       </div>

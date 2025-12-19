@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { SPEAKING_TOPICS, CRITERIA } from './constants';
-import { Evaluation, EvaluationResultData } from './types';
+import { Evaluation, EvaluationResultData, ExamSession, StudentInfo } from './types';
 import { evaluateSpeech } from './services/geminiService';
 import { blobToBase64 } from './utils/audioUtils';
 
@@ -12,13 +12,14 @@ import Recorder from './components/Recorder';
 import EvaluationResult from './components/EvaluationResult';
 import RecentHistory from './components/RecentHistory';
 import HistoryView from './components/HistoryView';
+import ExamMode from './components/ExamMode';
 
 // Icons
 import { Logo } from './icons/Logo';
 import { HomeIcon } from './icons/HomeIcon';
 import { HistoryIcon } from './icons/HistoryIcon';
 
-type ViewState = 'landing' | 'dashboard' | 'recorder' | 'evaluating' | 'result' | 'history';
+type ViewState = 'landing' | 'dashboard' | 'recorder' | 'evaluating' | 'result' | 'history' | 'exam-setup' | 'exam-wheel' | 'exam-result';
 
 // Standard User Placeholder Icon
 const UserPlaceholder = ({ className }: { className?: string }) => (
@@ -42,7 +43,7 @@ const App: React.FC = () => {
   });
   
   // Data State
-  const [history, setHistory] = useState<Evaluation[]>(() => {
+  const [history, setHistory] = useState<(Evaluation | ExamSession)[]>(() => {
     try {
       const saved = localStorage.getItem('history');
       return saved ? JSON.parse(saved) : [];
@@ -57,13 +58,17 @@ const App: React.FC = () => {
   const [evaluationData, setEvaluationData] = useState<EvaluationResultData | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  // Exam Specific State
+  const [studentInfo, setStudentInfo] = useState<StudentInfo | null>(null);
+  const [isExamMode, setIsExamMode] = useState(false);
+
   // Random Testimonials Logic
   const selectedTestimonials = useMemo(() => {
     const all = t('landing.testimonials', { returnObjects: true }) as any[];
     if (!Array.isArray(all)) return [];
     const shuffled = [...all].sort(() => 0.5 - Math.random());
     return shuffled.slice(0, 3);
-  }, [t, view === 'landing']); // Reshuffle when returning to landing
+  }, [t, view === 'landing']);
 
   // Counter State
   const [displayCount, setDisplayCount] = useState(0);
@@ -177,19 +182,32 @@ const App: React.FC = () => {
         currentLang
       );
 
-      const newEvaluation: Evaluation = {
-        ...result,
-        id: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
-        date: new Date().toISOString()
-      };
+      const evaluationId = crypto.randomUUID ? crypto.randomUUID() : Date.now().toString();
+      const dateString = new Date().toISOString();
 
-      setEvaluationData(result);
-      setHistory(prev => [newEvaluation, ...prev]);
-      
-      setLoadingProgress(100);
-      setTimeout(() => {
-        setView('result');
-      }, 500);
+      if (isExamMode && studentInfo) {
+        const newExam: ExamSession = {
+          ...result,
+          id: evaluationId,
+          date: dateString,
+          studentInfo: studentInfo,
+          isExam: true
+        };
+        setEvaluationData(newExam);
+        setHistory(prev => [newExam, ...prev]);
+        setLoadingProgress(100);
+        setTimeout(() => setView('exam-result'), 500);
+      } else {
+        const newEvaluation: Evaluation = {
+          ...result,
+          id: evaluationId,
+          date: dateString
+        };
+        setEvaluationData(result);
+        setHistory(prev => [newEvaluation, ...prev]);
+        setLoadingProgress(100);
+        setTimeout(() => setView('result'), 500);
+      }
 
     } catch (err) {
       console.error("Evaluation failed", err);
@@ -210,10 +228,26 @@ const App: React.FC = () => {
   const handleSelectHistoryItem = (id: string) => {
     const item = history.find(h => h.id === id);
     if (item) {
-      setEvaluationData(item);
-      setAudioBlob(null); 
-      setView('result');
+      if ('isExam' in item && item.isExam) {
+        setStudentInfo(item.studentInfo);
+        setIsExamMode(true);
+        setEvaluationData(item);
+        setAudioBlob(null);
+        setView('exam-result');
+      } else {
+        setEvaluationData(item);
+        setAudioBlob(null); 
+        setView('result');
+        setIsExamMode(false);
+      }
     }
+  };
+
+  const handleExamComplete = (topic: string, info: StudentInfo) => {
+    setCurrentTopic(topic);
+    setStudentInfo(info);
+    setIsExamMode(true);
+    setView('recorder');
   };
 
   const getLoadingStatusText = (progress: number) => {
@@ -418,6 +452,29 @@ const App: React.FC = () => {
                       onStart={handleStartRecording}
                     />
                  </section>
+
+                 <section className="glass rounded-2xl p-8 border border-white/20 dark:border-slate-800 shadow-xl shadow-purple-500/5 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 dark:from-indigo-900/10 dark:to-purple-900/10">
+                    <div className="flex flex-col md:flex-row items-center gap-6">
+                       <div className="flex-1 space-y-4">
+                          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300 text-xs font-bold uppercase tracking-wider">
+                             New Feature
+                          </div>
+                          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{t('dashboard.examMode')}</h2>
+                          <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                             {t('dashboard.examModeDesc')}
+                          </p>
+                       </div>
+                       <button
+                         onClick={() => {
+                            setIsExamMode(true);
+                            setView('exam-setup');
+                         }}
+                         className="px-8 py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl font-bold shadow-lg shadow-purple-500/30 transition-all hover:scale-105"
+                       >
+                          {t('exam.beginExam')}
+                       </button>
+                    </div>
+                 </section>
               </div>
               <div className="md:col-span-4 space-y-4">
                 <RecentHistory history={history} onSelect={handleSelectHistoryItem} />
@@ -429,6 +486,19 @@ const App: React.FC = () => {
                 </button>
               </div>
             </div>
+          </div>
+        );
+
+      case 'exam-setup':
+        return (
+          <div className="max-w-4xl mx-auto py-8 animate-fade-in relative z-10">
+             <ExamMode 
+               onComplete={handleExamComplete}
+               onCancel={() => {
+                 setIsExamMode(false);
+                 setView('dashboard');
+               }}
+             />
           </div>
         );
 
@@ -502,12 +572,19 @@ const App: React.FC = () => {
         );
 
       case 'result':
+      case 'exam-result':
         return evaluationData ? (
-          <div className="max-w-5xl mx-auto py-4 animate-fade-in relative z-10">
+          <div className="max-w-5xl mx-auto py-4 animate-fade-in relative z-10 print:m-0 print:p-0">
             <EvaluationResult 
               data={evaluationData}
               audioBlob={audioBlob}
-              onBack={() => setView('dashboard')}
+              onBack={() => {
+                setView('dashboard');
+                setIsExamMode(false);
+                setStudentInfo(null);
+              }}
+              isExam={isExamMode}
+              studentInfo={studentInfo}
             />
           </div>
         ) : null;
@@ -531,17 +608,20 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors duration-500 overflow-hidden relative font-sans">
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors duration-500 overflow-hidden relative font-sans print:bg-white">
+      <div className="fixed inset-0 pointer-events-none overflow-hidden print:hidden">
         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-200/30 dark:bg-indigo-900/20 rounded-full blur-[120px] animate-blob"></div>
         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-[120px] animate-blob animation-delay-2000"></div>
       </div>
 
-      <header className="sticky top-0 z-50 glass border-b border-white/20 dark:border-slate-800 transition-colors duration-300">
+      <header className="sticky top-0 z-50 glass border-b border-white/20 dark:border-slate-800 transition-colors duration-300 print:hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
           <div 
             className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 cursor-pointer"
-            onClick={() => setView('landing')}
+            onClick={() => {
+              setView('landing');
+              setIsExamMode(false);
+            }}
           >
             <Logo />
             <div className="hidden md:block w-px h-6 bg-slate-200 dark:bg-slate-700"></div>
@@ -553,7 +633,10 @@ const App: React.FC = () => {
           <div className="flex items-center gap-2 sm:gap-3">
             {view !== 'landing' && (
               <button 
-                onClick={() => setView('dashboard')}
+                onClick={() => {
+                  setView('dashboard');
+                  setIsExamMode(false);
+                }}
                 className="p-2.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl transition-all duration-200"
                 title="Home"
               >
@@ -562,7 +645,10 @@ const App: React.FC = () => {
             )}
             
             <button 
-               onClick={() => setView('history')}
+               onClick={() => {
+                 setView('history');
+                 setIsExamMode(false);
+               }}
                className="p-2.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl transition-all duration-200"
                title="History"
             >
@@ -597,11 +683,11 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 relative z-10">
+      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12 relative z-10 print:p-0 print:max-w-none">
         {renderContent()}
       </main>
 
-      <footer className="w-full py-8 text-center relative z-10 border-t border-slate-200/50 dark:border-slate-800/50 bg-white/30 dark:bg-slate-900/30 backdrop-blur-sm mt-auto">
+      <footer className="w-full py-8 text-center relative z-10 border-t border-slate-200/50 dark:border-slate-800/50 bg-white/30 dark:bg-slate-900/30 backdrop-blur-sm mt-auto print:hidden">
         <div className="max-w-7xl mx-auto px-4">
           <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">
             Built with <span className="font-semibold text-sky-500">React</span>, <span className="font-semibold text-blue-500">TypeScript</span> & <span className="font-semibold text-cyan-500">Tailwind</span> by{' '}

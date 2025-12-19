@@ -1,3 +1,4 @@
+
 export interface EvaluationScores {
   rapport: number;
   organisation: number;
@@ -27,4 +28,15 @@ export interface EvaluationResultData {
 export interface Evaluation extends EvaluationResultData {
   id: string;
   date: string; // ISO 8601 format
+}
+
+export interface StudentInfo {
+  firstName: string;
+  lastName: string;
+  studentClass: string;
+}
+
+export interface ExamSession extends Evaluation {
+  studentInfo: StudentInfo;
+  isExam: boolean;
 }

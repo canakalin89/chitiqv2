@@ -21,7 +21,8 @@ const resources = {
         confirmDeleteAll: "Are you sure you want to delete all history?",
         confirmDelete: "Delete this item?",
         retry: "Try Again",
-        requestAccess: "Grant Permission"
+        requestAccess: "Grant Permission",
+        print: "Print / Save as PDF"
       },
       dashboard: {
         selectTask: "Select Task",
@@ -31,6 +32,8 @@ const resources = {
         processing: "Processing...",
         recording: "Recording...",
         usageCount: "Usage Count",
+        examMode: "Teacher Exam Mode",
+        examModeDesc: "Create structured exams, pick questions with a lucky wheel, and download reports.",
         processingSteps: {
           uploading: "Uploading audio...",
           transcribing: "Transcribing speech...",
@@ -38,6 +41,24 @@ const resources = {
           finalizing: "Finalizing report..."
         },
         estimatedTime: "Estimated time: ~{{seconds}}s"
+      },
+      exam: {
+        title: "Teacher Exam Mode",
+        studentInfo: "Student Information",
+        firstName: "First Name",
+        lastName: "Last Name",
+        class: "Class",
+        selectQuestions: "Select Questions for the Wheel",
+        minQuestions: "Please select at least 2 questions.",
+        startWheel: "Prepare Wheel",
+        spinWheel: "Spin the Wheel!",
+        spinning: "Spinning...",
+        selectedTopic: "Selected Topic",
+        beginExam: "Begin Exam",
+        reportTitle: "Official Speaking Exam Report",
+        examDate: "Exam Date",
+        teacherNotes: "Notes",
+        selectedQuestionsCount: "{{count}} questions selected"
       },
       recorder: {
         liveTranscript: "Live Transcript",
@@ -121,7 +142,8 @@ const resources = {
         confirmDeleteAll: "Tüm geçmişi silmek istediğinize emin misiniz?",
         confirmDelete: "Bu kaydı sil?",
         retry: "Tekrar Dene",
-        requestAccess: "İzin Ver"
+        requestAccess: "İzin Ver",
+        print: "Yazdır / PDF Olarak Kaydet"
       },
       dashboard: {
         selectTask: "Görev Seçin",
@@ -131,6 +153,8 @@ const resources = {
         processing: "İşleniyor...",
         recording: "Kaydediliyor...",
         usageCount: "Kullanılma Sayısı",
+        examMode: "Öğretmen Sınav Modu",
+        examModeDesc: "Sınav oturumları oluşturun, soruları çarkla seçin ve resmi raporlar alın.",
         processingSteps: {
           uploading: "Ses yükleniyor...",
           transcribing: "Konuşma deşifre ediliyor...",
@@ -138,6 +162,24 @@ const resources = {
           finalizing: "Rapor hazırlanıyor..."
         },
         estimatedTime: "Tahmini süre: ~{{seconds}}sn"
+      },
+      exam: {
+        title: "Öğretmen Sınav Modu",
+        studentInfo: "Öğrenci Bilgileri",
+        firstName: "Adı",
+        lastName: "Soyadı",
+        class: "Sınıfı",
+        selectQuestions: "Çark İçin Soruları Seçin",
+        minQuestions: "Lütfen en az 2 soru seçin.",
+        startWheel: "Çarkı Hazırla",
+        spinWheel: "Çarkı Çevir!",
+        spinning: "Çevriliyor...",
+        selectedTopic: "Seçilen Konu",
+        beginExam: "Sınavı Başlat",
+        reportTitle: "Resmi İngilizce Konuşma Sınav Raporu",
+        examDate: "Sınav Tarihi",
+        teacherNotes: "Notlar",
+        selectedQuestionsCount: "{{count}} soru seçildi"
       },
       recorder: {
         liveTranscript: "Canlı Döküm",

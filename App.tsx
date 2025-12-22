@@ -150,7 +150,6 @@ const App: React.FC = () => {
   const testimonials = useMemo(() => {
     const teachersObj = t('landing.teacherTestimonials', { returnObjects: true }) as any;
     const studentsObj = t('landing.studentTestimonials', { returnObjects: true }) as any;
-    
     if (!teachersObj || !studentsObj) return [];
     
     const allTeachers: any[] = [];
@@ -249,7 +248,6 @@ const App: React.FC = () => {
     if (info) {
       setStudentInfo(info);
       setIsExamMode(true);
-      // Logic for adding student to class if they don't exist
       if (info.classId && info.firstName && info.lastName && info.studentNumber) {
         const targetClass = classes.find(c => c.id === info.classId);
         if (targetClass) {
@@ -319,7 +317,6 @@ const App: React.FC = () => {
                 </div>
               </div>
             </div>
-            {/* Steps & Criteria - Same as before */}
             <div className="w-full max-w-5xl mx-auto px-4 space-y-6">
               <div className="text-center">
                 <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-1">{t('landing.howItWorks')}</h2>
@@ -339,7 +336,6 @@ const App: React.FC = () => {
                 ))}
               </div>
             </div>
-            {/* Criteria section and Testimonials section same as before */}
             <div className="w-full bg-slate-100/30 dark:bg-slate-900/30 py-10 border-y border-slate-200/50 dark:border-slate-800/50 backdrop-blur-sm">
               <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                  <div className="lg:col-span-4 space-y-3 text-center lg:text-left">
@@ -364,7 +360,6 @@ const App: React.FC = () => {
                  </div>
               </div>
             </div>
-            {/* Testimonials */}
             <div className="w-full max-w-6xl mx-auto px-4 space-y-12">
                <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                   <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('landing.testimonialsTitle')}</h2>
@@ -398,36 +393,25 @@ const App: React.FC = () => {
           <div className="max-w-5xl mx-auto space-y-8 animate-slide-up relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
               <div className="md:col-span-8 space-y-6">
-                 {/* Standard Selection */}
                  <section className="glass rounded-2xl p-1 border border-white/20 dark:border-slate-800 shadow-xl shadow-indigo-500/5"><TopicSelector onSelectTopic={setCurrentTopic} onStart={() => { setIsExamMode(false); setView('recorder'); }}/></section>
-                 
                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    {/* Lucky Wheel Card */}
                     <section className="glass rounded-3xl p-6 border border-white/20 dark:border-slate-800 shadow-xl bg-gradient-to-br from-indigo-500/5 to-emerald-500/5 group">
                         <div className="space-y-4">
-                           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clipRule="evenodd" /></svg>
-                           </div>
+                           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clipRule="evenodd" /></svg></div>
                            <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('dashboard.wheelPractice')}</h2>
                            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{t('dashboard.wheelPracticeDesc')}</p>
                            <button onClick={() => { setIsExamMode(false); setView('practice-wheel'); }} className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/20 transition-all group-hover:-translate-y-1">{t('exam.startWheel')}</button>
                         </div>
                     </section>
-
-                    {/* Exam Mode Card */}
                     <section className="glass rounded-3xl p-6 border border-white/20 dark:border-slate-800 shadow-xl bg-gradient-to-br from-purple-500/5 to-indigo-500/5 group">
                         <div className="space-y-4">
-                           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path d="M11.7 2.805a.75.75 0 01.6 0A60.65 60.65 0 0122.83 8.72a.75.75 0 01-.231 1.337 49.94 49.94 0 00-9.902 3.912l-.003.002c-.114.06-.227.119-.34.18a.75.75 0 01-.707 0A50.88 50.88 0 002.75 10.25a.75.75 0 01-.31-1.274A50.39 50.39 0 0111.7 2.805z" /><path d="M13.06 15.473a48.45 48.45 0 017.623-2.662c.034 1.209.034 2.45 0 3.658a47.44 47.44 0 01-5.293 3.048.75.75 0 01-.654 0l-2.48-1.481a48.04 48.04 0 01-5.132-3.413 47.44 47.44 0 001.088-6.23l1.266-.735a44.86 44.86 0 009.262 3.25c.01.658.01 1.333 0 2.022a48.837 48.837 0 01-5.68 2.593z" /></svg>
-                           </div>
+                           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path d="M11.7 2.805a.75.75 0 01.6 0A60.65 60.65 0 0122.83 8.72a.75.75 0 01-.231 1.337 49.94 49.94 0 00-9.902 3.912l-.003.002c-.114.06-.227.119-.34.18a.75.75 0 01-.707 0A50.88 50.88 0 002.75 10.25a.75.75 0 01-.31-1.274A50.39 50.39 0 0111.7 2.805z" /><path d="M13.06 15.473a48.45 48.45 0 017.623-2.662c.034 1.209.034 2.45 0 3.658a47.44 47.44 0 01-5.293 3.048.75.75 0 01-.654 0l-2.48-1.481a48.04 48.04 0 01-5.132-3.413 47.44 47.44 0 001.088-6.23l1.266-.735a44.86 44.86 0 009.262 3.25c.01.658.01 1.333 0 2.022a48.837 48.837 0 01-5.68 2.593z" /></svg></div>
                            <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('dashboard.examMode')}</h2>
                            <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{t('dashboard.examModeDesc')}</p>
                            <button onClick={() => { setIsExamMode(true); setView('exam-setup'); }} className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold shadow-lg shadow-purple-500/20 transition-all group-hover:-translate-y-1">{t('exam.beginExam')}</button>
                         </div>
                     </section>
                  </div>
-
-                 {/* Tools Section */}
                  <section className="flex flex-wrap gap-4">
                     <button onClick={() => setView('class-manager')} className="flex-1 min-w-[140px] px-6 py-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center gap-2 group">
                        <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-500 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg></div>
@@ -441,31 +425,22 @@ const App: React.FC = () => {
               </div>
               <div className="md:col-span-4 space-y-4">
                  <RecentHistory history={history} onSelect={handleSelectHistoryItem} />
-                 <button onClick={() => setView('history')} className="w-full py-4 px-4 rounded-2xl text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 text-[10px] shadow-sm">
-                    <HistoryIcon className="w-4 h-4" /> {t('common.viewAllHistory')}
-                 </button>
+                 <button onClick={() => setView('history')} className="w-full py-4 px-4 rounded-2xl text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 text-[10px] shadow-sm"><HistoryIcon className="w-4 h-4" /> {t('common.viewAllHistory')}</button>
               </div>
             </div>
           </div>
         );
-      case 'class-manager':
-        return <ClassManager classes={classes} history={history} onUpdate={setClasses} onSelectHistory={handleSelectHistoryItem} onBack={() => setView('dashboard')} />;
-      case 'analytics':
-        return <AnalyticsDashboard history={history} classes={classes} onBack={() => setView('dashboard')} />;
-      case 'exam-setup':
-        return <div className="max-w-4xl mx-auto py-8 animate-fade-in relative z-10"><ExamMode classes={classes} onComplete={handleExamComplete} onCancel={() => { setIsExamMode(false); setView('dashboard'); }} mode="exam"/></div>;
-      case 'practice-wheel':
-        return <div className="max-w-4xl mx-auto py-8 animate-fade-in relative z-10"><ExamMode classes={[]} onComplete={handleExamComplete} onCancel={() => setView('dashboard')} mode="practice"/></div>;
-      case 'recorder':
-        return <div className="max-w-4xl mx-auto py-8 animate-fade-in relative z-10"><Recorder topic={currentTopic} onStop={handleStopRecording} onCancel={() => setView('dashboard')}/></div>;
+      case 'class-manager': return <ClassManager classes={classes} history={history} onUpdate={setClasses} onSelectHistory={handleSelectHistoryItem} onBack={() => setView('dashboard')} />;
+      case 'analytics': return <AnalyticsDashboard history={history} classes={classes} onBack={() => setView('dashboard')} />;
+      case 'exam-setup': return <div className="max-w-4xl mx-auto py-8 animate-fade-in relative z-10"><ExamMode classes={classes} onComplete={handleExamComplete} onCancel={() => { setIsExamMode(false); setView('dashboard'); }} mode="exam"/></div>;
+      case 'practice-wheel': return <div className="max-w-4xl mx-auto py-8 animate-fade-in relative z-10"><ExamMode classes={[]} onComplete={handleExamComplete} onCancel={() => setView('dashboard')} mode="practice"/></div>;
+      case 'recorder': return <div className="max-w-4xl mx-auto py-8 animate-fade-in relative z-10"><Recorder topic={currentTopic} onStop={handleStopRecording} onCancel={() => setView('dashboard')}/></div>;
       case 'evaluating':
         const radius = 70; const circumference = 2 * Math.PI * radius; const strokeDashoffset = circumference - (loadingProgress / 100) * circumference;
         return (<div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8 animate-fade-in relative z-10"><div className="relative w-56 h-56 flex items-center justify-center"><div className="absolute inset-0 bg-indigo-500 blur-3xl opacity-20 rounded-full animate-pulse-slow"></div><svg className="w-full h-full" viewBox="0 0 224 224"><circle cx="112" cy="112" r={radius} stroke="currentColor" strokeWidth="12" fill="transparent" className="text-slate-200 dark:text-slate-800" /><circle cx="112" cy="112" r={radius} stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round" className="text-indigo-600 dark:text-indigo-500 transition-all duration-300 ease-linear origin-center -rotate-90" /><text x="112" y="112" textAnchor="middle" dominantBaseline="middle" dy=".1em" className="text-4xl font-extrabold fill-slate-800 dark:fill-white" style={{ fontVariantNumeric: 'tabular-nums' }}>{Math.round(loadingProgress)}%</text></svg></div><div className="text-center space-y-3 max-w-sm px-4"><h2 className="text-2xl font-bold text-slate-800 dark:text-white tracking-tight animate-pulse">{progressText(loadingProgress)}</h2><div className="inline-block px-4 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-900/50"><p className="text-sm font-medium text-indigo-600 dark:text-indigo-400">{t('dashboard.estimatedTime', { seconds: estimatedTimeLeft })}</p></div></div></div>);
       case 'result':
-      case 'exam-result':
-        return evaluationData ? (<div className="max-w-5xl mx-auto py-4 animate-fade-in relative z-10 print:m-0 print:p-0"><EvaluationResult data={evaluationData} audioBlob={audioBlob} onBack={() => { setView('dashboard'); setIsExamMode(false); setStudentInfo(null); }} isExam={isExamMode} studentInfo={studentInfo}/></div>) : null;
-      case 'history':
-        return (<div className="max-w-5xl mx-auto py-4 animate-fade-in relative z-10"><HistoryView history={history} onSelect={handleSelectHistoryItem} onDelete={(id) => setHistory(prev => prev.filter(i => i.id !== id))} onClearAll={() => setHistory([])} onBack={() => setView('dashboard')}/></div>);
+      case 'exam-result': return evaluationData ? (<div className="max-w-5xl mx-auto py-4 animate-fade-in relative z-10 print:m-0 print:p-0"><EvaluationResult data={evaluationData} audioBlob={audioBlob} onBack={() => { setView('dashboard'); setIsExamMode(false); setStudentInfo(null); }} isExam={isExamMode} studentInfo={studentInfo}/></div>) : null;
+      case 'history': return (<div className="max-w-5xl mx-auto py-4 animate-fade-in relative z-10"><HistoryView history={history} onSelect={handleSelectHistoryItem} onDelete={(id) => setHistory(prev => prev.filter(i => i.id !== id))} onClearAll={() => setHistory([])} onBack={() => setView('dashboard')}/></div>);
       default: return null;
     }
   };

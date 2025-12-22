@@ -73,7 +73,6 @@ const ExamMode: React.FC<ExamModeProps> = ({ classes, onComplete, onCancel, mode
     setWinner(null);
     setIsSpinning(true);
     
-    // Add extra rotations for the effect
     const extraRotations = 2400 + Math.floor(Math.random() * 1800); 
     const newRotation = rotation + extraRotations;
     const startRotation = rotation;
@@ -86,7 +85,6 @@ const ExamMode: React.FC<ExamModeProps> = ({ classes, onComplete, onCancel, mode
     const animateTicks = (now: number) => {
       const elapsed = now - startTime;
       if (elapsed < duration) {
-        // Ease out quartic
         const progress = 1 - Math.pow(1 - elapsed / duration, 4);
         const currentTotalRotation = startRotation + (newRotation - startRotation) * progress;
         
@@ -101,12 +99,9 @@ const ExamMode: React.FC<ExamModeProps> = ({ classes, onComplete, onCancel, mode
 
     setTimeout(() => {
       setIsSpinning(false);
-      
-      // Calculate winner based on the pointer being at the top (0 degrees)
       const actualDegrees = newRotation % 360;
       const normalizedTopDegree = (360 - actualDegrees) % 360;
       const winningIndex = Math.floor(normalizedTopDegree / sliceAngle);
-      
       setWinner(selectedQuestions[winningIndex]);
     }, duration);
   };
@@ -245,13 +240,18 @@ const ExamMode: React.FC<ExamModeProps> = ({ classes, onComplete, onCancel, mode
         </div>
         <div className="relative group">
           <div className="absolute inset-0 bg-indigo-500/20 blur-[60px] rounded-full group-hover:bg-purple-500/20 transition-colors duration-500"></div>
+          
           <div className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-6 z-30 drop-shadow-xl transition-transform ${isSpinning ? 'animate-bounce' : ''}`}>
             <svg width="40" height="50" viewBox="0 0 40 50" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M20 50L40 0H0L20 50Z" fill="#F43F5E" />
               <circle cx="20" cy="15" r="5" fill="white" fillOpacity="0.5" />
             </svg>
           </div>
-          <div className="relative w-[300px] h-[300px] sm:w-[500px] sm:h-[500px]">
+
+          <div 
+            onClick={spinWheel}
+            className={`relative w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] transition-transform duration-300 ${!isSpinning ? 'cursor-pointer hover:scale-[1.02]' : 'cursor-default'}`}
+          >
             <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl" style={{ transform: `rotate(${rotation}deg)`, transition: isSpinning ? 'transform 4s cubic-bezier(0.15, 0, 0.15, 1)' : 'none' }}>
               <defs>
                 {selectedQuestions.map((_, i) => (
@@ -265,7 +265,6 @@ const ExamMode: React.FC<ExamModeProps> = ({ classes, onComplete, onCancel, mode
                 const startAngle = i * sliceAngle; 
                 const endAngle = (i + 1) * sliceAngle; 
                 const largeArcFlag = sliceAngle > 180 ? 1 : 0; 
-                // -90 adjustment to start index 0 at the top
                 const x1 = 50 + 50 * Math.cos((Math.PI * (startAngle - 90)) / 180); 
                 const y1 = 50 + 50 * Math.sin((Math.PI * (startAngle - 90)) / 180); 
                 const x2 = 50 + 50 * Math.cos((Math.PI * (endAngle - 90)) / 180); 
@@ -285,6 +284,7 @@ const ExamMode: React.FC<ExamModeProps> = ({ classes, onComplete, onCancel, mode
             <div className="absolute inset-0 rounded-full border-[12px] border-white/10 dark:border-slate-800/20 pointer-events-none"></div>
           </div>
         </div>
+        
         <div className="w-full max-w-2xl flex flex-col items-center gap-8">
           {winner && !isSpinning ? (
             <div className="space-y-8 text-center animate-fade-in w-full">

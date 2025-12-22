@@ -1,69 +1,101 @@
-# ChitIQ - Smart Speaking Evaluator / Akıllı Konuşma Asistanı
+
+# 🚀 ChitIQ - AI-Powered Speaking Evaluator & Exam Assistant
 
 [English](#english) | [Türkçe](#türkçe)
 
 ---
 
 <a name="english"></a>
-## 🇬🇧 English
+## 🇬🇧 English: Professional Overview
 
-### Overview
-ChitIQ is a modern React application designed to help users, especially high school students, practice and evaluate their English speaking skills. Powered by the Google Gemini API, it provides instant, detailed feedback on Rapport, Organization, Delivery, Language Use, and Creativity.
+**ChitIQ** is a state-of-the-art Web application built for modern English language education. It serves as a dual-purpose tool: a personal practice assistant for students and a high-efficiency assessment suite for teachers.
 
-### Features
-- **AI-Powered Analysis**: Uses Google's Gemini 2.5 Flash model for accurate speech evaluation, transcription, and summarization.
-- **Exam Focused**: Tailored for high school speaking exams with specific topics (Freestyle, IELTS, TOEFL, etc.).
-- **Educational Alignment**: Aligned with the **"Century of Türkiye Education Model"**, focusing on holistic skill development.
-- **Comprehensive Feedback**: Provides detailed scoring (0-100) and constructive advice across 5 key metrics.
-- **History Tracking**: Saves evaluations locally so students can track their progress over time.
-- **Responsive Design**: Fully responsive UI with dark mode support and mobile-friendly gestures (swipe-to-delete).
+### 🌟 Vision & Pedagogical Alignment
+ChitIQ is specifically designed to align with the **"Century of Türkiye Education Model" (Türkiye Yüzyılı Maarif Modeli)** and the **Common European Framework of Reference for Languages (CEFR)**. It focuses on holistic language production rather than just rote memorization.
 
-### Tech Stack
-- **Frontend**: React 19, TypeScript
-- **Styling**: Tailwind CSS
-- **AI Integration**: Google GenAI SDK (`@google/genai`)
-- **Internationalization**: i18next (English & Turkish support)
-- **Audio**: Native Web Audio API for recording and visualization
+### 🛠 Key Features
 
-### Installation
-1. Clone the repository.
-2. Install dependencies: `npm install`
-3. Set up your API Key:
-   - Create a `.env` file in the root directory.
-   - Add your key: `API_KEY=your_google_gemini_api_key`
-4. Run the application: `npm start`
+#### 👨‍🏫 For Teachers (Exam Mode & Management)
+- **Teacher Exam Mode**: Conduct speaking exams with professional precision. 
+- **Lucky Wheel Selection**: Gamify the exam process. Select curriculum-based questions and let the wheel decide the student's task with realistic physics and 3D animations.
+- **Class & Student Management**: Create classes (e.g., 9-A, 11-B), bulk-add students using a simple text format, and manage individual student profiles.
+- **Automated Analytics**: View class averages and compare performance metrics between different classes.
+- **Professional PDF Reports**: Generate "Class Achievement Reports" or "Individual Assessment Reports" that are ready to print, featuring radar charts and signature lines.
+
+#### 🎓 For Students (Practice & Growth)
+- **Real-Time Live Transcription**: Powered by **Gemini Live API**, the app provides a verbatim transcript of the student's speech as they talk.
+- **Interactive Recorder**: Visual feedback with real-time soundwave animations and silence detection.
+- **Instant AI Feedback**: Within seconds of finishing, receive a score (0-100) and detailed pedagogical feedback in Turkish or English.
+- **Practice Wheel**: Use the wheel for self-study to challenge yourself with random topics.
+- **History Tracking**: Keep a local record of all attempts to visualize progress over time.
+
+### 📊 Evaluation Metrics
+The AI (Gemini 3 Pro) evaluates every recording based on five core pillars:
+1.  **Rapport**: Confidence, volume, and natural social flow.
+2.  **Organisation**: Logical structure (Intro/Body/Conclusion) and use of discourse markers.
+3.  **Delivery**: Fluency, intonation patterns, and IPA-based pronunciation analysis.
+4.  **Language Use**: Grammatical accuracy and lexical variety (CEFR A2-B2 level).
+5.  **Creativity**: Depth of ideas, use of idioms, and original thought.
+
+### 💻 Technical Stack
+- **Framework**: React 19 (Modern Hooks, Context)
+- **Language**: TypeScript (Strict typing for reliability)
+- **Styling**: Tailwind CSS (Custom mesh backgrounds, aurora blobs, glassmorphism)
+- **AI Engine**: 
+  - `gemini-3-pro-preview` (For deep pedagogical evaluation)
+  - `gemini-2.5-flash-native-audio-preview-09-2025` (For real-time transcription)
+- **i18n**: Multi-language support with `i18next`.
+- **Animations**: Framer-motion inspired CSS keyframes, high-performance canvas visualizers.
 
 ---
 
 <a name="türkçe"></a>
-## 🇹🇷 Türkçe
+## 🇹🇷 Türkçe: Profesyonel Bakış
 
-### Genel Bakış
-ChitIQ, kullanıcıların, özellikle lise öğrencilerinin İngilizce konuşma becerilerini geliştirmelerine ve sınavlara hazırlanmalarına yardımcı olmak için tasarlanmış modern bir React uygulamasıdır. Google Gemini API gücüyle çalışan uygulama; Uyum, Organizasyon, Sunum, Dil Kullanımı ve Yaratıcılık gibi kriterler üzerinden anında ve detaylı geri bildirim sağlar.
+**ChitIQ**, modern İngilizce eğitimi için geliştirilmiş, öğrenci pratik asistanı ve öğretmen sınav yönetim panelini tek bir çatıda toplayan kapsamlı bir web uygulamasıdır.
 
-### Özellikler
-- **Yapay Zeka Destekli Analiz**: Google Gemini 2.5 Flash modeli ile konuşmaları dinler, metne döker ve puanlar.
-- **Sınav Odaklı**: Lise İngilizce konuşma sınavlarına hazırlık için müfredata uygun konular içerir.
-- **Eğitim Modeli Uyumu**: **"Türkiye Yüzyılı Maarif Modeli"** vizyonuna uygun olarak öğrencilerin dil becerilerini geliştirmeyi hedefler.
-- **Kapsamlı Geri Bildirim**: 5 temel kriter üzerinden 100 üzerinden puanlama ve kişisel gelişim tavsiyeleri sunar.
-- **Geçmiş Takibi**: Öğrencilerin gelişimlerini izleyebilmeleri için değerlendirmeleri tarayıcıda saklar.
-- **Mobil Uyumlu**: Karanlık mod desteği ve mobil cihazlarda kaydırarak silme (swipe-to-delete) özelliği ile kullanıcı dostu arayüz.
+### 🌟 Vizyon ve Eğitsel Uyum
+ChitIQ, **"Türkiye Yüzyılı Maarif Modeli"** vizyonuna ve **Avrupa Ortak Dil Çerçevesi (CEFR)** kriterlerine tam uyumlu olarak geliştirilmiştir. Sadece kelime bilgisini değil, bütüncül konuşma üretimini ölçmeyi hedefler.
 
-### Teknolojiler
-- **Arayüz**: React 19, TypeScript
-- **Stil**: Tailwind CSS
-- **Yapay Zeka**: Google GenAI SDK (`@google/genai`)
+### 🛠 Temel Özellikler
+
+#### 👨‍🏫 Öğretmenler İçin (Sınav Modu ve Yönetim)
+- **Öğretmen Sınav Modu**: Konuşma sınavlarını profesyonel bir standartta gerçekleştirin.
+- **Şans Çarkı (Lucky Wheel)**: Sınav sürecini oyunlaştırın. Müfredat sorularını seçin ve gerçekçi fizik kurallarıyla çalışan çarkın öğrenciye sorusunu seçmesini izleyin.
+- **Sınıf ve Öğrenci Yönetimi**: Sınıflar oluşturun, öğrenci listelerini toplu olarak saniyeler içinde ekleyin.
+- **Gelişmiş Analizler**: Sınıf ortalamalarını görün ve farklı sınıfların performans metriklerini karşılaştırın.
+- **Profesyonel Raporlama**: Baskıya hazır, radar grafikli ve imza alanlı "Sınıf Başarı Raporları" ve "Bireysel Sınav Analizleri" oluşturun.
+
+#### 🎓 Öğrenciler İçin (Pratik ve Gelişim)
+- **Anlık Canlı Deşifre**: **Gemini Live API** sayesinde, öğrenci konuşurken kelimeleri anlık olarak ekranda belirir.
+- **İnteraktif Kayıt Cihazı**: Gerçek zamanlı ses dalgaları, sessizlik uyarısı ve süre takibi.
+- **Anlık Yapay Zeka Geri Bildirimi**: Kayıt biter bitmez 5 farklı kriterde 100 üzerinden puanlama ve Türkçe/İngilizce detaylı analiz.
+- **Kişisel Pratik Çarkı**: Rastgele konular seçerek kendi kendine çalışma imkanı.
+- **Gelişim Geçmişi**: Tüm denemeleri tarayıcıda saklayarak zaman içindeki değişimi gözlemleme.
+
+### 📊 Değerlendirme Kriterleri
+Yapay Zeka (Gemini 3 Pro), her kaydı beş temel pedagojik sütunda inceler:
+1.  **Uyum (Rapport)**: Özgüven, ses seviyesi ve doğal etkileşim akışı.
+2.  **Organizasyon (Organisation)**: Mantıksal yapı (Giriş/Gelişme/Sonuç) ve bağlaç kullanımı.
+3.  **Sunum (Delivery)**: Akıcılık, tonlama ve IPA tabanlı detaylı telaffuz analizi.
+4.  **Dil Kullanımı (Language Use)**: Dilbilgisi doğruluğu ve kelime çeşitliliği (A2-B2 seviyesi).
+5.  **Yaratıcılık (Creativity)**: Fikir derinliği, deyim kullanımı ve özgün bakış açısı.
+
+### 💻 Teknolojik Yapı
+- **Arayüz**: React 19
+- **Dil**: TypeScript
+- **Tasarım**: Tailwind CSS (Özel mesh arka planlar, aurora efektleri, glassmorphism)
+- **Yapay Zeka Motoru**: 
+  - `gemini-3-pro-preview` (Pedagojik değerlendirme için)
+  - `gemini-2.5-flash-native-audio-preview-09-2025` (Canlı yayın deşifre için)
 - **Dil Desteği**: i18next (Türkçe & İngilizce)
-- **Ses**: Web Audio API (Kayıt ve Görselleştirme)
-
-### Kurulum
-1. Projeyi bilgisayarınıza indirin.
-2. Gerekli paketleri yükleyin: `npm install`
-3. API Anahtarını ayarlayın:
-   - Ana dizinde `.env` dosyası oluşturun.
-   - Şu satırı ekleyin: `API_KEY=google_gemini_api_anahtariniz`
-4. Uygulamayı başlatın: `npm start`
+- **Görselleştirme**: HTML5 Canvas tabanlı ses görselleştirici ve 3D görünümlü şans çarkı.
 
 ---
+
+### 🚀 Setup / Kurulum
+1.  **API Key**: Projenin çalışması için `process.env.API_KEY` değişkenine geçerli bir Google Gemini API anahtarı gereklidir.
+2.  **Install**: `npm install`
+3.  **Start**: `npm start`
 
 *Developed by [Can AKALIN](https://instagram.com/can_akalin)*

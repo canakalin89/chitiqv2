@@ -4,13 +4,12 @@ import { EvaluationResultData } from "../types";
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-// Using a plain object for schema as recommended in guidelines
 const evaluationSchema = {
   type: Type.OBJECT,
   properties: {
     topic: {
       type: Type.STRING,
-      description: "The specific topic discussed. If the user selected 'Freestyle', this is the identified topic.",
+      description: "The specific topic discussed. If the user selected 'Freestyle', identify the topic. Otherwise, MUST match the input topic EXACTLY.",
     },
     scores: {
       type: Type.OBJECT,
@@ -61,36 +60,30 @@ export const evaluateSpeech = async (
   allTopics: string[],
   language: 'en' | 'tr'
 ): Promise<EvaluationResultData> => {
-  const isFreestyle = topic === "Freestyle" || topic === "Serbest Konu";
+  const isFreestyle = topic === "Freestyle" || topic === "Serbest Konuşma (İstediğiniz bir konu hakkında konuşun)";
   const targetLanguage = language === 'tr' ? 'Turkish' : 'English';
 
-  const systemInstruction = `You are an expert English Speaking Proficiency Evaluator. 
-  Your task is to evaluate a user's spoken English based on an audio recording.
+  const systemInstruction = `You are an expert English Speaking Proficiency Evaluator.
+  Your task is to evaluate spoken English based on an audio recording.
 
-  **Process:**
-  1.  **Transcribe**: Accurately transcribe the English speech.
-  2.  **Summarize**: Provide a brief summary of the content.
-  3.  **Identify Topic**: 
-      - The user selected topic is: "${topic}".
-      - ${isFreestyle 
-        ? 'Since the user chose "Freestyle", analyze the content to IDENTIFY and name the specific topic they are discussing.' 
-        : 'Use the selected topic as context. If the speech deviates significantly, note this in the feedback.'}
-  4.  **Evaluate**: Score and critique the performance based on these 5 criteria:
-      - **Rapport**: Engagement, tone, and connection.
-      - **Organisation**: Structure, coherence, and flow.
-      - **Delivery**: Fluency, pronunciation, and pacing.
-      - **Language Use**: Vocabulary range, grammatical accuracy, and complexity.
-      - **Creativity**: Originality of ideas and expression.
-  5.  **Output Language**: 
-      - The **transcription** must be in **English** (as spoken).
-      - The **feedback**, **summary**, and **topic name** (if Freestyle) must be in **${targetLanguage}**.
+  **CRITICAL RULE FOR TOPIC**: 
+  - The input topic provided by the user is: "${topic}".
+  - IF the input is NOT "Freestyle" (or the Turkish equivalent), you MUST return the EXACT string "${topic}" in the "topic" field of the JSON. Do not summarize or rename it.
+  - IF the input IS "Freestyle", analyze the content and identify the specific topic discussed.
 
-  **Output Format**:
-  Return a raw JSON object adhering strictly to the provided schema. Do not include markdown formatting.
-  `;
+  **Evaluation Process:**
+  1. **Transcribe**: VERBATIM transcription of the speech in English.
+  2. **Summarize**: Brief summary of content in ${targetLanguage}.
+  3. **Evaluate**: Score 0-100 and provide constructive feedback in ${targetLanguage} for:
+     - Rapport (engagement/tone)
+     - Organisation (structure/flow)
+     - Delivery (fluency/pronunciation)
+     - Language Use (vocabulary/grammar)
+     - Creativity (originality)
+
+  Return raw JSON only. No markdown formatting.`;
 
   try {
-    // Using gemini-3-pro-preview for complex reasoning tasks like speech evaluation
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
       contents: {
@@ -102,7 +95,7 @@ export const evaluateSpeech = async (
             },
           },
           {
-            text: "Evaluate my speaking performance based on the system instructions.",
+            text: `Evaluate this speaking session. The user is supposed to talk about: "${topic}".`,
           },
         ],
       },
@@ -114,11 +107,15 @@ export const evaluateSpeech = async (
     });
 
     const textResponse = response.text;
-    if (!textResponse) {
-      throw new Error("Received empty response from Gemini.");
-    }
+    if (!textResponse) throw new Error("Received empty response from Gemini.");
 
     const result = JSON.parse(textResponse) as EvaluationResultData;
+    
+    // Safety check: force correct topic name if AI deviated
+    if (!isFreestyle) {
+      result.topic = topic;
+    }
+    
     return result;
 
   } catch (error) {

@@ -26,6 +26,7 @@ const ExamMode: React.FC<ExamModeProps> = ({ classes, onComplete, onCancel, mode
   const [isSpinning, setIsSpinning] = useState(false);
   const [winner, setWinner] = useState<string | null>(null);
   const [rotation, setRotation] = useState(0);
+  const [confetti, setConfetti] = useState<any[]>([]);
   
   const audioCtxRef = useRef<AudioContext | null>(null);
   const lastTickAngleRef = useRef(0);
@@ -68,27 +69,51 @@ const ExamMode: React.FC<ExamModeProps> = ({ classes, onComplete, onCancel, mode
     }
   };
 
+  const triggerConfetti = () => {
+    const pieces = [];
+    const colors = ['#f43f5e', '#6366f1', '#10b981', '#f59e0b', '#8b5cf6'];
+    for (let i = 0; i < 100; i++) {
+      pieces.push({
+        id: i,
+        left: Math.random() * 100,
+        delay: Math.random() * 2,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        size: Math.random() * 10 + 5
+      });
+    }
+    setConfetti(pieces);
+    setTimeout(() => setConfetti([]), 5000);
+  };
+
   const spinWheel = () => {
     if (isSpinning) return;
     setWinner(null);
     setIsSpinning(true);
     
-    const extraRotations = 2400 + Math.floor(Math.random() * 1800); 
-    const newRotation = rotation + extraRotations;
-    const startRotation = rotation;
-    setRotation(newRotation);
+    // Physics parameters
+    const minRotations = 10;
+    const maxRotations = 15;
+    const extraRotations = (minRotations + Math.random() * (maxRotations - minRotations)) * 360; 
+    
+    // Calculate winning angle for rebound effect
+    const sliceAngle = 360 / selectedQuestions.length;
+    const currentRotation = rotation % 360;
+    const targetRotation = rotation + extraRotations;
+    
+    setRotation(targetRotation);
     
     const startTime = performance.now();
-    const duration = 4000;
-    const sliceAngle = 360 / selectedQuestions.length;
+    const duration = 5000;
     
     const animateTicks = (now: number) => {
       const elapsed = now - startTime;
       if (elapsed < duration) {
-        const progress = 1 - Math.pow(1 - elapsed / duration, 4);
-        const currentTotalRotation = startRotation + (newRotation - startRotation) * progress;
+        // Cubic ease-out for smooth slowdown
+        const t = elapsed / duration;
+        const progress = 1 - Math.pow(1 - t, 4);
+        const currentTotalRotation = rotation + (targetRotation - rotation) * progress;
         
-        if (Math.floor(currentTotalRotation / sliceAngle) !== Math.floor(lastTickAngleRef.current / sliceAngle)) {
+        if (Math.abs(Math.floor(currentTotalRotation / sliceAngle) - Math.floor(lastTickAngleRef.current / sliceAngle)) >= 1) {
           playTick();
           lastTickAngleRef.current = currentTotalRotation;
         }
@@ -99,14 +124,22 @@ const ExamMode: React.FC<ExamModeProps> = ({ classes, onComplete, onCancel, mode
 
     setTimeout(() => {
       setIsSpinning(false);
-      const actualDegrees = newRotation % 360;
+      const actualDegrees = targetRotation % 360;
       const normalizedTopDegree = (360 - actualDegrees) % 360;
       const winningIndex = Math.floor(normalizedTopDegree / sliceAngle);
       setWinner(selectedQuestions[winningIndex]);
+      triggerConfetti();
     }, duration);
   };
 
-  const colors = ['#6366f1', '#8b5cf6', '#a855f7', '#d946ef', '#ec4899', '#f43f5e', '#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e'];
+  const colors = [
+    'linear-gradient(135deg, #6366f1, #4f46e5)', // Indigo
+    'linear-gradient(135deg, #8b5cf6, #7c3aed)', // Violet
+    'linear-gradient(135deg, #a855f7, #9333ea)', // Purple
+    'linear-gradient(135deg, #d946ef, #c026d3)', // Fuchsia
+    'linear-gradient(135deg, #ec4899, #db2777)', // Pink
+    'linear-gradient(135deg, #f43f5e, #e11d48)', // Rose
+  ];
 
   const handleClassSelect = (classId: string) => {
     const selectedClass = classes.find(c => c.id === classId);
@@ -223,8 +256,25 @@ const ExamMode: React.FC<ExamModeProps> = ({ classes, onComplete, onCancel, mode
   const renderWheel = () => {
     const numSlices = selectedQuestions.length; 
     const sliceAngle = 360 / numSlices;
+    const lightDots = Array.from({ length: 24 }); // Peripheral lights
+
     return (
-      <div className="flex flex-col items-center justify-center space-y-12 animate-slide-up py-4">
+      <div className="flex flex-col items-center justify-center space-y-12 animate-slide-up py-4 relative">
+        {/* Confetti Animation Layer */}
+        {confetti.map((c) => (
+          <div 
+            key={c.id} 
+            className="confetti-piece animate-confetti" 
+            style={{ 
+              left: `${c.left}%`, 
+              backgroundColor: c.color, 
+              width: `${c.size}px`, 
+              height: `${c.size}px`, 
+              animationDelay: `${c.delay}s` 
+            }}
+          />
+        ))}
+
         <div className="text-center space-y-3">
           <div className="inline-block px-4 py-1.5 rounded-full bg-indigo-100 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 text-sm font-bold uppercase tracking-widest mb-2">
             {mode === 'exam' ? 'Sınav Oturumu' : 'Pratik Oturumu'}
@@ -238,29 +288,53 @@ const ExamMode: React.FC<ExamModeProps> = ({ classes, onComplete, onCancel, mode
             <h2 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">Şans Çarkı</h2>
           )}
         </div>
-        <div className="relative group">
-          <div className="absolute inset-0 bg-indigo-500/20 blur-[60px] rounded-full group-hover:bg-purple-500/20 transition-colors duration-500"></div>
+
+        <div className="relative group p-10">
+          {/* Enhanced Outer Glow and Lights */}
+          <div className={`absolute inset-0 rounded-full blur-[80px] transition-all duration-700 ${isSpinning ? 'bg-indigo-500/30 scale-110' : 'bg-indigo-500/10'}`}></div>
           
-          <div className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-6 z-30 drop-shadow-xl transition-transform ${isSpinning ? 'animate-bounce' : ''}`}>
-            <svg width="40" height="50" viewBox="0 0 40 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M20 50L40 0H0L20 50Z" fill="#F43F5E" />
-              <circle cx="20" cy="15" r="5" fill="white" fillOpacity="0.5" />
+          {/* The Pointer */}
+          <div className={`absolute top-4 left-1/2 -translate-x-1/2 z-40 drop-shadow-2xl transition-transform ${isSpinning ? 'scale-110' : 'scale-100'}`}>
+            <svg width="60" height="70" viewBox="0 0 60 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M30 70L60 0H0L30 70Z" fill="#F43F5E" />
+              <path d="M30 60L50 5H10L30 60Z" fill="white" fillOpacity="0.2" />
             </svg>
           </div>
 
           <div 
             onClick={spinWheel}
-            className={`relative w-[300px] h-[300px] sm:w-[500px] sm:h-[500px] transition-transform duration-300 ${!isSpinning ? 'cursor-pointer hover:scale-[1.02]' : 'cursor-default'}`}
+            className={`relative w-[320px] h-[320px] sm:w-[540px] sm:h-[540px] rounded-full p-4 bg-white/10 dark:bg-slate-800/20 backdrop-blur-md border-[10px] border-slate-200 dark:border-slate-800 shadow-2xl transition-all duration-300 ${!isSpinning ? 'cursor-pointer hover:scale-[1.03] active:scale-95' : 'scale-100 cursor-default'}`}
           >
-            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl" style={{ transform: `rotate(${rotation}deg)`, transition: isSpinning ? 'transform 4s cubic-bezier(0.15, 0, 0.15, 1)' : 'none' }}>
+            {/* Chasing Peripheral Lights */}
+            <div className="absolute inset-0 pointer-events-none">
+              {lightDots.map((_, i) => (
+                <div 
+                  key={i} 
+                  className={`absolute w-3 h-3 rounded-full bg-white shadow-[0_0_10px_white] transition-opacity duration-300 ${isSpinning ? 'animate-pulse' : ''}`}
+                  style={{ 
+                    top: '50%', left: '50%', 
+                    transform: `translate(-50%, -50%) rotate(${(i * 360) / 24}deg) translate(0, -250px)`,
+                    opacity: isSpinning ? (i % 2 === 0 ? 1 : 0.4) : 0.8,
+                    animationDelay: `${i * 0.1}s`
+                  }}
+                />
+              ))}
+            </div>
+
+            <svg viewBox="0 0 100 100" className="w-full h-full drop-shadow-2xl overflow-visible" style={{ transform: `rotate(${rotation}deg)`, transition: isSpinning ? 'transform 5s cubic-bezier(0.1, 0, 0.1, 1)' : 'transform 0.5s ease-out' }}>
               <defs>
                 {selectedQuestions.map((_, i) => (
-                  <linearGradient key={`grad-${i}`} id={`grad-${i}`} x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor={colors[i % colors.length]} />
-                    <stop offset="100%" stopColor={colors[i % colors.length]} stopOpacity="0.8" />
-                  </linearGradient>
+                  <radialGradient key={`grad-${i}`} id={`grad-${i}`} cx="50%" cy="50%" r="50%" fx="50%" fy="50%">
+                    <stop offset="0%" stopColor={colors[i % colors.length].match(/#\w+/g)![0]} />
+                    <stop offset="100%" stopColor={colors[i % colors.length].match(/#\w+/g)![1]} />
+                  </radialGradient>
                 ))}
+                <filter id="innerGlow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feGaussianBlur in="SourceGraphic" stdDeviation="1.5" result="blur" />
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
               </defs>
+
               {selectedQuestions.map((q, i) => { 
                 const startAngle = i * sliceAngle; 
                 const endAngle = (i + 1) * sliceAngle; 
@@ -269,39 +343,64 @@ const ExamMode: React.FC<ExamModeProps> = ({ classes, onComplete, onCancel, mode
                 const y1 = 50 + 50 * Math.sin((Math.PI * (startAngle - 90)) / 180); 
                 const x2 = 50 + 50 * Math.cos((Math.PI * (endAngle - 90)) / 180); 
                 const y2 = 50 + 50 * Math.sin((Math.PI * (endAngle - 90)) / 180); 
+                
+                const isSelected = winner === q;
+
                 return (
-                  <g key={`slice-${i}`}>
-                    <path d={`M 50 50 L ${x1} ${y1} A 50 50 0 ${largeArcFlag} 1 ${x2} ${y2} Z`} fill={`url(#grad-${i})`} stroke="white" strokeWidth="0.5" />
-                    <text x="80" y="50" fill="white" fontSize="2.5" fontWeight="bold" textAnchor="end" alignmentBaseline="middle" transform={`rotate(${startAngle + sliceAngle / 2 - 90}, 50, 50)`} className="pointer-events-none select-none uppercase" style={{ textShadow: '0px 1px 2px rgba(0,0,0,0.5)' }}>
-                      {q.length > 25 ? q.substring(0, 22) + '...' : q}
+                  <g key={`slice-${i}`} className={`transition-all duration-500 ${isSelected ? 'scale-[1.05]' : 'opacity-90'}`}>
+                    <path 
+                      d={`M 50 50 L ${x1} ${y1} A 50 50 0 ${largeArcFlag} 1 ${x2} ${y2} Z`} 
+                      fill={`url(#grad-${i})`} 
+                      stroke="rgba(255,255,255,0.2)" 
+                      strokeWidth="0.5"
+                      filter={isSelected ? "url(#innerGlow)" : ""}
+                    />
+                    <text 
+                      x="82" y="50" 
+                      fill="white" 
+                      fontSize="2.8" 
+                      fontWeight="800" 
+                      textAnchor="end" 
+                      alignmentBaseline="middle" 
+                      transform={`rotate(${startAngle + sliceAngle / 2 - 90}, 50, 50)`} 
+                      className="pointer-events-none select-none uppercase tracking-tighter"
+                      style={{ textShadow: '0px 2px 4px rgba(0,0,0,0.6)' }}
+                    >
+                      {q.length > 22 ? q.substring(0, 19) + '...' : q}
                     </text>
                   </g>
                 ); 
               })}
-              <circle cx="50" cy="50" r="8" fill="white" className="dark:fill-slate-900 shadow-xl" />
-              <circle cx="50" cy="50" r="5" fill="currentColor" className="text-indigo-500 animate-pulse" />
+              
+              {/* Center Hub */}
+              <circle cx="50" cy="50" r="10" fill="white" className="dark:fill-slate-900 shadow-2xl" />
+              <circle cx="50" cy="50" r="6" fill="currentColor" className={`${isSpinning ? 'text-indigo-500 animate-ping' : 'text-indigo-600'}`} />
             </svg>
-            <div className="absolute inset-0 rounded-full border-[12px] border-white/10 dark:border-slate-800/20 pointer-events-none"></div>
           </div>
         </div>
         
         <div className="w-full max-w-2xl flex flex-col items-center gap-8">
           {winner && !isSpinning ? (
             <div className="space-y-8 text-center animate-fade-in w-full">
-              <div className="glass p-8 rounded-[2.5rem] border-4 border-indigo-500 shadow-2xl shadow-indigo-500/20 bg-white/80 dark:bg-slate-900/80 transform scale-105 transition-transform">
-                <div className="flex justify-center mb-4">
-                  <div className="px-4 py-1 rounded-full bg-indigo-600 text-white text-xs font-black uppercase tracking-widest animate-pulse">SEÇİLEN SORU</div>
+              <div className="relative glass p-10 rounded-[3rem] border-4 border-indigo-500 shadow-2xl shadow-indigo-500/40 bg-white/90 dark:bg-slate-900/90 transform scale-110 transition-transform overflow-hidden">
+                <div className="absolute -top-10 -right-10 w-24 h-24 bg-yellow-400 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+                <div className="absolute -bottom-10 -left-10 w-24 h-24 bg-purple-400 rounded-full blur-3xl opacity-30 animate-pulse"></div>
+                
+                <div className="flex justify-center mb-6">
+                  <div className="px-6 py-1.5 rounded-full bg-indigo-600 text-white text-sm font-black uppercase tracking-[0.2em] animate-sparkle">
+                    SEÇİLEN SORU
+                  </div>
                 </div>
-                <h3 className="text-2xl sm:text-3xl font-black text-slate-800 dark:text-white leading-tight">{winner}</h3>
+                <h3 className="text-3xl sm:text-4xl font-black text-slate-800 dark:text-white leading-tight drop-shadow-sm italic">"{winner}"</h3>
               </div>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button onClick={spinWheel} className="px-8 py-4 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-2xl font-bold hover:bg-slate-200 dark:hover:bg-slate-700 transition-all active:scale-95">Tekrar Çevir</button>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+                <button onClick={spinWheel} className="px-10 py-5 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-400 rounded-2xl font-black border-2 border-slate-100 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-all active:scale-95 shadow-lg">TEKRAR ÇEVİR</button>
                 <button 
                   onClick={() => onComplete(winner, mode === 'exam' ? studentInfo : null)} 
-                  className="px-12 py-5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-[2rem] font-black text-xl shadow-2xl shadow-emerald-500/40 transition-all transform hover:scale-105 active:scale-95 flex items-center gap-3"
+                  className="px-16 py-6 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-[2.5rem] font-black text-2xl shadow-2xl shadow-emerald-500/50 transition-all transform hover:scale-110 active:scale-95 flex items-center gap-4 shimmer-effect relative overflow-hidden"
                 >
-                  <span>{t('exam.beginExam')}</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clipRule="evenodd" /></svg>
+                  <span className="relative z-10">{t('exam.beginExam')}</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-8 h-8 relative z-10"><path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z" clipRule="evenodd" /></svg>
                 </button>
               </div>
             </div>
@@ -309,10 +408,11 @@ const ExamMode: React.FC<ExamModeProps> = ({ classes, onComplete, onCancel, mode
             <button 
               onClick={spinWheel} 
               disabled={isSpinning} 
-              className={`relative group overflow-hidden px-16 py-6 bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-600 text-white rounded-[2rem] font-black text-2xl shadow-2xl transition-all transform hover:scale-105 active:scale-95 ${isSpinning ? 'shadow-none opacity-80 cursor-not-allowed' : 'shadow-indigo-500/40'}`}
+              className={`relative group overflow-hidden px-20 py-8 bg-gradient-to-br from-indigo-600 via-purple-600 to-indigo-600 text-white rounded-[2.5rem] font-black text-3xl shadow-2xl transition-all transform hover:scale-105 active:scale-95 ${isSpinning ? 'shadow-none opacity-80 cursor-not-allowed grayscale' : 'shadow-indigo-500/40'}`}
             >
               <span className="relative z-10">{isSpinning ? t('exam.spinning') : t('exam.spinWheel')}</span>
-              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+              <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-500"></div>
+              <div className="absolute top-0 left-0 w-full h-1 bg-white/30 animate-shimmer"></div>
             </button>
           )}
         </div>

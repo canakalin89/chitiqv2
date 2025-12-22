@@ -280,79 +280,90 @@ const App: React.FC = () => {
     switch (view) {
       case 'landing':
         return (
-          <div className="flex flex-col items-center space-y-12 animate-fade-in relative z-10 pb-16">
-            <div className="flex flex-col items-center text-center space-y-6 pt-2 relative w-full px-4">
+          <div className="flex flex-col items-center space-y-16 md:space-y-24 animate-fade-in relative z-10 pb-24">
+            {/* Hero Section */}
+            <div className="flex flex-col items-center text-center space-y-8 pt-8 md:pt-16 relative w-full px-4">
               <div className="z-30 animate-slide-up">
-                <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-indigo-50/80 dark:bg-indigo-950/80 backdrop-blur-sm border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 text-[10px] sm:text-xs font-black shadow-sm">
-                   <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                <div className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full bg-indigo-50/90 dark:bg-indigo-950/90 backdrop-blur-md border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 text-[10px] sm:text-xs font-black shadow-lg shadow-indigo-500/10">
+                   <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
                    {t('landing.badge')}
                 </div>
               </div>
-              <div className="flex flex-col items-center gap-4">
-                <div className="relative transform hover:scale-105 transition-transform duration-500">
-                  <Logo className="md:scale-110" />
+              
+              <div className="flex flex-col items-center gap-6">
+                <div className="relative transform hover:scale-110 transition-transform duration-700 animate-float">
+                  <Logo className="md:scale-125" />
+                  <div className="absolute -inset-4 bg-indigo-400/20 blur-2xl rounded-full -z-10 animate-pulse-slow"></div>
                 </div>
-                <div className="space-y-2 max-w-4xl">
-                  <h1 className="text-4xl md:text-7xl font-black tracking-tight text-slate-900 dark:text-white leading-[1] drop-shadow-sm">
+                <div className="space-y-4 max-w-4xl">
+                  <h1 className="text-5xl md:text-8xl font-black tracking-tight text-slate-900 dark:text-white leading-[0.9] drop-shadow-xl mb-4">
                     {t('landing.heroTitle')}
                   </h1>
-                  <p className="text-base md:text-xl font-medium text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
+                  <p className="text-lg md:text-2xl font-medium text-slate-500 dark:text-slate-400 max-w-2xl mx-auto leading-relaxed">
                     {t('landing.heroDesc')}
                   </p>
                 </div>
               </div>
-              <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
+
+              <div className="flex flex-col sm:flex-row items-center gap-6 pt-4">
                 <button 
                   onClick={() => setView('dashboard')} 
-                  className="group relative inline-flex items-center justify-center px-10 py-5 text-lg font-black text-white transition-all duration-300 bg-indigo-600 rounded-2xl focus:outline-none hover:bg-indigo-700 shadow-xl shadow-indigo-500/30 active:scale-95"
+                  className="shimmer-effect group relative overflow-hidden inline-flex items-center justify-center px-12 py-6 text-xl font-black text-white transition-all duration-300 bg-indigo-600 rounded-3xl focus:outline-none hover:bg-indigo-700 shadow-2xl shadow-indigo-500/40 active:scale-95"
                 >
-                  {t('landing.startBtn')}
-                  <svg className="w-5 h-5 ml-2.5 transition-transform group-hover:translate-x-1.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                  <span className="relative z-10 flex items-center">
+                    {t('landing.startBtn')}
+                    <svg className="w-6 h-6 ml-3 transition-transform group-hover:translate-x-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" /></svg>
+                  </span>
                 </button>
-                <div className="flex items-center gap-4 px-8 py-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800 shadow-sm">
+                <div className="flex items-center gap-5 px-10 py-5 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md rounded-3xl border border-slate-100 dark:border-slate-800 shadow-xl">
                    <div className="text-center">
-                     <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5">{t('dashboard.usageCount')}</p>
-                     <p className="text-2xl font-black text-slate-800 dark:text-white tabular-nums">{displayCount.toLocaleString()}</p>
+                     <p className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-1">{t('dashboard.usageCount')}</p>
+                     <p className="text-3xl font-black text-slate-800 dark:text-white tabular-nums tracking-tighter">{displayCount.toLocaleString()}+</p>
                    </div>
                 </div>
               </div>
             </div>
-            <div className="w-full max-w-5xl mx-auto px-4 space-y-6">
+
+            {/* How it Works */}
+            <div className="w-full max-w-5xl mx-auto px-4 space-y-10 relative">
               <div className="text-center">
-                <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-1">{t('landing.howItWorks')}</h2>
-                <p className="text-slate-500 dark:text-slate-400 text-sm font-bold">{t('landing.howDesc')}</p>
+                <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-2">{t('landing.howItWorks')}</h2>
+                <p className="text-slate-500 dark:text-slate-400 text-base md:text-lg font-bold">{t('landing.howDesc')}</p>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {[1, 2, 3].map(step => (
-                  <div key={step} className="flex items-start gap-4 p-6 rounded-2xl bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm transition-all hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-indigo-100 dark:bg-indigo-900/30 flex items-center justify-center text-indigo-600 dark:text-indigo-400 text-xl font-black shadow-inner">
+                  <div key={step} className="flex flex-col items-center md:items-start gap-4 p-8 rounded-[2.5rem] glass border border-white/40 dark:border-slate-800 shadow-xl transition-all hover:scale-[1.03] hover:shadow-indigo-500/10 hover:bg-white dark:hover:bg-slate-900/80">
+                    <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white text-2xl font-black shadow-lg shadow-indigo-500/30">
                       {step}
                     </div>
-                    <div>
-                      <h3 className="text-base font-bold text-slate-800 dark:text-white mb-1">{t(`landing.step${step}Title`)}</h3>
-                      <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-xs font-medium">{t(`landing.step${step}Desc`)}</p>
+                    <div className="text-center md:text-left mt-2">
+                      <h3 className="text-xl font-bold text-slate-800 dark:text-white mb-2">{t(`landing.step${step}Title`)}</h3>
+                      <p className="text-slate-500 dark:text-slate-400 leading-relaxed text-sm font-medium">{t(`landing.step${step}Desc`)}</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-            <div className="w-full bg-slate-100/30 dark:bg-slate-900/30 py-10 border-y border-slate-200/50 dark:border-slate-800/50 backdrop-blur-sm">
-              <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-                 <div className="lg:col-span-4 space-y-3 text-center lg:text-left">
-                    <h2 className="text-3xl md:text-4xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none">{t('landing.criteriaTitle')}</h2>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 font-medium">{t('landing.criteriaDesc')}</p>
+
+            {/* Criteria Mesh */}
+            <div className="w-full bg-indigo-600/5 dark:bg-indigo-600/10 py-16 border-y border-indigo-100/50 dark:border-indigo-900/50 backdrop-blur-xl relative overflow-hidden">
+              <div className="absolute inset-0 bg-mesh opacity-40"></div>
+              <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+                 <div className="lg:col-span-5 space-y-4 text-center lg:text-left">
+                    <h2 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tighter leading-none">{t('landing.criteriaTitle')}</h2>
+                    <p className="text-lg text-slate-500 dark:text-slate-400 font-medium">{t('landing.criteriaDesc')}</p>
                  </div>
-                 <div className="lg:col-span-8 grid grid-cols-2 sm:grid-cols-3 gap-3">
+                 <div className="lg:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-4">
                     {Object.keys(CRITERIA[i18n.language.startsWith('tr') ? 'tr' : 'en']).map((key) => (
-                      <div key={key} className="p-4 rounded-2xl bg-white dark:bg-slate-950 border border-slate-100 dark:border-slate-800 shadow-sm flex flex-col items-center text-center gap-2 transition-all hover:scale-105">
-                        <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-                           {key === 'rapport' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
-                           {key === 'organisation' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>}
-                           {key === 'delivery' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>}
-                           {key === 'languageUse' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>}
-                           {key === 'creativity' && <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>}
+                      <div key={key} className="group p-6 rounded-3xl bg-white/80 dark:bg-slate-950/80 border border-slate-100 dark:border-slate-800 shadow-lg flex flex-col items-center text-center gap-3 transition-all hover:scale-110 hover:shadow-indigo-500/20 active:scale-95">
+                        <div className="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
+                           {key === 'rapport' && <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
+                           {key === 'organisation' && <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 10h16M4 14h16M4 18h16" /></svg>}
+                           {key === 'delivery' && <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" /></svg>}
+                           {key === 'languageUse' && <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" /></svg>}
+                           {key === 'creativity' && <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" /></svg>}
                         </div>
-                        <h4 className="text-[10px] font-black text-slate-800 dark:text-white uppercase tracking-tight leading-none">
+                        <h4 className="text-xs font-black text-slate-800 dark:text-white uppercase tracking-tight leading-none group-hover:text-indigo-600 transition-colors">
                            {(CRITERIA[i18n.language.startsWith('tr') ? 'tr' : 'en'] as any)[key]}
                         </h4>
                       </div>
@@ -360,25 +371,29 @@ const App: React.FC = () => {
                  </div>
               </div>
             </div>
-            <div className="w-full max-w-6xl mx-auto px-4 space-y-12">
-               <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-                  <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('landing.testimonialsTitle')}</h2>
-                  <button onClick={() => setShowFeedback(true)} className="px-6 py-2.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 rounded-xl font-bold text-sm border border-indigo-100 dark:border-indigo-800 hover:bg-indigo-100 transition-all active:scale-95">{t('feedback.writeBtn')}</button>
+
+            {/* Testimonials */}
+            <div className="w-full max-w-6xl mx-auto px-4 space-y-12 pb-10 relative">
+               <div className="flex flex-col md:flex-row justify-between items-center gap-6">
+                  <h2 className="text-3xl md:text-5xl font-black text-slate-900 dark:text-white uppercase tracking-tighter text-center md:text-left">{t('landing.testimonialsTitle')}</h2>
+                  <button onClick={() => setShowFeedback(true)} className="group relative px-8 py-3 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 rounded-2xl font-black text-sm border border-indigo-100 dark:border-indigo-800 hover:bg-indigo-600 hover:text-white transition-all active:scale-95 shadow-lg shadow-indigo-500/5">
+                    {t('feedback.writeBtn')}
+                  </button>
                </div>
-               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                  {testimonials.map((item, idx) => (
-                    <div key={idx} className="flex flex-col p-6 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm relative transition-all hover:shadow-md">
-                       <div className="flex items-center gap-1 mb-4">
+                    <div key={idx} className="flex flex-col p-8 rounded-[3rem] glass border border-white/40 dark:border-slate-800 shadow-lg relative transition-all hover:scale-[1.02] hover:shadow-2xl hover:bg-white dark:hover:bg-slate-900">
+                       <div className="flex items-center gap-1 mb-6">
                           {[...Array(5)].map((_, i) => (
-                             <svg key={i} className={`w-4 h-4 ${i < item.stars ? 'text-amber-400' : 'text-slate-100 dark:text-slate-800'}`} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                             <svg key={i} className={`w-5 h-5 ${i < item.stars ? 'text-amber-400' : 'text-slate-100 dark:text-slate-800'}`} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                           ))}
                        </div>
-                       <p className="flex-1 text-slate-600 dark:text-slate-300 text-sm font-bold italic leading-relaxed mb-6">“{item.comment}”</p>
-                       <div className="flex items-center gap-4 pt-4 border-t border-slate-50 dark:border-slate-800">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-black shadow-sm ${item.type === 'teacher' ? 'bg-indigo-600' : 'bg-purple-600'}`}><UserPlaceholder className="w-6 h-6" /></div>
+                       <p className="flex-1 text-slate-600 dark:text-slate-300 text-base font-bold italic leading-relaxed mb-8">“{item.comment}”</p>
+                       <div className="flex items-center gap-4 pt-6 border-t border-slate-100 dark:border-slate-800">
+                          <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-white font-black shadow-lg ${item.type === 'teacher' ? 'bg-indigo-600' : 'bg-purple-600'}`}><UserPlaceholder className="w-8 h-8" /></div>
                           <div>
-                             <h4 className="font-bold text-slate-900 dark:text-white leading-none mb-1 text-sm">{item.name}</h4>
-                             <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">{item.role}</p>
+                             <h4 className="font-bold text-slate-900 dark:text-white leading-none mb-1 text-base">{item.name}</h4>
+                             <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">{item.role}</p>
                           </div>
                        </div>
                     </div>
@@ -393,39 +408,39 @@ const App: React.FC = () => {
           <div className="max-w-5xl mx-auto space-y-8 animate-slide-up relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
               <div className="md:col-span-8 space-y-6">
-                 <section className="glass rounded-2xl p-1 border border-white/20 dark:border-slate-800 shadow-xl shadow-indigo-500/5"><TopicSelector onSelectTopic={setCurrentTopic} onStart={() => { setIsExamMode(false); setView('recorder'); }}/></section>
+                 <section className="glass rounded-[2rem] p-1 border border-white/40 dark:border-slate-800 shadow-2xl shadow-indigo-500/5"><TopicSelector onSelectTopic={setCurrentTopic} onStart={() => { setIsExamMode(false); setView('recorder'); }}/></section>
                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                    <section className="glass rounded-3xl p-6 border border-white/20 dark:border-slate-800 shadow-xl bg-gradient-to-br from-indigo-500/5 to-emerald-500/5 group">
-                        <div className="space-y-4">
-                           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clipRule="evenodd" /></svg></div>
-                           <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('dashboard.wheelPractice')}</h2>
-                           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{t('dashboard.wheelPracticeDesc')}</p>
-                           <button onClick={() => { setIsExamMode(false); setView('practice-wheel'); }} className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/20 transition-all group-hover:-translate-y-1">{t('exam.startWheel')}</button>
+                    <section className="glass rounded-[2.5rem] p-8 border border-white/40 dark:border-slate-800 shadow-2xl bg-gradient-to-br from-indigo-500/5 to-emerald-500/5 group hover:scale-[1.02] transition-all">
+                        <div className="space-y-5">
+                           <div className="w-14 h-14 rounded-[1.25rem] bg-gradient-to-br from-indigo-500 to-indigo-600 text-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7"><path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clipRule="evenodd" /></svg></div>
+                           <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('dashboard.wheelPractice')}</h2>
+                           <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{t('dashboard.wheelPracticeDesc')}</p>
+                           <button onClick={() => { setIsExamMode(false); setView('practice-wheel'); }} className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-bold shadow-xl shadow-indigo-500/20 transition-all group-hover:-translate-y-1">{t('exam.startWheel')}</button>
                         </div>
                     </section>
-                    <section className="glass rounded-3xl p-6 border border-white/20 dark:border-slate-800 shadow-xl bg-gradient-to-br from-purple-500/5 to-indigo-500/5 group">
-                        <div className="space-y-4">
-                           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path d="M11.7 2.805a.75.75 0 01.6 0A60.65 60.65 0 0122.83 8.72a.75.75 0 01-.231 1.337 49.94 49.94 0 00-9.902 3.912l-.003.002c-.114.06-.227.119-.34.18a.75.75 0 01-.707 0A50.88 50.88 0 002.75 10.25a.75.75 0 01-.31-1.274A50.39 50.39 0 0111.7 2.805z" /><path d="M13.06 15.473a48.45 48.45 0 017.623-2.662c.034 1.209.034 2.45 0 3.658a47.44 47.44 0 01-5.293 3.048.75.75 0 01-.654 0l-2.48-1.481a48.04 48.04 0 01-5.132-3.413 47.44 47.44 0 001.088-6.23l1.266-.735a44.86 44.86 0 009.262 3.25c.01.658.01 1.333 0 2.022a48.837 48.837 0 01-5.68 2.593z" /></svg></div>
-                           <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('dashboard.examMode')}</h2>
-                           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{t('dashboard.examModeDesc')}</p>
-                           <button onClick={() => { setIsExamMode(true); setView('exam-setup'); }} className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold shadow-lg shadow-purple-500/20 transition-all group-hover:-translate-y-1">{t('exam.beginExam')}</button>
+                    <section className="glass rounded-[2.5rem] p-8 border border-white/40 dark:border-slate-800 shadow-2xl bg-gradient-to-br from-purple-500/5 to-indigo-500/5 group hover:scale-[1.02] transition-all">
+                        <div className="space-y-5">
+                           <div className="w-14 h-14 rounded-[1.25rem] bg-gradient-to-br from-purple-500 to-purple-600 text-white flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-7 h-7"><path d="M11.7 2.805a.75.75 0 01.6 0A60.65 60.65 0 0122.83 8.72a.75.75 0 01-.231 1.337 49.94 49.94 0 00-9.902 3.912l-.003.002c-.114.06-.227.119-.34.18a.75.75 0 01-.707 0A50.88 50.88 0 002.75 10.25a.75.75 0 01-.31-1.274A50.39 50.39 0 0111.7 2.805z" /><path d="M13.06 15.473a48.45 48.45 0 017.623-2.662c.034 1.209.034 2.45 0 3.658a47.44 47.44 0 01-5.293 3.048.75.75 0 01-.654 0l-2.48-1.481a48.04 48.04 0 01-5.132-3.413 47.44 47.44 0 001.088-6.23l1.266-.735a44.86 44.86 0 009.262 3.25c.01.658.01 1.333 0 2.022a48.837 48.837 0 01-5.68 2.593z" /></svg></div>
+                           <h2 className="text-2xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('dashboard.examMode')}</h2>
+                           <p className="text-sm text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{t('dashboard.examModeDesc')}</p>
+                           <button onClick={() => { setIsExamMode(true); setView('exam-setup'); }} className="w-full py-4 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl font-bold shadow-xl shadow-purple-500/20 transition-all group-hover:-translate-y-1">{t('exam.beginExam')}</button>
                         </div>
                     </section>
                  </div>
-                 <section className="flex flex-wrap gap-4">
-                    <button onClick={() => setView('class-manager')} className="flex-1 min-w-[140px] px-6 py-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center gap-2 group">
-                       <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-500 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg></div>
+                 <section className="flex flex-wrap gap-6">
+                    <button onClick={() => setView('class-manager')} className="flex-1 min-w-[160px] px-8 py-6 bg-white/80 dark:bg-slate-900/80 border border-slate-100 dark:border-slate-800 rounded-3xl shadow-xl hover:shadow-2xl transition-all flex flex-col items-center gap-3 group">
+                       <div className="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-500 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-all"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg></div>
                        <span className="text-xs font-black uppercase text-slate-700 dark:text-slate-300 tracking-widest">{t('dashboard.manageClasses')}</span>
                     </button>
-                    <button onClick={() => setView('analytics')} className="flex-1 min-w-[140px] px-6 py-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center gap-2 group">
-                       <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-500 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" /></svg></div>
+                    <button onClick={() => setView('analytics')} className="flex-1 min-w-[160px] px-8 py-6 bg-white/80 dark:bg-slate-900/80 border border-slate-100 dark:border-slate-800 rounded-3xl shadow-xl hover:shadow-2xl transition-all flex flex-col items-center gap-3 group">
+                       <div className="w-12 h-12 rounded-2xl bg-purple-50 dark:bg-purple-900/30 text-purple-500 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-all"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" /></svg></div>
                        <span className="text-xs font-black uppercase text-slate-700 dark:text-slate-300 tracking-widest">{t('dashboard.analytics')}</span>
                     </button>
                  </section>
               </div>
               <div className="md:col-span-4 space-y-4">
                  <RecentHistory history={history} onSelect={handleSelectHistoryItem} />
-                 <button onClick={() => setView('history')} className="w-full py-4 px-4 rounded-2xl text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 text-[10px] shadow-sm"><HistoryIcon className="w-4 h-4" /> {t('common.viewAllHistory')}</button>
+                 <button onClick={() => setView('history')} className="w-full py-5 px-4 rounded-[1.5rem] text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 text-[10px] shadow-sm"><HistoryIcon className="w-4 h-4" /> {t('common.viewAllHistory')}</button>
               </div>
             </div>
           </div>
@@ -437,7 +452,7 @@ const App: React.FC = () => {
       case 'recorder': return <div className="max-w-4xl mx-auto py-8 animate-fade-in relative z-10"><Recorder topic={currentTopic} onStop={handleStopRecording} onCancel={() => setView('dashboard')}/></div>;
       case 'evaluating':
         const radius = 70; const circumference = 2 * Math.PI * radius; const strokeDashoffset = circumference - (loadingProgress / 100) * circumference;
-        return (<div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8 animate-fade-in relative z-10"><div className="relative w-56 h-56 flex items-center justify-center"><div className="absolute inset-0 bg-indigo-500 blur-3xl opacity-20 rounded-full animate-pulse-slow"></div><svg className="w-full h-full" viewBox="0 0 224 224"><circle cx="112" cy="112" r={radius} stroke="currentColor" strokeWidth="12" fill="transparent" className="text-slate-200 dark:text-slate-800" /><circle cx="112" cy="112" r={radius} stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round" className="text-indigo-600 dark:text-indigo-500 transition-all duration-300 ease-linear origin-center -rotate-90" /><text x="112" y="112" textAnchor="middle" dominantBaseline="middle" dy=".1em" className="text-4xl font-extrabold fill-slate-800 dark:fill-white" style={{ fontVariantNumeric: 'tabular-nums' }}>{Math.round(loadingProgress)}%</text></svg></div><div className="text-center space-y-3 max-w-sm px-4"><h2 className="text-2xl font-bold text-slate-800 dark:text-white tracking-tight animate-pulse">{progressText(loadingProgress)}</h2><div className="inline-block px-4 py-1.5 rounded-full bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-900/50"><p className="text-sm font-medium text-indigo-600 dark:text-indigo-400">{t('dashboard.estimatedTime', { seconds: estimatedTimeLeft })}</p></div></div></div>);
+        return (<div className="flex flex-col items-center justify-center min-h-[60vh] space-y-8 animate-fade-in relative z-10"><div className="relative w-64 h-64 flex items-center justify-center"><div className="absolute inset-0 bg-indigo-500 blur-[80px] opacity-30 rounded-full animate-pulse-slow"></div><svg className="w-full h-full relative z-10" viewBox="0 0 224 224"><circle cx="112" cy="112" r={radius} stroke="currentColor" strokeWidth="12" fill="transparent" className="text-slate-200 dark:text-slate-800" /><circle cx="112" cy="112" r={radius} stroke="currentColor" strokeWidth="12" fill="transparent" strokeDasharray={circumference} strokeDashoffset={strokeDashoffset} strokeLinecap="round" className="text-indigo-600 dark:text-indigo-500 transition-all duration-300 ease-linear origin-center -rotate-90" /><text x="112" y="112" textAnchor="middle" dominantBaseline="middle" dy=".1em" className="text-5xl font-extrabold fill-slate-800 dark:fill-white" style={{ fontVariantNumeric: 'tabular-nums' }}>{Math.round(loadingProgress)}%</text></svg></div><div className="text-center space-y-4 max-w-sm px-4"><h2 className="text-3xl font-black text-slate-800 dark:text-white tracking-tighter animate-pulse">{progressText(loadingProgress)}</h2><div className="inline-block px-6 py-2 rounded-2xl bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-900/50 shadow-sm"><p className="text-sm font-bold text-indigo-600 dark:text-indigo-400">{t('dashboard.estimatedTime', { seconds: estimatedTimeLeft })}</p></div></div></div>);
       case 'result':
       case 'exam-result': return evaluationData ? (<div className="max-w-5xl mx-auto py-4 animate-fade-in relative z-10 print:m-0 print:p-0"><EvaluationResult data={evaluationData} audioBlob={audioBlob} onBack={() => { setView('dashboard'); setIsExamMode(false); setStudentInfo(null); }} isExam={isExamMode} studentInfo={studentInfo}/></div>) : null;
       case 'history': return (<div className="max-w-5xl mx-auto py-4 animate-fade-in relative z-10"><HistoryView history={history} onSelect={handleSelectHistoryItem} onDelete={(id) => setHistory(prev => prev.filter(i => i.id !== id))} onClearAll={() => setHistory([])} onBack={() => setView('dashboard')}/></div>);
@@ -454,21 +469,36 @@ const App: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 transition-colors duration-500 overflow-hidden relative font-sans print:bg-white">
-      <div className="fixed inset-0 pointer-events-none overflow-hidden print:hidden"><div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-indigo-200/30 dark:bg-indigo-900/20 rounded-full blur-[120px] animate-blob"></div><div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-purple-200/30 dark:bg-purple-900/20 rounded-full blur-[120px] animate-blob animation-delay-2000"></div></div>
-      <header className="sticky top-0 z-50 glass border-b border-white/20 dark:border-slate-800 transition-colors duration-300 print:hidden">
+      {/* Dynamic Aurora Background */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden print:hidden z-0">
+        <div className="absolute inset-0 bg-mesh opacity-30"></div>
+        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-indigo-200/40 dark:bg-indigo-900/20 rounded-full blur-[120px] animate-blob"></div>
+        <div className="absolute bottom-[-20%] right-[-10%] w-[60%] h-[60%] bg-purple-200/40 dark:bg-purple-900/20 rounded-full blur-[120px] animate-blob" style={{ animationDelay: '3s' }}></div>
+        <div className="absolute top-[20%] right-[10%] w-[40%] h-[40%] bg-blue-200/30 dark:bg-blue-900/10 rounded-full blur-[100px] animate-blob" style={{ animationDelay: '6s' }}></div>
+      </div>
+
+      <header className="sticky top-0 z-50 glass border-b border-white/20 dark:border-slate-800 transition-colors duration-300 print:hidden shadow-lg shadow-slate-900/5">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-          <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 cursor-pointer" onClick={() => { setView('landing'); setIsExamMode(false); }}><Logo /><div className="hidden md:block w-px h-6 bg-slate-200 dark:bg-slate-700"></div><span className="text-xs md:text-sm font-medium text-slate-500 dark:text-slate-400 tracking-wide">{t('app.subtitle')}</span></div>
+          <div className="flex flex-col md:flex-row md:items-center gap-1 md:gap-4 cursor-pointer" onClick={() => { setView('landing'); setIsExamMode(false); }}><Logo /><div className="hidden md:block w-px h-6 bg-slate-200 dark:bg-slate-700"></div><span className="text-xs md:text-sm font-black text-slate-500 dark:text-slate-400 tracking-wide uppercase">{t('app.subtitle')}</span></div>
           <div className="flex items-center gap-2 sm:gap-3">
-            {view !== 'landing' && <button onClick={() => { setView('dashboard'); setIsExamMode(false); }} className="p-2.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl transition-all duration-200" title="Home"><HomeIcon className="w-5 h-5" /></button>}
-            <button onClick={() => { setView('history'); setIsExamMode(false); }} className="p-2.5 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-xl transition-all duration-200" title="History"><HistoryIcon className="w-5 h-5" /></button>
+            {view !== 'landing' && <button onClick={() => { setView('dashboard'); setIsExamMode(false); }} className="p-3 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-2xl transition-all duration-300" title="Home"><HomeIcon className="w-5 h-5" /></button>}
+            <button onClick={() => { setView('history'); setIsExamMode(false); }} className="p-3 text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800/50 rounded-2xl transition-all duration-300" title="History"><HistoryIcon className="w-5 h-5" /></button>
             <div className="w-px h-6 bg-slate-200 dark:bg-slate-700 mx-2"></div>
-            <button onClick={toggleTheme} className="p-2.5 text-amber-500 hover:bg-amber-50 dark:text-slate-300 dark:hover:text-amber-400 dark:hover:bg-slate-800/50 rounded-xl transition-all duration-200" title="Toggle Theme">{theme === 'light' ? <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" /></svg> : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" /></svg>}</button>
-            <button onClick={toggleLanguage} className="ml-1 px-4 py-2 text-sm font-bold tracking-wide text-slate-700 dark:text-slate-200 bg-white/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-200 shadow-sm">{i18n.language === 'tr' ? 'TR' : 'EN'}</button>
+            <button onClick={toggleTheme} className="p-3 text-amber-500 hover:bg-amber-50 dark:text-slate-300 dark:hover:text-amber-400 dark:hover:bg-slate-800/50 rounded-2xl transition-all duration-300" title="Toggle Theme">{theme === 'light' ? <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" /></svg> : <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" /></svg>}</button>
+            <button onClick={toggleLanguage} className="ml-1 px-5 py-2.5 text-sm font-black tracking-widest text-slate-700 dark:text-slate-200 bg-white/50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 rounded-2xl hover:bg-slate-50 dark:hover:bg-slate-700 transition-all duration-300 shadow-sm">{i18n.language === 'tr' ? 'TR' : 'EN'}</button>
           </div>
         </div>
       </header>
-      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-2 md:py-4 relative z-10 print:p-0 print:max-w-none">{renderContent()}</main>
-      <footer className="w-full py-8 text-center relative z-10 border-t border-slate-200/50 dark:border-slate-800/50 bg-white/30 dark:bg-slate-900/30 backdrop-blur-sm mt-auto print:hidden"><div className="max-w-7xl mx-auto px-4"><p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Built with <span className="font-semibold text-sky-500">React</span>, <span className="font-semibold text-blue-500">TypeScript</span> & <span className="font-semibold text-cyan-500">Tailwind</span> by <a href="https://instagram.com/can_akalin" target="_blank" rel="noopener noreferrer" className="text-slate-700 dark:text-slate-200 font-bold hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors inline-flex items-center gap-1">Can AKALIN</a></p></div></footer>
+      
+      <main className="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8 relative z-10 print:p-0 print:max-w-none">
+        {renderContent()}
+      </main>
+
+      <footer className="w-full py-12 text-center relative z-10 border-t border-slate-200/50 dark:border-slate-800/50 bg-white/30 dark:bg-slate-900/30 backdrop-blur-md mt-auto print:hidden">
+        <div className="max-w-7xl mx-auto px-4">
+          <p className="text-slate-500 dark:text-slate-400 text-sm font-medium">Built with <span className="font-semibold text-sky-500">React</span>, <span className="font-semibold text-blue-500">TypeScript</span> & <span className="font-semibold text-cyan-500">Tailwind</span> by <a href="https://instagram.com/can_akalin" target="_blank" rel="noopener noreferrer" className="text-slate-700 dark:text-slate-200 font-bold hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors inline-flex items-center gap-1 underline underline-offset-4 decoration-indigo-500/30">Can AKALIN</a></p>
+        </div>
+      </footer>
     </div>
   );
 };

@@ -55,7 +55,11 @@
               'fade-in': 'fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
               'slide-up': 'slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1)',
               'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-              'blob': 'blob 7s infinite',
+              'blob': 'blob 10s infinite',
+              'float': 'float 6s ease-in-out infinite',
+              'shimmer': 'shimmer 2s linear infinite',
+              'confetti': 'confetti 3s ease-out forwards',
+              'sparkle': 'sparkle 1.5s infinite',
             },
             keyframes: {
               fadeIn: {
@@ -68,9 +72,24 @@
               },
               blob: {
                 "0%": { transform: "translate(0px, 0px) scale(1)" },
-                "33%": { transform: "translate(30px, -50px) scale(1.1)" },
-                "66%": { transform: "translate(-20px, 20px) scale(0.9)" },
+                "33%": { transform: "translate(50px, -70px) scale(1.2)" },
+                "66%": { transform: "translate(-30px, 30px) scale(0.8)" },
                 "100%": { transform: "translate(0px, 0px) scale(1)" }
+              },
+              float: {
+                '0%, 100%': { transform: 'translateY(0)' },
+                '50%': { transform: 'translateY(-20px)' },
+              },
+              shimmer: {
+                '100%': { transform: 'translateX(100%)' },
+              },
+              confetti: {
+                '0%': { transform: 'translateY(0) rotate(0deg)', opacity: '1' },
+                '100%': { transform: 'translateY(100vh) rotate(720deg)', opacity: '0' },
+              },
+              sparkle: {
+                '0%, 100%': { transform: 'scale(1)', opacity: '1' },
+                '50%': { transform: 'scale(1.2)', opacity: '0.5' },
               }
             }
           }
@@ -125,6 +144,36 @@
         background: rgba(15, 23, 42, 0.6);
       }
 
+      /* Background Mesh Grid */
+      .bg-mesh {
+        background-image: 
+          radial-gradient(circle at 1px 1px, rgba(99, 102, 241, 0.08) 1px, transparent 0);
+        background-size: 40px 40px;
+      }
+      .dark .bg-mesh {
+        background-image: 
+          radial-gradient(circle at 1px 1px, rgba(99, 102, 241, 0.15) 1px, transparent 0);
+      }
+
+      /* Animated Shimmer for Buttons */
+      .shimmer-effect::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        transform: translateX(-100%);
+        background-image: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0,
+          rgba(255, 255, 255, 0.2) 20%,
+          rgba(255, 255, 255, 0.5) 60%,
+          rgba(255, 255, 255, 0)
+        );
+        animation: shimmer 3s infinite;
+      }
+
       /* Print Optimization to force single page */
       @media print {
         @page {
@@ -147,6 +196,17 @@
         .fixed, .absolute-blob {
           display: none !important;
         }
+      }
+
+      /* Confetti Pieces */
+      .confetti-piece {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: #ffd700;
+        top: -10px;
+        z-index: 1000;
+        pointer-events: none;
       }
     </style>
   </head>

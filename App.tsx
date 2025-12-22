@@ -22,7 +22,7 @@ import { Logo } from './icons/Logo';
 import { HomeIcon } from './icons/HomeIcon';
 import { HistoryIcon } from './icons/HistoryIcon';
 
-type ViewState = 'landing' | 'dashboard' | 'recorder' | 'evaluating' | 'result' | 'history' | 'exam-setup' | 'exam-wheel' | 'exam-result' | 'class-manager' | 'analytics';
+type ViewState = 'landing' | 'dashboard' | 'recorder' | 'evaluating' | 'result' | 'history' | 'exam-setup' | 'practice-wheel' | 'exam-result' | 'class-manager' | 'analytics';
 
 const UserPlaceholder = ({ className }: { className?: string }) => (
   <svg 
@@ -147,41 +147,32 @@ const App: React.FC = () => {
     };
   }, [view]);
 
-  // Handlers
-  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
-  const toggleLanguage = () => i18n.changeLanguage(i18n.language === 'tr' ? 'en' : 'tr');
-
-  // Testimonial logic ensures uniqueness and randomized selection from localized keys
   const testimonials = useMemo(() => {
     const teachersObj = t('landing.teacherTestimonials', { returnObjects: true }) as any;
     const studentsObj = t('landing.studentTestimonials', { returnObjects: true }) as any;
     
     if (!teachersObj || !studentsObj) return [];
     
-    const pickedTeachers: any[] = [];
-    const pickedStudents: any[] = [];
-    const cats = ['star5', 'star4', 'star3'];
-    
-    // Pick 3 unique teachers
     const allTeachers: any[] = [];
-    cats.forEach(cat => {
+    ['star5', 'star4', 'star3'].forEach(cat => {
       if (teachersObj[cat]) {
         teachersObj[cat].forEach((item: any) => allTeachers.push({ ...item, stars: parseInt(cat.replace('star', '')), type: 'teacher' }));
       }
     });
     
-    // Pick 3 unique students
     const allStudents: any[] = [];
-    cats.forEach(cat => {
+    ['star5', 'star4', 'star3'].forEach(cat => {
       if (studentsObj[cat]) {
         studentsObj[cat].forEach((item: any) => allStudents.push({ ...item, stars: parseInt(cat.replace('star', '')), type: 'student' }));
       }
     });
 
     const shuffle = (array: any[]) => array.sort(() => Math.random() - 0.5);
-    
     return [...shuffle(allTeachers).slice(0, 3), ...shuffle(allStudents).slice(0, 3)].sort(() => Math.random() - 0.5);
-  }, [t, i18n.language, view]);
+  }, [t, i18n.language]);
+
+  const toggleTheme = () => setTheme(prev => prev === 'light' ? 'dark' : 'light');
+  const toggleLanguage = () => i18n.changeLanguage(i18n.language === 'tr' ? 'en' : 'tr');
 
   const handleStopRecording = async (blob: Blob) => {
     setAudioBlob(blob);
@@ -253,34 +244,38 @@ const App: React.FC = () => {
     }
   };
 
-  const handleExamComplete = (topic: string, info: StudentInfo) => {
+  const handleExamComplete = (topic: string, info: StudentInfo | null) => {
     setCurrentTopic(topic);
-    setStudentInfo(info);
-    setIsExamMode(true);
-    setView('recorder');
-
-    if (info.classId && info.firstName && info.lastName && info.studentNumber) {
-      const targetClass = classes.find(c => c.id === info.classId);
-      if (targetClass) {
-        const exists = targetClass.students.some(s => 
-          (s.firstName.toLowerCase() === info.firstName!.toLowerCase() && 
-          s.lastName.toLowerCase() === info.lastName!.toLowerCase()) ||
-          s.studentNumber === info.studentNumber
-        );
-
-        if (!exists) {
-          const newStudent: Student = {
-            id: crypto.randomUUID(),
-            studentNumber: info.studentNumber!,
-            firstName: info.firstName!.trim(),
-            lastName: info.lastName!.trim()
-          };
-          setClasses(prev => prev.map(c => 
-            c.id === info.classId ? { ...c, students: [...c.students, newStudent] } : c
-          ));
+    if (info) {
+      setStudentInfo(info);
+      setIsExamMode(true);
+      // Logic for adding student to class if they don't exist
+      if (info.classId && info.firstName && info.lastName && info.studentNumber) {
+        const targetClass = classes.find(c => c.id === info.classId);
+        if (targetClass) {
+          const exists = targetClass.students.some(s => 
+            (s.firstName.toLowerCase() === info.firstName!.toLowerCase() && 
+            s.lastName.toLowerCase() === info.lastName!.toLowerCase()) ||
+            s.studentNumber === info.studentNumber
+          );
+          if (!exists) {
+            const newStudent: Student = {
+              id: crypto.randomUUID(),
+              studentNumber: info.studentNumber!,
+              firstName: info.firstName!.trim(),
+              lastName: info.lastName!.trim()
+            };
+            setClasses(prev => prev.map(c => 
+              c.id === info.classId ? { ...c, students: [...c.students, newStudent] } : c
+            ));
+          }
         }
       }
+    } else {
+      setStudentInfo(null);
+      setIsExamMode(false);
     }
+    setView('recorder');
   };
 
   const renderContent = () => {
@@ -288,23 +283,17 @@ const App: React.FC = () => {
       case 'landing':
         return (
           <div className="flex flex-col items-center space-y-12 animate-fade-in relative z-10 pb-16">
-            {/* --- HERO SECTION --- */}
             <div className="flex flex-col items-center text-center space-y-6 pt-2 relative w-full px-4">
-              
-              {/* Maarif Badge - Top center */}
               <div className="z-30 animate-slide-up">
                 <div className="inline-flex items-center gap-2 px-6 py-2 rounded-full bg-indigo-50/80 dark:bg-indigo-950/80 backdrop-blur-sm border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-400 text-[10px] sm:text-xs font-black shadow-sm">
                    <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
                    {t('landing.badge')}
                 </div>
               </div>
-
               <div className="flex flex-col items-center gap-4">
-                {/* Logo Section */}
                 <div className="relative transform hover:scale-105 transition-transform duration-500">
                   <Logo className="md:scale-110" />
                 </div>
-                
                 <div className="space-y-2 max-w-4xl">
                   <h1 className="text-4xl md:text-7xl font-black tracking-tight text-slate-900 dark:text-white leading-[1] drop-shadow-sm">
                     {t('landing.heroTitle')}
@@ -314,7 +303,6 @@ const App: React.FC = () => {
                   </p>
                 </div>
               </div>
-
               <div className="flex flex-col sm:flex-row items-center gap-4 pt-2">
                 <button 
                   onClick={() => setView('dashboard')} 
@@ -331,8 +319,7 @@ const App: React.FC = () => {
                 </div>
               </div>
             </div>
-
-            {/* --- COMPACT HOW IT WORKS --- */}
+            {/* Steps & Criteria - Same as before */}
             <div className="w-full max-w-5xl mx-auto px-4 space-y-6">
               <div className="text-center">
                 <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter mb-1">{t('landing.howItWorks')}</h2>
@@ -352,8 +339,7 @@ const App: React.FC = () => {
                 ))}
               </div>
             </div>
-
-            {/* --- COMPACT CRITERIA SECTION --- */}
+            {/* Criteria section and Testimonials section same as before */}
             <div className="w-full bg-slate-100/30 dark:bg-slate-900/30 py-10 border-y border-slate-200/50 dark:border-slate-800/50 backdrop-blur-sm">
               <div className="max-w-6xl mx-auto px-4 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                  <div className="lg:col-span-4 space-y-3 text-center lg:text-left">
@@ -378,41 +364,23 @@ const App: React.FC = () => {
                  </div>
               </div>
             </div>
-
-            {/* --- COMPACT TESTIMONIALS SECTION --- */}
+            {/* Testimonials */}
             <div className="w-full max-w-6xl mx-auto px-4 space-y-12">
                <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                   <h2 className="text-2xl md:text-3xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('landing.testimonialsTitle')}</h2>
-                  <button 
-                    onClick={() => setShowFeedback(true)}
-                    className="px-6 py-2.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 rounded-xl font-bold text-sm border border-indigo-100 dark:border-indigo-800 hover:bg-indigo-100 transition-all active:scale-95"
-                  >
-                    {t('feedback.writeBtn')}
-                  </button>
+                  <button onClick={() => setShowFeedback(true)} className="px-6 py-2.5 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 rounded-xl font-bold text-sm border border-indigo-100 dark:border-indigo-800 hover:bg-indigo-100 transition-all active:scale-95">{t('feedback.writeBtn')}</button>
                </div>
-               
                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                  {testimonials.map((item, idx) => (
                     <div key={idx} className="flex flex-col p-6 rounded-[2rem] bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 shadow-sm relative transition-all hover:shadow-md">
                        <div className="flex items-center gap-1 mb-4">
                           {[...Array(5)].map((_, i) => (
-                             <svg 
-                               key={i} 
-                               className={`w-4 h-4 ${i < item.stars ? 'text-amber-400' : 'text-slate-100 dark:text-slate-800'}`} 
-                               fill="currentColor" 
-                               viewBox="0 0 20 20"
-                             >
-                               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                             </svg>
+                             <svg key={i} className={`w-4 h-4 ${i < item.stars ? 'text-amber-400' : 'text-slate-100 dark:text-slate-800'}`} fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                           ))}
                        </div>
-                       <p className="flex-1 text-slate-600 dark:text-slate-300 text-sm font-bold italic leading-relaxed mb-6">
-                          “{item.comment}”
-                       </p>
+                       <p className="flex-1 text-slate-600 dark:text-slate-300 text-sm font-bold italic leading-relaxed mb-6">“{item.comment}”</p>
                        <div className="flex items-center gap-4 pt-4 border-t border-slate-50 dark:border-slate-800">
-                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-black shadow-sm ${item.type === 'teacher' ? 'bg-indigo-600' : 'bg-purple-600'}`}>
-                             <UserPlaceholder className="w-6 h-6" />
-                          </div>
+                          <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-white font-black shadow-sm ${item.type === 'teacher' ? 'bg-indigo-600' : 'bg-purple-600'}`}><UserPlaceholder className="w-6 h-6" /></div>
                           <div>
                              <h4 className="font-bold text-slate-900 dark:text-white leading-none mb-1 text-sm">{item.name}</h4>
                              <p className="text-[9px] font-black text-slate-400 uppercase tracking-widest leading-none">{item.role}</p>
@@ -422,7 +390,6 @@ const App: React.FC = () => {
                  ))}
                </div>
             </div>
-
             {showFeedback && <FeedbackForm onClose={() => setShowFeedback(false)} />}
           </div>
         );
@@ -430,24 +397,54 @@ const App: React.FC = () => {
         return (
           <div className="max-w-5xl mx-auto space-y-8 animate-slide-up relative z-10">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
-              <div className="md:col-span-8 space-y-8">
-                 <section className="glass rounded-2xl p-1 border border-white/20 dark:border-slate-800 shadow-xl shadow-indigo-500/5"><TopicSelector onSelectTopic={setCurrentTopic} onStart={() => setView('recorder')}/></section>
-                 <section className="glass rounded-2xl p-8 border border-white/20 dark:border-slate-800 shadow-xl shadow-purple-500/5 bg-gradient-to-br from-indigo-50/30 to-purple-50/30 dark:from-indigo-900/10 dark:to-purple-900/10">
-                    <div className="flex flex-col md:flex-row items-center gap-6">
-                       <div className="flex-1 space-y-4">
-                          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-300 text-xs font-bold uppercase tracking-wider">Teacher Tool</div>
-                          <h2 className="text-2xl font-bold text-slate-900 dark:text-white">{t('dashboard.examMode')}</h2>
-                          <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{t('dashboard.examModeDesc')}</p>
-                          <div className="flex flex-wrap gap-3 mt-4">
-                             <button onClick={() => { setIsExamMode(true); setView('exam-setup'); }} className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold shadow-lg shadow-purple-500/30 transition-all hover:scale-105">{t('exam.beginExam')}</button>
-                             <button onClick={() => setView('class-manager')} className="px-6 py-3 bg-white dark:bg-slate-800 text-purple-600 dark:text-purple-300 border-2 border-purple-200 dark:border-purple-900 rounded-xl font-bold hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-all">{t('dashboard.manageClasses')}</button>
-                             <button onClick={() => setView('analytics')} className="px-6 py-3 bg-indigo-50 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400 border-2 border-indigo-100 dark:border-indigo-900/30 rounded-xl font-bold hover:bg-indigo-100 dark:hover:bg-indigo-900/40 transition-all">{t('dashboard.analytics')}</button>
-                          </div>
-                       </div>
-                    </div>
+              <div className="md:col-span-8 space-y-6">
+                 {/* Standard Selection */}
+                 <section className="glass rounded-2xl p-1 border border-white/20 dark:border-slate-800 shadow-xl shadow-indigo-500/5"><TopicSelector onSelectTopic={setCurrentTopic} onStart={() => { setIsExamMode(false); setView('recorder'); }}/></section>
+                 
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {/* Lucky Wheel Card */}
+                    <section className="glass rounded-3xl p-6 border border-white/20 dark:border-slate-800 shadow-xl bg-gradient-to-br from-indigo-500/5 to-emerald-500/5 group">
+                        <div className="space-y-4">
+                           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-indigo-500 to-indigo-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path fillRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 6a.75.75 0 00-1.5 0v6c0 .414.336.75.75.75h4.5a.75.75 0 000-1.5h-3.75V6z" clipRule="evenodd" /></svg>
+                           </div>
+                           <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('dashboard.wheelPractice')}</h2>
+                           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{t('dashboard.wheelPracticeDesc')}</p>
+                           <button onClick={() => { setIsExamMode(false); setView('practice-wheel'); }} className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-500/20 transition-all group-hover:-translate-y-1">{t('exam.startWheel')}</button>
+                        </div>
+                    </section>
+
+                    {/* Exam Mode Card */}
+                    <section className="glass rounded-3xl p-6 border border-white/20 dark:border-slate-800 shadow-xl bg-gradient-to-br from-purple-500/5 to-indigo-500/5 group">
+                        <div className="space-y-4">
+                           <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple-500 to-purple-600 text-white flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-6 h-6"><path d="M11.7 2.805a.75.75 0 01.6 0A60.65 60.65 0 0122.83 8.72a.75.75 0 01-.231 1.337 49.94 49.94 0 00-9.902 3.912l-.003.002c-.114.06-.227.119-.34.18a.75.75 0 01-.707 0A50.88 50.88 0 002.75 10.25a.75.75 0 01-.31-1.274A50.39 50.39 0 0111.7 2.805z" /><path d="M13.06 15.473a48.45 48.45 0 017.623-2.662c.034 1.209.034 2.45 0 3.658a47.44 47.44 0 01-5.293 3.048.75.75 0 01-.654 0l-2.48-1.481a48.04 48.04 0 01-5.132-3.413 47.44 47.44 0 001.088-6.23l1.266-.735a44.86 44.86 0 009.262 3.25c.01.658.01 1.333 0 2.022a48.837 48.837 0 01-5.68 2.593z" /></svg>
+                           </div>
+                           <h2 className="text-xl font-black text-slate-900 dark:text-white uppercase tracking-tighter">{t('dashboard.examMode')}</h2>
+                           <p className="text-xs text-slate-500 dark:text-slate-400 font-medium leading-relaxed">{t('dashboard.examModeDesc')}</p>
+                           <button onClick={() => { setIsExamMode(true); setView('exam-setup'); }} className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-bold shadow-lg shadow-purple-500/20 transition-all group-hover:-translate-y-1">{t('exam.beginExam')}</button>
+                        </div>
+                    </section>
+                 </div>
+
+                 {/* Tools Section */}
+                 <section className="flex flex-wrap gap-4">
+                    <button onClick={() => setView('class-manager')} className="flex-1 min-w-[140px] px-6 py-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center gap-2 group">
+                       <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/30 text-indigo-500 flex items-center justify-center group-hover:bg-indigo-500 group-hover:text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" /></svg></div>
+                       <span className="text-xs font-black uppercase text-slate-700 dark:text-slate-300 tracking-widest">{t('dashboard.manageClasses')}</span>
+                    </button>
+                    <button onClick={() => setView('analytics')} className="flex-1 min-w-[140px] px-6 py-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-2xl shadow-sm hover:shadow-md transition-all flex flex-col items-center gap-2 group">
+                       <div className="w-10 h-10 rounded-xl bg-purple-50 dark:bg-purple-900/30 text-purple-500 flex items-center justify-center group-hover:bg-purple-500 group-hover:text-white transition-colors"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3v11.25A2.25 2.25 0 006 16.5h2.25M3.75 3h-1.5m1.5 0h16.5m0 0h1.5m-1.5 0v11.25A2.25 2.25 0 0118 16.5h-2.25m-7.5 0h7.5m-7.5 0l-1 3m8.5-3l1 3m0 0l.5 1.5m-.5-1.5h-9.5m0 0l-.5 1.5m.75-9l3-3 2.148 2.148A12.061 12.061 0 0116.5 7.605" /></svg></div>
+                       <span className="text-xs font-black uppercase text-slate-700 dark:text-slate-300 tracking-widest">{t('dashboard.analytics')}</span>
+                    </button>
                  </section>
               </div>
-              <div className="md:col-span-4 space-y-4"><RecentHistory history={history} onSelect={handleSelectHistoryItem} /><button onClick={() => setView('history')} className="w-full py-3 px-4 rounded-xl text-indigo-600 dark:text-indigo-400 font-semibold bg-indigo-50 dark:bg-indigo-900/10 hover:bg-indigo-100 dark:hover:bg-indigo-900/30 transition-colors flex items-center justify-center gap-2 text-sm"><HistoryIcon className="w-4 h-4" /> {t('common.viewAllHistory')}</button></div>
+              <div className="md:col-span-4 space-y-4">
+                 <RecentHistory history={history} onSelect={handleSelectHistoryItem} />
+                 <button onClick={() => setView('history')} className="w-full py-4 px-4 rounded-2xl text-slate-500 dark:text-slate-400 font-black uppercase tracking-widest bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors flex items-center justify-center gap-2 text-[10px] shadow-sm">
+                    <HistoryIcon className="w-4 h-4" /> {t('common.viewAllHistory')}
+                 </button>
+              </div>
             </div>
           </div>
         );
@@ -456,7 +453,9 @@ const App: React.FC = () => {
       case 'analytics':
         return <AnalyticsDashboard history={history} classes={classes} onBack={() => setView('dashboard')} />;
       case 'exam-setup':
-        return <div className="max-w-4xl mx-auto py-8 animate-fade-in relative z-10"><ExamMode classes={classes} onComplete={handleExamComplete} onCancel={() => { setIsExamMode(false); setView('dashboard'); }}/></div>;
+        return <div className="max-w-4xl mx-auto py-8 animate-fade-in relative z-10"><ExamMode classes={classes} onComplete={handleExamComplete} onCancel={() => { setIsExamMode(false); setView('dashboard'); }} mode="exam"/></div>;
+      case 'practice-wheel':
+        return <div className="max-w-4xl mx-auto py-8 animate-fade-in relative z-10"><ExamMode classes={[]} onComplete={handleExamComplete} onCancel={() => setView('dashboard')} mode="practice"/></div>;
       case 'recorder':
         return <div className="max-w-4xl mx-auto py-8 animate-fade-in relative z-10"><Recorder topic={currentTopic} onStop={handleStopRecording} onCancel={() => setView('dashboard')}/></div>;
       case 'evaluating':

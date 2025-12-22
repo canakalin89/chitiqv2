@@ -36,6 +36,8 @@ const resources = {
         usageCount: "Total Practices",
         examMode: "Teacher Exam Mode",
         examModeDesc: "Create exams, pick questions with a lucky wheel, and download professional reports.",
+        wheelPractice: "Lucky Wheel Practice",
+        wheelPracticeDesc: "Feeling lucky? Select multiple topics and let the wheel decide your next challenge.",
         manageClasses: "Class Management",
         analytics: "Analytics & Comparison",
         processingSteps: {
@@ -48,7 +50,8 @@ const resources = {
       },
       exam: {
         title: "Speaking Exam Session",
-        beginExam: "Start Exam",
+        practiceTitle: "Lucky Wheel Selection",
+        beginExam: "Start Speaking",
         studentInfo: "Student Details",
         selectClass: "Select Class",
         selectStudent: "Select Student",
@@ -220,6 +223,8 @@ const resources = {
         usageCount: "Toplam Pratik",
         examMode: "Öğretmen Sınav Modu",
         examModeDesc: "Sınav oturumları oluşturun, soruları çarkla seçin ve profesyonel raporlar alın.",
+        wheelPractice: "Şans Çarkı ile Pratik",
+        wheelPracticeDesc: "Kendine güveniyor musun? Birden fazla konu seç ve şans çarkının senin için bir görev belirlemesine izin ver.",
         manageClasses: "Sınıf Yönetimi",
         analytics: "Analiz ve Karşılaştırma",
         processingSteps: {
@@ -232,7 +237,8 @@ const resources = {
       },
       exam: {
         title: "Konuşma Sınavı Oturumu",
-        beginExam: "Sınavı Başlat",
+        practiceTitle: "Şans Çarkı Seçimi",
+        beginExam: "Konuşmaya Başla",
         studentInfo: "Öğrenci Bilgileri",
         selectClass: "Sınıf Seçin",
         selectStudent: "Öğrenci Seçin",

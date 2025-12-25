@@ -106,8 +106,27 @@ const resources = {
       recorder: {
         micHelp: "Please ensure your microphone is connected and you have granted permission in your browser settings.",
         speakUp: "Please speak a bit louder!",
-        liveTranscript: "Live Transcription",
-        listening: "Listening..."
+        listening: "Listening...",
+        proTip: "PRO TIP",
+        tips: [
+          "Maintain eye contact with your virtual audience as you speak.",
+          "Remember to breathe and pause between your main ideas.",
+          "Use discourse markers like 'however', 'moreover', or 'on the other hand'.",
+          "Vary your pitch to avoid sounding monotone and keep engagement.",
+          "Speak at a steady pace—not too fast, not too slow.",
+          "Support your opinions with clear examples or logical reasons.",
+          "Focus on clarity rather than complex vocabulary if you're unsure.",
+          "Use correct word stress to improve your overall intelligibility.",
+          "Try to structure your talk with a clear introduction and conclusion.",
+          "Don't worry about minor mistakes; keeping the flow is more important.",
+          "Use synonyms to avoid repeating the same word multiple times.",
+          "Speak clearly and project your voice confidently.",
+          "If you get stuck, try to rephrase your thought in a simpler way.",
+          "Use relative clauses to provide more detail in your descriptions.",
+          "Pay attention to your intonation in questions and statements.",
+          "Be confident! Your attitude significantly affects your fluency score.",
+          "Imagine the target audience for your topic while you speak."
+        ]
       },
       feedback: {
         title: "Send Feedback",
@@ -126,8 +145,8 @@ const resources = {
         howDesc: "Achieve fluency in three simple steps.",
         step1Title: "Pick Your Topic",
         step1Desc: "Choose from curriculum-based speaking tasks.",
-        step2Title: "Record & Transcribe",
-        step2Desc: "Speak naturally. AI transcribes your words in real-time.",
+        step2Title: "Record & Listen",
+        step2Desc: "Speak naturally. AI will analyze your speech once you're done.",
         step3Title: "Smart Analysis",
         step3Desc: "Get instant scores and accurate feedback on 5 metrics.",
         criteriaTitle: "Evaluation Metrics",
@@ -291,10 +310,29 @@ const resources = {
         empty: "Henüz kayıt bulunamadı."
       },
       recorder: {
-        micHelp: "Lütfen mikrofonunuzun takılı olduğundan ve tarayıcı ayarlarından izin verdiğinizden emin olun.",
+        micHelp: "Mikrofon erişimi gerekli. Lütfen tarayıcı ayarlarınızdan izin verin.",
         speakUp: "Lütfen biraz daha yüksek sesle konuşun!",
-        liveTranscript: "Anlık Deşifre",
-        listening: "Dinliyor..."
+        listening: "Dinliyor...",
+        proTip: "PROFESYONEL İPUCU",
+        tips: [
+          "Hayali dinleyicilerinle göz teması kuruyormuş gibi hisset.",
+          "Fikirlerin arasında duraklamayı ve nefes almayı unutma.",
+          "'However', 'Moreover' gibi bağlaçları kullanarak cümlelerini bağla.",
+          "Ses tonunu monotonluktan kurtarmak için iniş çıkışlar ekle.",
+          "Dengeli bir hızda konuş; ne çok hızlı ne çok yavaş.",
+          "Görüşlerini örnekler veya nedenlerle destekle.",
+          "Emin olmadığında karmaşık kelimeler yerine netliğe odaklan.",
+          "Kelime vurgularına dikkat ederek anlaşılırlığını artır.",
+          "Konuşmanı giriş, gelişme ve sonuç bölümlerine ayırmaya çalış.",
+          "Küçük hatalara takılma; konuşmanın akışını bozma.",
+          "Aynı kelimeyi tekrarlamak yerine eş anlamlılarını kullan.",
+          "Net konuş ve sesini dinleyiciye ulaştır.",
+          "Takıldığında pes etmek yerine düşünceni başka kelimelerle ifade et.",
+          "Daha fazla detay vermek için 'Relative Clauses' yapılarını kullan.",
+          "Soru ve düz cümlelerdeki tonlama farklarına dikkat et.",
+          "Özgüvenli ol! Tavrın akıcılığını doğrudan etkiler.",
+          "Konuştuğun konunun hedef kitlesini hayal ederek konuş."
+        ]
       },
       feedback: {
         title: "Yorum Yapın",
@@ -313,8 +351,8 @@ const resources = {
         howDesc: "Akıcı konuşmaya üç basit adımda ulaşın.",
         step1Title: "Konu Seçin",
         step1Desc: "Müfredata uygun konuşma görevlerinden birini belirleyin.",
-        step2Title: "Kaydet & Çözümle",
-        step2Desc: "Doğal konuşun, yapay zeka her kelimenizi anlık metne döksün.",
+        step2Title: "Kaydet & Dinle",
+        step2Desc: "Doğal konuşun, yapay zeka kayıttan sonra sesinizi analiz etsin.",
         step3Title: "Akıllı Analiz",
         step3Desc: "5 kriterde anlık puan ve detaylı geri bildirim alın.",
         criteriaTitle: "Değerlendirme Kriterleri",

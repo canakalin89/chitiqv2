@@ -26,7 +26,7 @@ function encode(bytes: Uint8Array) {
 }
 
 const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   
   const [hasStarted, setHasStarted] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -170,7 +170,7 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
       config: {
         responseModalities: [Modality.AUDIO],
         inputAudioTranscription: {},
-        systemInstruction: "You are a speech-to-text transcriber. Transcribe the user's speech verbatim and with extreme precision. ONLY detect and output English or Turkish words. Ignore background noise, music, or non-human sounds. Do not translate, just transcribe.",
+        systemInstruction: "You are a highly precise speech-to-text engine. Your task is to transcribe exactly what the user says. ONLY output English and Turkish words. Do not translate. Filter out non-verbal noises. High sensitivity to word stress and accurate spelling is required.",
       }
     });
     sessionPromiseRef.current = sessionPromise;
@@ -261,7 +261,6 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
     if (sourceRef.current) sourceRef.current.disconnect();
     if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
     
-    // Close Live Session
     if (sessionPromiseRef.current) {
       sessionPromiseRef.current.then(session => {
         try { session.close(); } catch(e) {}
@@ -339,9 +338,11 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
         
         {/* Transcription Area */}
         <div className="flex-1 overflow-y-auto mb-8 bg-white/40 dark:bg-slate-950/40 rounded-[2rem] p-8 border border-white/40 dark:border-slate-800/50 shadow-inner custom-scrollbar backdrop-blur-sm">
-           <div className="flex items-center gap-2 mb-4 opacity-50">
-             <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
-             <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">{t('evaluation.transcription')} (CANLI)</span>
+           <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2 opacity-60">
+                <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
+                <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">{t('recorder.liveLabel')}</span>
+              </div>
            </div>
            <p className="text-lg md:text-xl font-bold text-slate-700 dark:text-slate-200 leading-relaxed transition-all duration-300">
              {transcription || <span className="text-slate-400 italic font-medium">{t('recorder.listening')}</span>}
@@ -349,15 +350,22 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
            <div ref={transcriptionEndRef} />
         </div>
 
-        <div className="relative w-full h-[120px] flex items-center justify-center">
-           <canvas ref={canvasRef} width={1000} height={120} className="absolute inset-0 w-full h-full opacity-100 pointer-events-none" />
-           <div className="relative z-10 bg-white dark:bg-slate-800 p-6 rounded-full shadow-2xl shadow-indigo-500/20 border-4 border-slate-100/50 dark:border-slate-700/50">
-             <MicIcon className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
+        {/* Accuracy Note */}
+        <div className="mb-4 px-6 py-2 bg-slate-100/50 dark:bg-slate-800/50 rounded-xl border border-slate-200/50 dark:border-slate-700/50 text-center">
+           <p className="text-[10px] font-bold text-slate-500 dark:text-slate-400 leading-tight">
+             <span className="text-indigo-500">ℹ</span> {t('recorder.liveNote')}
+           </p>
+        </div>
+
+        <div className="relative w-full h-[100px] flex items-center justify-center">
+           <canvas ref={canvasRef} width={1000} height={100} className="absolute inset-0 w-full h-full opacity-100 pointer-events-none" />
+           <div className="relative z-10 bg-white dark:bg-slate-800 p-5 rounded-full shadow-2xl shadow-indigo-500/20 border-4 border-slate-100/50 dark:border-slate-700/50">
+             <MicIcon className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
            </div>
         </div>
         
         {isSilent && timer > 3 && (
-           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-12 bg-amber-500 text-white px-8 py-2.5 rounded-full text-sm font-black animate-bounce shadow-xl z-20 uppercase tracking-widest">
+           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-16 bg-amber-500 text-white px-8 py-2.5 rounded-full text-sm font-black animate-bounce shadow-xl z-20 uppercase tracking-widest">
              {t('recorder.speakUp')}
            </div>
         )}

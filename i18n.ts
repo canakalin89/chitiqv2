@@ -106,7 +106,9 @@ const resources = {
       recorder: {
         micHelp: "Please ensure your microphone is connected and you have granted permission in your browser settings.",
         speakUp: "Please speak a bit louder!",
-        listening: "Listening..."
+        listening: "Listening...",
+        liveNote: "Live transcription is for reference; final assessment will be more accurate.",
+        liveLabel: "LIVE"
       },
       feedback: {
         title: "Send Feedback",
@@ -292,7 +294,9 @@ const resources = {
       recorder: {
         micHelp: "Mikrofon erişimi gerekli. Lütfen tarayıcı ayarlarınızdan izin verin.",
         speakUp: "Lütfen biraz daha yüksek sesle konuşun!",
-        listening: "Dinliyor..."
+        listening: "Dinliyor...",
+        liveNote: "Anlık deşifre referans amaçlıdır; nihai analiz çok daha hassas olacaktır.",
+        liveLabel: "CANLI"
       },
       feedback: {
         title: "Yorum Yapın",

@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { GoogleGenAI, Modality } from '@google/genai';
 import { StopIcon } from '../icons/StopIcon';
 import { MicIcon } from '../icons/MicIcon';
 
@@ -14,15 +15,25 @@ const MAX_RECORDING_TIME = 180;
 const SILENCE_THRESHOLD = 0.008;
 const SILENCE_TIMEOUT = 5000;
 
+// Helper functions for base64 encoding/decoding as required by guidelines
+function encode(bytes: Uint8Array) {
+  let binary = '';
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i]);
+  }
+  return btoa(binary);
+}
+
 const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   
   const [hasStarted, setHasStarted] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [timer, setTimer] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const [isSilent, setIsSilent] = useState(false);
-  const [tipIndex, setTipIndex] = useState(0);
+  const [transcription, setTranscription] = useState('');
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
@@ -34,17 +45,24 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
   const silenceTimerRef = useRef<any>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameRef = useRef<number | null>(null);
+  const transcriptionEndRef = useRef<HTMLDivElement>(null);
+  
+  // Gemini Live Session Reference
+  const sessionPromiseRef = useRef<Promise<any> | null>(null);
 
-  const tips = t('recorder.tips', { returnObjects: true }) as string[];
+  useEffect(() => {
+    if (transcriptionEndRef.current) {
+      transcriptionEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [transcription]);
 
   useEffect(() => {
     return () => cleanup();
   }, []);
 
   useEffect(() => {
-    let interval: any;
     if (isRecording) {
-      interval = setInterval(() => {
+      const interval = setInterval(() => {
         setTimer((prev) => {
           if (prev >= MAX_RECORDING_TIME) {
             stopRecording();
@@ -53,27 +71,12 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
           return prev + 1;
         });
       }, 1000);
-      
-      // Cycle tips every 7 seconds
-      const tipInterval = setInterval(() => {
-        setTipIndex(prev => (prev + 1) % tips.length);
-      }, 7000);
-
-      return () => {
-        clearInterval(interval);
-        clearInterval(tipInterval);
-      }
+      return () => clearInterval(interval);
     }
-  }, [isRecording, tips.length]);
+  }, [isRecording]);
 
   const getSupportedMimeType = () => {
-    const types = [
-      'audio/webm;codecs=opus',
-      'audio/ogg;codecs=opus',
-      'audio/webm',
-      'audio/ogg',
-      'audio/wav'
-    ];
+    const types = ['audio/webm;codecs=opus', 'audio/ogg;codecs=opus', 'audio/webm', 'audio/ogg', 'audio/wav'];
     for (const type of types) {
       if (MediaRecorder.isTypeSupported(type)) return type;
     }
@@ -120,30 +123,61 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
     draw();
   };
 
+  const createBlobForLive = (data: Float32Array) => {
+    const l = data.length;
+    const int16 = new Int16Array(l);
+    for (let i = 0; i < l; i++) {
+      int16[i] = data[i] * 32768;
+    }
+    return {
+      data: encode(new Uint8Array(int16.buffer)),
+      mimeType: 'audio/pcm;rate=16000',
+    };
+  };
+
   const startRecording = async () => {
     let stream: MediaStream;
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
     } catch (err: any) {
-      console.error("Mic Access Error:", err);
       setError(t('errors.micPermission'));
       return;
     }
 
     const AudioContextClass = (window.AudioContext || (window as any).webkitAudioContext);
-    const audioContext = new AudioContextClass({ sampleRate: 44100 });
+    const audioContext = new AudioContextClass({ sampleRate: 16000 });
     audioContextRef.current = audioContext;
     
     if (audioContext.state === 'suspended') {
       await audioContext.resume();
     }
 
+    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const sessionPromise = ai.live.connect({
+      model: 'gemini-2.5-flash-native-audio-preview-09-2025',
+      callbacks: {
+        onopen: () => console.log("Live connection opened"),
+        onmessage: async (message) => {
+          if (message.serverContent?.inputTranscription) {
+            const text = message.serverContent.inputTranscription.text;
+            setTranscription(prev => prev + text);
+          }
+        },
+        onerror: (e) => console.error("Live Error:", e),
+        onclose: () => console.log("Live connection closed")
+      },
+      config: {
+        responseModalities: [Modality.AUDIO],
+        inputAudioTranscription: {},
+        systemInstruction: "You are a speech-to-text transcriber. Transcribe the user's speech verbatim and with extreme precision. ONLY detect and output English or Turkish words. Ignore background noise, music, or non-human sounds. Do not translate, just transcribe.",
+      }
+    });
+    sessionPromiseRef.current = sessionPromise;
+
     setError(null);
     setHasStarted(true);
     setIsRecording(true);
-    // Randomize initial tip
-    setTipIndex(Math.floor(Math.random() * tips.length));
 
     try {
       const mimeType = getSupportedMimeType();
@@ -172,10 +206,11 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
 
       processor.onaudioprocess = (e) => {
         const inputData = e.inputBuffer.getChannelData(0);
+        
+        // Silence detection
         let sum = 0;
         for (let i = 0; i < inputData.length; i++) sum += inputData[i] * inputData[i];
         const rms = Math.sqrt(sum / inputData.length);
-
         if (rms < SILENCE_THRESHOLD) {
           if (!silenceTimerRef.current) {
             silenceTimerRef.current = setTimeout(() => setIsSilent(true), SILENCE_TIMEOUT);
@@ -187,9 +222,14 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
             silenceTimerRef.current = null;
           }
         }
+
+        // Stream to Gemini Live
+        const pcmBlob = createBlobForLive(inputData);
+        sessionPromise.then((session) => {
+          session.sendRealtimeInput({ media: pcmBlob });
+        });
       };
     } catch (err: any) {
-      console.error("Recorder Setup Error:", err);
       setError(t('errors.generic'));
       cleanup();
     }
@@ -220,6 +260,13 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
     if (analyserRef.current) analyserRef.current.disconnect();
     if (sourceRef.current) sourceRef.current.disconnect();
     if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+    
+    // Close Live Session
+    if (sessionPromiseRef.current) {
+      sessionPromiseRef.current.then(session => {
+        try { session.close(); } catch(e) {}
+      });
+    }
   };
 
   const formatTime = (seconds: number) => {
@@ -269,7 +316,7 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
   }
 
   return (
-    <div className="w-full max-w-4xl mx-auto glass rounded-[2.5rem] shadow-2xl border border-white/20 dark:border-slate-800 overflow-hidden flex flex-col h-[650px] transition-all duration-300">
+    <div className="w-full max-w-4xl mx-auto glass rounded-[2.5rem] shadow-2xl border border-white/20 dark:border-slate-800 overflow-hidden flex flex-col h-[700px] transition-all duration-300">
       <div className="bg-white/50 dark:bg-slate-900/50 px-10 py-6 flex justify-between items-center border-b border-slate-200/50 dark:border-slate-700/50 backdrop-blur-md">
         <div className="flex items-center gap-4">
           <div className="flex items-center justify-center w-12 h-12 rounded-2xl bg-red-100 dark:bg-red-900/30">
@@ -285,35 +332,32 @@ const Recorder: React.FC<RecorderProps> = ({ onStop, onCancel, topic }) => {
         </div>
       </div>
 
-      <div className="flex-1 relative flex flex-col items-center justify-center p-8 overflow-hidden bg-gradient-to-b from-slate-50/30 to-white/30 dark:from-slate-900/30 dark:to-slate-950/30">
-        <div className="absolute top-8 left-0 right-0 text-center z-10 px-10">
+      <div className="flex-1 relative flex flex-col p-8 overflow-hidden bg-gradient-to-b from-slate-50/30 to-white/30 dark:from-slate-900/30 dark:to-slate-950/30">
+        <div className="text-center z-10 mb-8">
            <h3 className="text-slate-900 dark:text-white font-black text-2xl md:text-3xl truncate max-w-3xl mx-auto drop-shadow-sm italic">"{topic}"</h3>
         </div>
         
-        {/* Pro Tip Carousel Area */}
-        <div className="absolute bottom-32 left-0 right-0 px-8 z-20 pointer-events-none">
-           <div className="max-w-xl mx-auto glass p-6 rounded-3xl border border-white/40 dark:border-slate-700/50 shadow-2xl animate-fade-in flex flex-col items-center gap-2">
-              <div className="px-4 py-1 rounded-full bg-indigo-600 text-white text-[10px] font-black uppercase tracking-[0.2em] animate-pulse">
-                {t('recorder.proTip')}
-              </div>
-              <p 
-                key={tipIndex} 
-                className="text-center text-slate-700 dark:text-slate-200 font-bold italic text-lg leading-relaxed animate-fade-in"
-              >
-                "{tips[tipIndex]}"
-              </p>
+        {/* Transcription Area */}
+        <div className="flex-1 overflow-y-auto mb-8 bg-white/40 dark:bg-slate-950/40 rounded-[2rem] p-8 border border-white/40 dark:border-slate-800/50 shadow-inner custom-scrollbar backdrop-blur-sm">
+           <div className="flex items-center gap-2 mb-4 opacity-50">
+             <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></div>
+             <span className="text-[10px] font-black uppercase tracking-widest text-slate-500 dark:text-slate-400">{t('evaluation.transcription')} (CANLI)</span>
            </div>
+           <p className="text-lg md:text-xl font-bold text-slate-700 dark:text-slate-200 leading-relaxed transition-all duration-300">
+             {transcription || <span className="text-slate-400 italic font-medium">{t('recorder.listening')}</span>}
+           </p>
+           <div ref={transcriptionEndRef} />
         </div>
 
-        <div className="relative w-full h-[400px] flex items-center justify-center">
-           <canvas ref={canvasRef} width={1200} height={400} className="absolute inset-0 w-full h-full opacity-100 pointer-events-none" />
-           <div className="relative z-10 bg-white dark:bg-slate-800 p-12 rounded-full shadow-2xl shadow-indigo-500/20 border-8 border-slate-100/50 dark:border-slate-700/50 animate-float">
-             <MicIcon className="w-16 h-16 text-indigo-600 dark:text-indigo-400" />
+        <div className="relative w-full h-[120px] flex items-center justify-center">
+           <canvas ref={canvasRef} width={1000} height={120} className="absolute inset-0 w-full h-full opacity-100 pointer-events-none" />
+           <div className="relative z-10 bg-white dark:bg-slate-800 p-6 rounded-full shadow-2xl shadow-indigo-500/20 border-4 border-slate-100/50 dark:border-slate-700/50">
+             <MicIcon className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
            </div>
         </div>
         
         {isSilent && timer > 3 && (
-           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 translate-y-32 bg-amber-500 text-white px-8 py-2.5 rounded-full text-sm font-black animate-bounce shadow-xl z-20 uppercase tracking-widest">
+           <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-12 bg-amber-500 text-white px-8 py-2.5 rounded-full text-sm font-black animate-bounce shadow-xl z-20 uppercase tracking-widest">
              {t('recorder.speakUp')}
            </div>
         )}
